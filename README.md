@@ -41,3 +41,15 @@ npm run build
 - **UI Components**: Material UI (MUI v6/v9) + Emotion
 - **OCR Engine**: Tesseract.js
 - **Testing**: Vitest
+
+---
+
+## 📄 License
+
+This project is licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)** License.
+
+- ✅ **Free for Personal & Community Use**: You are free to use, modify, share, and build upon this software.
+- ❌ **Non-Commercial**: You may **not** sell, paywall, or use this software or derived works for commercial monetization.
+- 🔄 **ShareAlike & Open Source**: Any modifications or derivatives must remain open source and distributed under the exact same license terms.
+
+See the [LICENSE](LICENSE) file for details.
