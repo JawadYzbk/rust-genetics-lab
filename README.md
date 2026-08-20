@@ -3,7 +3,9 @@
 A fast, interactive genetics calculator, clone inventory bank, target designer, multi-generation crossbreeding solver, OCR screen scanner, and step-by-step in-game breeding assistant for Rust agriculture.
 
 inspired from Rust Breeder, but way faster and more features
-<img width="1579" height="1008" alt="image" src="https://github.com/user-attachments/assets/8830da3f-7fbc-4d27-9d3c-91625e961d86" />
+<img width="1918" height="1079" alt="image" src="https://github.com/user-attachments/assets/dc633ec3-7c6d-41eb-a1d3-ea39b6b988c6" />
+<img width="1917" height="1079" alt="image" src="https://github.com/user-attachments/assets/9e9295db-3213-4d77-ac7b-01a4faf39ead" />
+
 ## ✨ Features
 
 - **Direct Manual Input & Saved Sets**: Fast, zero-friction multi-line plant input with instant circular gene badges (`G`, `Y`, `H`, `W`, `X`), line indices, and auto-saving history.
