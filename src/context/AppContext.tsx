@@ -66,6 +66,8 @@ interface AppContextType {
   setIsConsentModalOpen: (open: boolean) => void;
   isScannerGuideOpen: boolean;
   setIsScannerGuideOpen: (open: boolean) => void;
+  isReflexNoticeOpen: boolean;
+  setIsReflexNoticeOpen: (open: boolean) => void;
   isKeyboardShortcutsOpen: boolean;
   setIsKeyboardShortcutsOpen: (open: boolean) => void;
   isProjectManagerOpen: boolean;
@@ -120,6 +122,13 @@ const AppInternalBridge: React.FC<{ children: React.ReactNode }> = ({ children }
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
   const [isConsentModalOpen, setIsConsentModalOpen] = useState(false);
   const [isScannerGuideOpen, setIsScannerGuideOpen] = useState(false);
+  const [isReflexNoticeOpen, setIsReflexNoticeOpen] = useState(() => {
+    try {
+      return !localStorage.getItem('genetics_reflex_notice_dismissed');
+    } catch {
+      return false;
+    }
+  });
   const [isKeyboardShortcutsOpen, setIsKeyboardShortcutsOpen] = useState(false);
   const [isProjectManagerOpen, setIsProjectManagerOpen] = useState(false);
 
@@ -243,6 +252,8 @@ const AppInternalBridge: React.FC<{ children: React.ReactNode }> = ({ children }
     setIsConsentModalOpen,
     isScannerGuideOpen,
     setIsScannerGuideOpen,
+    isReflexNoticeOpen,
+    setIsReflexNoticeOpen,
     isKeyboardShortcutsOpen,
     setIsKeyboardShortcutsOpen,
     isProjectManagerOpen,
