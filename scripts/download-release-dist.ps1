@@ -6,6 +6,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$ProgressPreference = "SilentlyContinue"
 
 # Determine target directory (defaults to ../dist relative to script)
 if ([string]::IsNullOrWhiteSpace($TargetDir)) {
