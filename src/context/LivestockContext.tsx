@@ -18,7 +18,7 @@ import {
   LivestockScanState
 } from '../services/livestock/livestockScanSession.ts';
 import { StableRead } from '../services/livestock/livestockReadStabilizer.ts';
-import { PortraitMatch, portraitSex, portraitSpecies } from '../services/livestock/portraitClassifier.ts';
+import { PortraitMatch, portraitSex } from '../services/livestock/portraitClassifier.ts';
 import { useNotification } from './NotificationContext.tsx';
 
 /** A scanned animal held back because its genes match one already in the herd. */
@@ -136,9 +136,10 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       let species = manual.species;
       let sex = manual.sex;
       if (manual.auto && portrait) {
-        species = portraitSpecies(portrait.kind);
-        // Calves, lambs and sheep share one portrait for both sexes: the panel cannot say.
-        sex = portraitSex(portrait.kind) ?? 'unknown';
+        species = portrait.species;
+        // Calves, lambs and sheep share one portrait for both sexes, and an uncertain
+        // cow-or-calf says nothing about sex: the panel cannot tell.
+        sex = (portrait.kind && portraitSex(portrait.kind)) ?? 'unknown';
       }
       const animal = createAnimal({
         species,

@@ -1,6 +1,8 @@
 import { RasterImage } from '../scanner/scannerTypes.ts';
 import { LivestockPanelRead } from './livestockPanelReader.ts';
-import { PORTRAIT_REFERENCES, PORTRAIT_SIZE } from './portraitData.ts';
+import { PORTRAIT_REFERENCES, PORTRAIT_SIZE, PortraitKind } from './portraitData.ts';
+
+export type { PortraitKind };
 
 /**
  * Which animal the panel belongs to, from the portrait in its header.
@@ -12,18 +14,25 @@ import { PORTRAIT_REFERENCES, PORTRAIT_SIZE } from './portraitData.ts';
  * only where it has the animal (its alpha), by correlation of brightness-normalised colour,
  * so the translucent panel and whatever shows through it do not count.
  *
+ * Portraits show the animal's own coat, so each kind has several references (see
+ * portraitData.ts) and the best one counts. Coats overlap between a cow and a calf, so when
+ * the two best kinds are close and of the same species, only the species is reported.
+ *
  * Cow and bull settle an adult's sex. Calves, lambs and sheep share one portrait per kind
  * for both sexes, so their sex is not on the panel at all.
  */
 
-export type PortraitKind = keyof typeof PORTRAIT_REFERENCES;
-
 export interface PortraitMatch {
-  kind: PortraitKind;
+  /** The kind, or null when only the species is certain (a cow/calf look-alike). */
+  kind: PortraitKind | null;
+  species: 'cattle' | 'sheep';
   score: number;
   /** Score gap to the next-best kind. */
   margin: number;
 }
+
+/** Below this gap between the two best kinds, the kind is not trusted. */
+const KIND_MARGIN = 0.12;
 
 interface Reference {
   kind: PortraitKind;
@@ -63,8 +72,8 @@ let references: Reference[] | null = null;
 
 function getReferences(): Reference[] {
   if (references) return references;
-  references = (Object.keys(PORTRAIT_REFERENCES) as PortraitKind[]).map((kind) => {
-    const rgba = decodeBase64(PORTRAIT_REFERENCES[kind]);
+  references = PORTRAIT_REFERENCES.map(({ kind, rgba: encoded }) => {
+    const rgba = decodeBase64(encoded);
     const rgb = new Float32Array(N * N * 3);
     const covered: number[] = [];
     for (let i = 0; i < N * N; i++) {
@@ -144,10 +153,13 @@ export function classifyPortrait(image: RasterImage, read: LivestockPanelRead): 
   const ranked = [...best.entries()].sort((a, b) => b[1] - a[1]);
   if (ranked.length < 2) return null;
   const [kind, score] = ranked[0];
-  const margin = score - ranked[1][1];
-  // A portrait has to look clearly like one animal, and more like it than any other.
-  if (score < 0.45 || margin < 0.05) return null;
-  return { kind, score, margin };
+  const [runnerUp, runnerScore] = ranked[1];
+  const margin = score - runnerScore;
+  if (score < 0.45) return null;
+  const species = portraitSpecies(kind);
+  if (margin >= KIND_MARGIN) return { kind, species, score, margin };
+  // Too close to call the kind; the species still holds if both candidates share it.
+  return portraitSpecies(runnerUp) === species ? { kind: null, species, score, margin } : null;
 }
 
 export function portraitSpecies(kind: PortraitKind): 'cattle' | 'sheep' {

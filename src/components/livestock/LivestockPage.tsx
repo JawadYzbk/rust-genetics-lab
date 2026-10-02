@@ -172,7 +172,13 @@ export const LivestockPage: React.FC = () => {
                     size="small"
                     color="primary"
                     variant="outlined"
-                    label={`Detected: ${scan.livePortrait.kind[0].toUpperCase()}${scan.livePortrait.kind.slice(1)}`}
+                    label={`Detected: ${
+                      scan.livePortrait.kind
+                        ? scan.livePortrait.kind[0].toUpperCase() + scan.livePortrait.kind.slice(1)
+                        : scan.livePortrait.species === 'cattle'
+                          ? 'Cattle (cow or calf?)'
+                          : 'Sheep (adult or lamb?)'
+                    }`}
                   />
                 )}
                 {scan.liveConditions && (

@@ -134,7 +134,10 @@ describe('portrait: which animal the panel belongs to', () => {
   it('recognises a cow from the panel header', async () => {
     const image = await loadFixture('livestock-desiree-panel-ui07', 355, 350);
     const read = readLivestockPanel(image, { readMarkerDigit })!;
-    expect(classifyPortrait(image, read)?.kind).toBe('cow');
+    const match = classifyPortrait(image, read);
+    expect(match?.species).toBe('cattle');
+    // Its own capture is among the references, so the kind is certain here.
+    expect(match?.kind).toBe('cow');
   });
 
   it('recognises a bull from the panel header', async () => {
@@ -143,7 +146,7 @@ describe('portrait: which animal the panel belongs to', () => {
     expect(read).not.toBeNull();
     const match = classifyPortrait(image, read);
     expect(match?.kind).toBe('bull');
-    expect(portraitSex(match!.kind)).toBe('male');
+    expect(portraitSex(match!.kind!)).toBe('male');
   });
 
   it('gives no answer when the header is cut off', async () => {
