@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0](https://github.com/JawadYzbk/rust-genetics-lab/releases/tag/v1.5.0) (2026-10-02)
+
+### 🚀 Features
+
+* feat(livestock): show each pair's expected newborn gene by gene ([fe4a417](https://github.com/JawadYzbk/rust-genetics-lab/commit/fe4a417269bead7d249a826ce59a0d2dd9f3dcd0))
+
+**Full Changelog**: https://github.com/JawadYzbk/rust-genetics-lab/compare/v1.4.0...v1.5.0
+All notable changes to this project will be documented in this file.
+
 ## [1.4.0](https://github.com/JawadYzbk/rust-genetics-lab/releases/tag/v1.4.0) (2026-10-02)
 
 ### 🚀 Features
