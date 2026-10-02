@@ -1,73 +1,57 @@
 import { GeneLevel, LIVESTOCK_GENES, geneMultiplier } from './livestockGenes.ts';
 import { LivestockAnimal, LivestockSex } from './animal.ts';
-import { BASE_SALE_PRICE, INBRED_GENE_FACTOR, SPECIES_PRICE_FACTOR } from './pricing.ts';
+import { BASE_SALE_PRICE, SPECIES_PRICE_FACTOR, INBRED_GENE_FACTOR } from './pricing.ts';
+import {
+  GenotypeDist,
+  HerdGenotypes,
+  breedsTrue,
+  expressedLevels,
+  inferHerdGenotypes,
+  offspringGenotype,
+  WILD_GENOTYPE
+} from './genotype.ts';
 
 /**
- * Pair suggestions under an ASSUMED inheritance model.
+ * Pair suggestions from Rust's inheritance rule: a newborn gets one random copy of each gene
+ * from each parent, and expresses the better of its two copies.
  *
- * Facepunch has not published how livestock genes pass to offspring ("the genes won't
- * behave exactly like plants"). The working assumption is the simplest one: for every gene,
- * the calf or lamb takes the mother's or the father's value with equal chance. Where an
- * animal was recorded with two rows of badges (an earlier panel), each of its rows is one of
- * the values it can pass on.
- *
- * Every number this module produces is therefore a ranking aid, not a prediction. The UI
- * must say so. When real litters disagree with it, this is the one file to change.
+ * The rule itself is documented. What is uncertain is the parents' hidden copies, which
+ * `genotype.ts` estimates from the panel, the wild odds and any recorded ancestry. The
+ * numbers here are exact for that estimate, and as good as the records behind it.
  */
-
-export const PAIRING_MODEL_ID = 'parent-coinflip-v1';
 
 export type Relation = 'parent-child' | 'siblings' | 'half-siblings' | 'shared-ancestor';
 
 export interface GeneOutlook {
-  /** Average multiplier of the values the offspring could inherit. */
+  /** Expected multiplier of the newborn's expressed gene. */
   expectedMultiplier: number;
-  /** Chance the inherited value is green. */
+  /** Chance the newborn shows Good. */
   high: number;
-  /** Chance the inherited value is red. */
+  /** Chance the newborn shows Bad. */
   low: number;
+  /** Chance the newborn carries two Good copies (and so always passes on Good). */
+  breedsTrue: number;
 }
 
 export interface PairSuggestion {
   male: LivestockAnimal;
   female: LivestockAnimal;
-  /** Expected gene factor of the offspring, inbreeding penalty included. */
+  /** Expected gene factor of the newborn (mean expected multiplier). */
   expectedGeneFactor: number;
-  /** Expected sale value of a young adult offspring at full health. */
+  /** Expected sale value of the newborn as a young adult at full condition. */
   expectedValue: number;
-  /** Chance every gene comes out green. */
+  /** Chance every gene shows Good. */
   allHighChance: number;
-  /** Chance no gene comes out red. */
+  /** Chance no gene shows Bad. */
   noLowChance: number;
-  /** Genes where at least one parent carries green. */
+  /** Chance of a god clone: all ten copies Good. */
+  godCloneChance: number;
+  /** Genes where the newborn can show Good at all. */
   genesWithHighSource: number;
   perGene: GeneOutlook[];
   relation: Relation | null;
   /** True when one or both sexes were never recorded. */
   sexAssumed: boolean;
-}
-
-function geneValues(animal: LivestockAnimal, geneIndex: number): Array<GeneLevel | null> {
-  return animal.rows.map((row) => row.levels[geneIndex] ?? null);
-}
-
-function share(values: Array<GeneLevel | null>, level: GeneLevel): number {
-  return values.filter((v) => v === level).length / values.length;
-}
-
-export function geneOutlook(a: LivestockAnimal, b: LivestockAnimal, geneIndex: number): GeneOutlook {
-  const gene = LIVESTOCK_GENES[geneIndex];
-  const fromA = geneValues(a, geneIndex);
-  const fromB = geneValues(b, geneIndex);
-  // Each parent contributes half; within a parent, each of its rows is equally likely.
-  const mean = (values: Array<GeneLevel | null>) =>
-    values.reduce((sum, level) => sum + geneMultiplier(gene, level), 0) / values.length;
-
-  return {
-    expectedMultiplier: (mean(fromA) + mean(fromB)) / 2,
-    high: (share(fromA, 'high') + share(fromB, 'high')) / 2,
-    low: (share(fromA, 'low') + share(fromB, 'low')) / 2
-  };
 }
 
 function ancestors(animal: LivestockAnimal, byId: Map<string, LivestockAnimal>, depth: number): Set<string> {
@@ -127,42 +111,64 @@ function canPair(a: LivestockSex, b: LivestockSex): boolean {
   return a !== b;
 }
 
+export function geneOutlook(
+  geneIndex: number,
+  mother: GenotypeDist,
+  father: GenotypeDist,
+  inbred: boolean
+): GeneOutlook {
+  const gene = LIVESTOCK_GENES[geneIndex];
+  const child = offspringGenotype(mother, father);
+  const shown = expressedLevels(child);
+  const levels: GeneLevel[] = ['low', 'mid', 'high'];
+  return {
+    expectedMultiplier: levels.reduce((sum, level) => sum + shown[level] * geneMultiplier(gene, level, inbred), 0),
+    high: shown.high,
+    low: shown.low,
+    breedsTrue: breedsTrue(child)
+  };
+}
+
 export function evaluatePair(
   male: LivestockAnimal,
   female: LivestockAnimal,
-  herd: LivestockAnimal[]
+  herd: LivestockAnimal[],
+  genotypes: HerdGenotypes = inferHerdGenotypes(herd)
 ): PairSuggestion {
-  const perGene = LIVESTOCK_GENES.map((_, i) => geneOutlook(male, female, i));
   const relation = relationBetween(male, female, herd);
-  const meanMultiplier =
-    perGene.reduce((sum, outlook) => sum + outlook.expectedMultiplier, 0) / perGene.length;
-  const expectedGeneFactor = relation ? meanMultiplier * INBRED_GENE_FACTOR : meanMultiplier;
+  // Close relatives can produce an inbred newborn; plan for the worse case.
+  const inbred = relation !== null;
+  const maleDists = genotypes.get(male.id) ?? LIVESTOCK_GENES.map(() => WILD_GENOTYPE);
+  const femaleDists = genotypes.get(female.id) ?? LIVESTOCK_GENES.map(() => WILD_GENOTYPE);
+  const perGene = LIVESTOCK_GENES.map((_, i) => geneOutlook(i, femaleDists[i], maleDists[i], inbred));
+  const meanMultiplier = perGene.reduce((sum, g) => sum + g.expectedMultiplier, 0) / perGene.length;
+  // The sale formula's own inbred penalty applies on top of the weaker genes.
+  const saleFactor = inbred ? meanMultiplier * INBRED_GENE_FACTOR : meanMultiplier;
 
   return {
     male,
     female,
-    expectedGeneFactor,
-    expectedValue: BASE_SALE_PRICE * SPECIES_PRICE_FACTOR[male.species] * expectedGeneFactor,
-    allHighChance: perGene.reduce((p, outlook) => p * outlook.high, 1),
-    noLowChance: perGene.reduce((p, outlook) => p * (1 - outlook.low), 1),
-    genesWithHighSource: perGene.filter((outlook) => outlook.high > 0).length,
+    expectedGeneFactor: meanMultiplier,
+    expectedValue: BASE_SALE_PRICE * SPECIES_PRICE_FACTOR[male.species] * saleFactor,
+    allHighChance: perGene.reduce((p, g) => p * g.high, 1),
+    noLowChance: perGene.reduce((p, g) => p * (1 - g.low), 1),
+    godCloneChance: perGene.reduce((p, g) => p * g.breedsTrue, 1),
+    genesWithHighSource: perGene.filter((g) => g.high > 0).length,
     perGene,
     relation,
     sexAssumed: male.sex === 'unknown' || female.sex === 'unknown'
   };
 }
 
-export type PairSortKey = 'expected' | 'allHigh' | 'noLow';
+export type PairSortKey = 'expected' | 'allHigh' | 'godClone' | 'noLow';
 
 /**
  * Every eligible pairing in the herd, best first. Same species only; known sexes must
- * differ. Related pairs are kept (the player may want to see them) but carry the
- * inbreeding penalty, so they sink.
+ * differ. Related pairs are kept (the player may want to see them) but are scored as
+ * inbred, so they sink.
  */
-export function suggestPairs(
-  herd: LivestockAnimal[],
-  sortBy: PairSortKey = 'expected'
-): PairSuggestion[] {
+export function suggestPairs(herd: LivestockAnimal[], sortBy: PairSortKey = 'expected'): PairSuggestion[] {
+  const genotypes = inferHerdGenotypes(herd);
   const suggestions: PairSuggestion[] = [];
 
   for (let i = 0; i < herd.length; i++) {
@@ -171,13 +177,14 @@ export function suggestPairs(
       const b = herd[j];
       if (a.species !== b.species || !canPair(a.sex, b.sex)) continue;
       const aIsMale = a.sex === 'male' || b.sex === 'female';
-      suggestions.push(evaluatePair(aIsMale ? a : b, aIsMale ? b : a, herd));
+      suggestions.push(evaluatePair(aIsMale ? a : b, aIsMale ? b : a, herd, genotypes));
     }
   }
 
   const primary: Record<PairSortKey, (s: PairSuggestion) => number> = {
     expected: (s) => s.expectedGeneFactor,
     allHigh: (s) => s.allHighChance,
+    godClone: (s) => s.godCloneChance,
     noLow: (s) => s.noLowChance
   };
   const key = primary[sortBy];
@@ -186,8 +193,8 @@ export function suggestPairs(
     (x, y) =>
       key(y) - key(x) ||
       y.expectedGeneFactor - x.expectedGeneFactor ||
-      y.noLowChance - x.noLowChance ||
       y.allHighChance - x.allHighChance ||
+      y.noLowChance - x.noLowChance ||
       Number(!!x.relation) - Number(!!y.relation)
   );
 }

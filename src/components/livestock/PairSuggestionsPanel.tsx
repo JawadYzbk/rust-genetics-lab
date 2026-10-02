@@ -28,8 +28,9 @@ function pct(value: number): string {
 
 const SORT_LABEL: Record<PairSortKey, string> = {
   expected: 'Best average genes',
-  noLow: 'Fewest red genes',
-  allHigh: 'Best chance of all green'
+  allHigh: 'Best chance of all green',
+  godClone: 'Best chance of a god clone',
+  noLow: 'Fewest red genes'
 };
 
 export const PairSuggestionsPanel: React.FC<{
@@ -48,10 +49,11 @@ export const PairSuggestionsPanel: React.FC<{
 
   return (
     <Stack spacing={1.5}>
-      <Alert severity="warning" variant="outlined">
-        <b>Best guess, not verified.</b> Facepunch has not published how livestock genes are inherited. These
-        rankings assume each gene comes from the mother or the father at even odds. Treat them as a shortlist,
-        and record parents so inbreeding is flagged.
+      <Alert severity="info" variant="outlined">
+        Each animal carries <b>two copies</b> of every gene and shows the <b>better</b> one; a newborn gets one
+        random copy from each parent. The panel hides the second copy, so it is estimated from the wild odds
+        (Good 20%, Ok 50%, Bad 30%) and from parents you record. Record parents to sharpen the odds and to get
+        inbreeding warnings. A <b>god clone</b> carries all ten copies Good and always breeds true.
       </Alert>
 
       <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -114,14 +116,15 @@ export const PairSuggestionsPanel: React.FC<{
           <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 1, mt: 1.25 }}>
             <Metric label="Avg gene value" value={`x${pair.expectedGeneFactor.toFixed(2)}`} />
             <Metric label="Est. offspring value" value={`~${Math.round(pair.expectedValue)} scrap`} />
-            <Metric label="No red genes" value={pct(pair.noLowChance)} />
             <Metric label="All green" value={pct(pair.allHighChance)} />
+            <Metric label="No red genes" value={pct(pair.noLowChance)} />
+            <Metric label="God clone" value={pct(pair.godCloneChance)} />
           </Box>
 
           <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
             {LIVESTOCK_GENES.map((gene, i) => (
               <Typography key={gene} variant="caption" sx={{ fontFamily: 'monospace', color: 'var(--gl-text-muted)' }}>
-                {gene}: {pct(pair.perGene[i].high)} green
+                {gene}: {pct(pair.perGene[i].high)} green, {pct(pair.perGene[i].breedsTrue)} pure
               </Typography>
             ))}
           </Box>

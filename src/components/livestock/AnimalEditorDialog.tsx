@@ -135,7 +135,7 @@ export const AnimalEditorDialog: React.FC<AnimalEditorDialogProps> = ({
               Genes
             </Typography>
             <Typography variant="caption" sx={{ color: 'var(--gl-text-muted)', display: 'block', mb: 1 }}>
-              Click a badge to change it: neutral, then green, then red. The last badge is the numbered marker; click it to change its colour.
+              Click a badge to change it: Ok (grey), then Good (green), then Bad (red). The last badge is the numbered marker; click it to change its colour.
             </Typography>
             <LivestockGenePanel rows={draft.rows} size="lg" editable onChange={setRows} />
             <Box sx={{ display: 'flex', gap: 1.5, mt: 1.5, alignItems: 'center', flexWrap: 'wrap' }}>

@@ -1,4 +1,4 @@
-import { LivestockGene, LIVESTOCK_GENES, LIVESTOCK_GENE_EFFECTS, geneMultiplier } from './livestockGenes.ts';
+import { LivestockGene, LIVESTOCK_BASE, LIVESTOCK_GENES, geneMultiplier } from './livestockGenes.ts';
 import { LivestockAnimal, LivestockGeneRow, LivestockSpecies } from './animal.ts';
 
 /**
@@ -11,8 +11,9 @@ import { LivestockAnimal, LivestockGeneRow, LivestockSpecies } from './animal.ts
  * - health: 0.40 below 15% state, 0.70 at 47.5%, 1.00 from 80% up
  * - age: 1.00 up to half its lifespan, 0.75 at 75%, 0.50 at the end
  *
- * The anchor points are measured, the stretches between them are interpolated linearly, and
- * the game itself randomises the offer, so the result is an estimate, not a quote.
+ * From a community infographic (2026-09-17); RustHelp documents no sale formula. The anchor
+ * points are measured, the stretches between them are interpolated linearly, and the game
+ * randomises the offer, so the result is an estimate, not a quote.
  */
 
 export const BASE_SALE_PRICE = 50;
@@ -90,14 +91,11 @@ export function estimateSalePrice(input: SalePriceInput): SalePriceEstimate {
 }
 
 /** Animals grow up one hour after birth, and only grown animals can be sold. */
-export const ADULT_AGE_SECONDS = 3600;
+export const ADULT_AGE_SECONDS = LIVESTOCK_BASE.growUpSeconds;
 
+/** Adult lifespan from the expressed Longevity gene (weaker when inbred). */
 export function lifespanSeconds(animal: LivestockAnimal): number {
-  const level = animal.rows[0].levels[1] ?? 'mid'; // L
-  const hours = animal.inbred
-    ? LIVESTOCK_GENE_EFFECTS.L.inbredLifespanHours[level]
-    : LIVESTOCK_GENE_EFFECTS.L.lifespanHours[level];
-  return hours * 3600;
+  return LIVESTOCK_BASE.lifespanHours * 3600 * geneMultiplier('L', animal.rows[0].levels[1] ?? null, animal.inbred);
 }
 
 export interface CurrentCondition {

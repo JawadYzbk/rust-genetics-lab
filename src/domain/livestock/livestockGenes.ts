@@ -1,14 +1,14 @@
 /**
- * Livestock genetics as Rust displays them (October 2026 livestock update).
+ * Livestock genetics as Rust implements them (October 2026 livestock update).
  *
- * An animal shows five genes, always in the order D, L, Y, F, H. Each gene comes in three
- * qualities that the game draws as the colour of its badge: red (worse than baseline),
- * dark (baseline) and green (better). Unlike plant genes, the letter never changes -- the
- * quality is the colour.
+ * Every animal carries TWO copies of each of five genes -- D, L, Y, F, H -- and the better
+ * copy is the one expressed. The in-game panel shows the expressed value of each gene, in
+ * that fixed order, as the colour of its badge: red Bad, grey Ok, green Good. A newborn gets
+ * one random copy of each gene from each parent.
  *
- * The multipliers and effect values below come from the community infographic dated
- * 2026-09-17. Facepunch labelled the system work in progress at the time, so they are
- * kept in one place to make a balance change a one-line edit.
+ * Values from RustHelp (rusthelp.com/world/cow, /bull, /sheep, /calf, /lamb), verified
+ * against the live game on 2026-10-01. Every effect is a base value scaled by the gene's
+ * multiplier, so a balance change is a one-line edit here.
  */
 
 export const LIVESTOCK_GENES = ['D', 'L', 'Y', 'F', 'H'] as const;
@@ -17,89 +17,93 @@ export type LivestockGene = (typeof LIVESTOCK_GENES)[number];
 export const GENE_LEVELS = ['low', 'mid', 'high'] as const;
 export type GeneLevel = (typeof GENE_LEVELS)[number];
 
-/** Date the gene values were last checked against the game. */
-export const LIVESTOCK_DATA_AS_OF = '2026-09-17';
+/** Date the gene values were last checked against the game, and where they came from. */
+export const LIVESTOCK_DATA_AS_OF = '2026-10-01';
+export const LIVESTOCK_DATA_SOURCE = 'RustHelp';
 
 export interface LivestockGeneInfo {
   gene: LivestockGene;
   name: string;
   summary: string;
   multipliers: Record<GeneLevel, number>;
+  /**
+   * Inbred animals' genes act weaker: Good acts as Ok, Ok falls halfway to Bad. Bad stays
+   * Bad. Inbred animals still pass on their Good copies.
+   */
+  inbredMultipliers: Record<GeneLevel, number>;
+}
+
+function gene(
+  gene: LivestockGene,
+  name: string,
+  summary: string,
+  bad: number,
+  good: number
+): LivestockGeneInfo {
+  return {
+    gene,
+    name,
+    summary,
+    multipliers: { low: bad, mid: 1, high: good },
+    inbredMultipliers: { low: bad, mid: (1 + bad) / 2, high: 1 }
+  };
 }
 
 export const LIVESTOCK_GENE_INFO: Record<LivestockGene, LivestockGeneInfo> = {
-  D: {
-    gene: 'D',
-    name: 'Dung',
-    summary: 'How often the animal gives dung (cows and bulls only)',
-    multipliers: { low: 0.6, mid: 1, high: 1.6 }
-  },
-  L: {
-    gene: 'L',
-    name: 'Longevity',
-    summary: 'How long the animal lives',
-    multipliers: { low: 0.65, mid: 1, high: 1.5 }
-  },
-  Y: {
-    gene: 'Y',
-    name: 'Yield',
-    summary: 'Gather cooldown and how much milk or wool it gives',
-    multipliers: { low: 0.6, mid: 1, high: 1.6 }
-  },
-  F: {
-    gene: 'F',
-    name: 'Fertility',
-    summary: 'Breeding cooldowns and twin chance',
-    multipliers: { low: 0.65, mid: 1, high: 1.6 }
-  },
-  H: {
-    gene: 'H',
-    name: 'Hardiness',
-    summary: 'How hard it is to keep the animal at full health',
-    multipliers: { low: 0.7, mid: 1, high: 1.5 }
-  }
+  D: gene('D', 'Dung', 'How often a tame animal drops dung', 0.6, 1.6),
+  L: gene('L', 'Longevity', 'How long the adult lives', 0.65, 1.5),
+  Y: gene('Y', 'Yield', 'Milk or wool per gather, and how fast it regrows', 0.6, 1.6),
+  F: gene('F', 'Fertility', 'Breeding cooldowns and twin chance', 0.65, 1.6),
+  H: gene('H', 'Hardiness', 'How low its needs can drop and it still counts as full condition', 0.7, 1.5)
 };
 
+/** Odds of each copy in a wild animal: Good 20%, Ok 50%, Bad 30%. */
+export const WILD_COPY_ODDS: Record<GeneLevel, number> = { low: 0.3, mid: 0.5, high: 0.2 };
+
+/** Wild and vendor animals are born inbred 1 time in 16. */
+export const WILD_INBRED_CHANCE = 1 / 16;
+
 /**
- * Per-level effect values. Times are in seconds unless the name says otherwise.
- * `null` means the effect does not apply to that animal (sheep give no dung).
+ * Base values at an Ok gene. A gene divides cooldowns and intervals by its multiplier and
+ * multiplies amounts and lifespan by it.
  */
-export const LIVESTOCK_GENE_EFFECTS = {
-  Y: {
-    gatherCooldownSeconds: { low: 500, mid: 300, high: 187.5 },
-    milkPerGather: { low: 1, mid: 1, high: 2 },
-    woolPerShear: { low: 6, mid: 10, high: 16 }
-  },
-  F: {
-    maleCooldownSeconds: { low: 923, mid: 600, high: 375 },
-    femaleCooldownSeconds: { low: 6120, mid: 3960, high: 2460 },
-    twinsChance: { low: 0, mid: 0, high: 0.6 }
-  },
-  H: {
-    /** Fraction of its needs an animal must be at to count as full health. */
-    fullHealthThreshold: { low: 0.71, mid: 0.5, high: 0.33 }
-  },
-  L: {
-    lifespanHours: { low: 15.6, mid: 24, high: 36 },
-    inbredLifespanHours: { low: 10.9, mid: 16.8, high: 25.2 }
-  },
-  D: {
-    dungIntervalMinutes: { low: 66, mid: 40, high: 25 }
-  }
+export const LIVESTOCK_BASE = {
+  /** Adult lifespan, hours (±10%). Animals only age while tame. */
+  lifespanHours: 48,
+  /** Calf or lamb to adult, seconds (±10%). */
+  growUpSeconds: 3600,
+  pregnancySeconds: 600,
+  /** Milking cooldown and fleece regrow time, seconds. */
+  gatherCooldownSeconds: 300,
+  milkPerGather: 1,
+  woolPerFleece: 10,
+  maleBreedingCooldownSeconds: 600,
+  femaleCooldownAfterBirthSeconds: 3960,
+  /** Dung interval at full condition, seconds (±20%). Tame animals only. */
+  dungIntervalSeconds: 600,
+  /** Chance of twins with a Good fertility gene. */
+  goodFertilityTwinChance: 0.6
 } as const;
 
-export function geneMultiplier(gene: LivestockGene, level: GeneLevel | null): number {
-  // An unread badge counts as baseline: it neither flatters nor punishes the animal.
-  return LIVESTOCK_GENE_INFO[gene].multipliers[level ?? 'mid'];
+/** Lowest need level that still counts as full condition, per Hardiness level. */
+export const HARDINESS_FULL_CONDITION: Record<GeneLevel, number> = { low: 0.71, mid: 0.5, high: 0.33 };
+
+/** What the Livestock Vendor charges for young, already bonded and on a lead. */
+export const VENDOR_PRICES = { calf: 300, lamb: 150 } as const;
+
+export function geneMultiplier(gene: LivestockGene, level: GeneLevel | null, inbred = false): number {
+  // An unread badge counts as Ok: it neither flatters nor punishes the animal.
+  const info = LIVESTOCK_GENE_INFO[gene];
+  return (inbred ? info.inbredMultipliers : info.multipliers)[level ?? 'mid'];
 }
 
 export const LEVEL_LABEL: Record<GeneLevel, string> = {
-  low: 'Red',
-  mid: 'Neutral',
-  high: 'Green'
+  low: 'Bad',
+  mid: 'Ok',
+  high: 'Good'
 };
 
-/** Next level when a badge is clicked in the editor: neutral -> green -> red -> neutral. */
+/** Next level when a badge is clicked in the editor: Ok -> Good -> Bad -> Ok. */
 export function cycleLevel(level: GeneLevel | null): GeneLevel {
   if (level === 'mid' || level === null) return 'high';
   if (level === 'high') return 'low';

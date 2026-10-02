@@ -30,7 +30,8 @@ import {
   displayName
 } from '../../domain/livestock/animal.ts';
 import { estimateAnimalPrice } from '../../domain/livestock/pricing.ts';
-import { LIVESTOCK_DATA_AS_OF } from '../../domain/livestock/livestockGenes.ts';
+import { LIVESTOCK_DATA_AS_OF, LIVESTOCK_DATA_SOURCE } from '../../domain/livestock/livestockGenes.ts';
+import { AnimalPortrait, kindLabel } from './LivestockImages.tsx';
 import { exportHerd, sanitizeHerd } from '../../domain/livestock/herdCodec.ts';
 import { isCameraSupported, isDesktopCaptureSupported } from '../../services/livestock/livestockScanSession.ts';
 import { LivestockGenePanel } from './LivestockGeneBadges.tsx';
@@ -132,8 +133,8 @@ export const LivestockPage: React.FC = () => {
             Scan cows, bulls and sheep straight from Rust, see what their genes do, and find the pairs worth breeding.
           </Typography>
         </Box>
-        <Tooltip title="Gene effects and sale prices are community measurements from the livestock test branch.">
-          <Chip size="small" variant="outlined" label={`Values as of ${LIVESTOCK_DATA_AS_OF}`} sx={{ color: 'var(--gl-text-secondary)' }} />
+        <Tooltip title="Gene effects and breeding rules from RustHelp, checked against the live game. The sale formula is a community measurement.">
+          <Chip size="small" variant="outlined" label={`${LIVESTOCK_DATA_SOURCE} data, ${LIVESTOCK_DATA_AS_OF}`} sx={{ color: 'var(--gl-text-secondary)' }} />
         </Tooltip>
       </Box>
 
@@ -290,14 +291,18 @@ export const LivestockPage: React.FC = () => {
                       '&:hover': { backgroundColor: 'var(--gl-card-hover-bg)' }
                     }}
                   >
-                    <Box sx={{ minWidth: 0 }}>
+                    <Box sx={{ minWidth: 0, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <AnimalPortrait animal={animal} size={36} />
+                      <Box sx={{ minWidth: 0 }}>
                       <Typography variant="body2" sx={{ fontWeight: 800, color: 'var(--gl-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {displayName(animal)}
                       </Typography>
                       <Typography variant="caption" sx={{ color: 'var(--gl-text-muted)' }}>
-                        {animalKindLabel(animal.species, animal.sex)}
+                        {kindLabel(animal)}
+                        {animal.sex !== 'unknown' && kindLabel(animal) !== animalKindLabel(animal.species, animal.sex) ? ` · ${animal.sex}` : ''}
                         {animal.inbred ? ' · inbred' : ''}
                       </Typography>
+                      </Box>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
                       <LivestockGenePanel rows={animal.rows} size="sm" />

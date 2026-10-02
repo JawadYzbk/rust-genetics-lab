@@ -11,6 +11,15 @@ import { GeneLevel, cycleLevel } from '../domain/livestock/livestockGenes.ts';
 import { ageFactor, estimateSalePrice, healthFactor } from '../domain/livestock/pricing.ts';
 import { animalStats } from '../domain/livestock/stats.ts';
 import { evaluatePair, relationBetween, suggestPairs } from '../domain/livestock/pairing.ts';
+import {
+  WILD_GENOTYPE,
+  breedsTrue,
+  conditionOnExpressed,
+  exactGenotype,
+  hidesBad,
+  inferHerdGenotypes,
+  offspringGenotype
+} from '../domain/livestock/genotype.ts';
 
 function row(levels: string, marker: LivestockGeneRow['marker'] = { value: 0, color: 'pink' }): LivestockGeneRow {
   const map: Record<string, GeneLevel | null> = { r: 'low', n: 'mid', g: 'high', '?': null };
@@ -93,59 +102,109 @@ describe('livestock sale price', () => {
   });
 });
 
-describe('livestock stats', () => {
-  it('reads a cow\'s effects from its top row', () => {
-    const cow = createAnimal({ species: 'cattle', sex: 'female', rows: [row('ggrgn'), row('rrrrr')] });
-    const stats = animalStats(cow);
-    const byLabel = Object.fromEntries(stats.map((s) => [s.label, s.value]));
-    expect(byLabel['Dung interval']).toBe('25m');
-    expect(byLabel['Lifespan']).toBe('36h');
-    expect(byLabel['Gather cooldown']).toBe('8m');
-    expect(byLabel['Milk per gather']).toBe('1');
-    expect(byLabel['Female breeding cooldown']).toBe('41m');
+describe('livestock stats (RustHelp values)', () => {
+  it('reads a cow\'s effects from its expressed genes', () => {
+    const cow = createAnimal({ species: 'cattle', sex: 'female', rows: [row('ggrgn')] });
+    const byLabel = Object.fromEntries(animalStats(cow).map((s) => [s.label, s.value]));
+    expect(byLabel['Dung interval']).toBe('6m 15s (9.6/h)');
+    expect(byLabel['Adult lifespan']).toBe('72h');
+    expect(byLabel['Milking cooldown']).toBe('8m 20s');
+    expect(byLabel['Milk per milking']).toBe('1');
+    expect(byLabel['Cooldown after giving birth']).toBe('41m');
     expect(byLabel['Twins chance']).toBe('60%');
     expect(byLabel['Male breeding cooldown']).toBeUndefined();
   });
 
-  it('gives sheep wool instead of milk and no dung', () => {
-    const ram = createAnimal({ species: 'sheep', sex: 'male', rows: [row('nnnnn'), row('nnnnn')] });
-    const stats = animalStats(ram);
-    expect(stats.find((s) => s.label === 'Wool per shear')?.value).toBe('10');
-    expect(stats.find((s) => s.label === 'Dung interval')?.applies).toBe(false);
+  it('matches the documented Ok and Bad values', () => {
+    const bull = createAnimal({ species: 'cattle', sex: 'male', rows: [row('rnrrr')] });
+    const byLabel = Object.fromEntries(animalStats(bull).map((s) => [s.label, s.value]));
+    expect(byLabel['Male breeding cooldown']).toBe('15m');
+    expect(byLabel['Adult lifespan']).toBe('48h');
+    expect(byLabel['Dung interval']).toBe('17m (3.6/h)');
+    expect(byLabel['Lowest need for full condition']).toBe('71%');
   });
 
-  it('uses the shorter inbred lifespan', () => {
-    const cow = createAnimal({ inbred: true, rows: [row('nnnnn'), row('nnnnn')] });
-    expect(animalStats(cow).find((s) => s.gene === 'L')?.value).toBe('16.8h');
+  it('gives sheep wool and dung', () => {
+    const ram = createAnimal({ species: 'sheep', sex: 'male', rows: [row('nnnnn')] });
+    const byLabel = Object.fromEntries(animalStats(ram).map((s) => [s.label, s.value]));
+    expect(byLabel['Wool per full fleece']).toBe('10');
+    expect(byLabel['Fleece regrow']).toBe('5m');
+    expect(byLabel['Dung interval']).toBe('10m (6/h)');
+  });
+
+  it('weakens inbred genes: Good acts as Ok, Ok falls halfway to Bad', () => {
+    const good = createAnimal({ inbred: true, rows: [row('ngnnn')] });
+    const ok = createAnimal({ inbred: true, rows: [row('nnnnn')] });
+    expect(animalStats(good).find((s) => s.gene === 'L')?.value).toBe('48h');
+    expect(animalStats(ok).find((s) => s.gene === 'L')?.value).toBe('39h 36m');
   });
 });
 
-describe('livestock pairing (assumed model)', () => {
-  const bull = createAnimal({ id: 'bull', species: 'cattle', sex: 'male', rows: [row('ggggg'), row('ggggg')] });
-  const cow = createAnimal({ id: 'cow', species: 'cattle', sex: 'female', rows: [row('ggggg'), row('rrrrr')] });
+describe('hidden copies', () => {
+  it('knows a Bad badge means two Bad copies', () => {
+    const d = conditionOnExpressed(WILD_GENOTYPE, 'low');
+    expect(breedsTrue(d)).toBe(0);
+    expect(hidesBad(d)).toBeCloseTo(1);
+  });
 
-  it('weighs each parent equally, and each of a parent\'s rows equally', () => {
-    // bull: all green on both rows. cow: green on one row, red on the other.
-    const pair = evaluatePair(bull, cow, [bull, cow]);
-    expect(pair.perGene[0].high).toBeCloseTo(0.75);
-    expect(pair.perGene[0].low).toBeCloseTo(0.25);
-    expect(pair.allHighChance).toBeCloseTo(0.75 ** 5);
-    expect(pair.noLowChance).toBeCloseTo(0.75 ** 5);
+  it('estimates a wild Ok badge: 25 of 55 pure Ok, the rest hiding Bad', () => {
+    const d = conditionOnExpressed(WILD_GENOTYPE, 'mid');
+    expect(hidesBad(d)).toBeCloseTo(0.3 / 0.55);
+  });
+
+  it('estimates a wild Good badge: 1 in 9 pure Good', () => {
+    const d = conditionOnExpressed(WILD_GENOTYPE, 'high');
+    expect(breedsTrue(d)).toBeCloseTo(0.04 / 0.36);
+  });
+
+  it('passes one random copy from each parent', () => {
+    const pure = exactGenotype('high', 'high');
+    const carrier = exactGenotype('high', 'low');
+    const child = offspringGenotype(pure, carrier);
+    // GG x GB -> half GG, half GB: always shows Good, pure half the time.
+    expect(breedsTrue(child)).toBeCloseTo(0.5);
+    expect(hidesBad(child)).toBeCloseTo(0.5);
+  });
+
+  it('uses recorded parents: two pure Good parents make a pure Good calf', () => {
+    const mum = createAnimal({ id: 'm', sex: 'female', rows: [row('ggggg'), row('ggggg')] });
+    const dad = createAnimal({ id: 'd', sex: 'male', rows: [row('ggggg'), row('ggggg')] });
+    const calf = createAnimal({ id: 'c', motherId: 'm', fatherId: 'd', rows: [row('ggggg')] });
+    const genotypes = inferHerdGenotypes([mum, dad, calf]);
+    expect(breedsTrue(genotypes.get('c')![0])).toBeCloseTo(1);
+  });
+
+  it('survives a parent loop in the records', () => {
+    const a = createAnimal({ id: 'a', motherId: 'b', rows: [row('nnnnn')] });
+    const b = createAnimal({ id: 'b', motherId: 'a', rows: [row('nnnnn')] });
+    expect(inferHerdGenotypes([a, b]).size).toBe(2);
+  });
+});
+
+describe('livestock pairing (documented inheritance)', () => {
+  // Two-row animals are known exactly: the rows are their two copies.
+  const pureBull = createAnimal({ id: 'bull', species: 'cattle', sex: 'male', rows: [row('ggggg'), row('ggggg')] });
+  const carrierCow = createAnimal({ id: 'cow', species: 'cattle', sex: 'female', rows: [row('ggggg'), row('rrrrr')] });
+
+  it('a pure Good parent makes every calf show Good, and half of them pure', () => {
+    const pair = evaluatePair(pureBull, carrierCow, [pureBull, carrierCow]);
+    expect(pair.perGene[0].high).toBeCloseTo(1);
+    expect(pair.allHighChance).toBeCloseTo(1);
+    expect(pair.godCloneChance).toBeCloseTo(0.5 ** 5);
     expect(pair.relation).toBeNull();
   });
 
-  it('pairs single-row animals, as the live panel shows them', () => {
-    const singleBull = createAnimal({ id: 'sb', species: 'cattle', sex: 'male', rows: [row('ggggg')] });
-    const singleCow = createAnimal({ id: 'sc', species: 'cattle', sex: 'female', rows: [row('rrrrr')] });
-    const pair = evaluatePair(singleBull, singleCow, [singleBull, singleCow]);
-    expect(pair.perGene[2].high).toBeCloseTo(0.5);
-    expect(pair.expectedGeneFactor).toBeCloseTo((1.56 + 0.64) / 2);
+  it('two carriers of Bad can throw a Bad calf', () => {
+    const carrierBull = createAnimal({ id: 'cb', species: 'cattle', sex: 'male', rows: [row('ggggg'), row('rrrrr')] });
+    const pair = evaluatePair(carrierBull, carrierCow, [carrierBull, carrierCow]);
+    expect(pair.perGene[2].low).toBeCloseTo(0.25);
+    expect(pair.perGene[2].high).toBeCloseTo(0.75);
   });
 
   it('only pairs opposite sexes of the same species', () => {
     const ewe = createAnimal({ id: 'ewe', species: 'sheep', sex: 'female' });
     const cow2 = createAnimal({ id: 'cow2', species: 'cattle', sex: 'female' });
-    const pairs = suggestPairs([bull, cow, ewe, cow2]);
+    const pairs = suggestPairs([pureBull, carrierCow, ewe, cow2]);
     expect(pairs).toHaveLength(2);
     for (const pair of pairs) {
       expect(pair.male.id).toBe('bull');
@@ -153,22 +212,24 @@ describe('livestock pairing (assumed model)', () => {
     }
   });
 
-  it('ranks the stronger cow first', () => {
+  it('ranks the cow most likely to give all-Good calves first', () => {
+    const carrierBull = createAnimal({ id: 'cb', species: 'cattle', sex: 'male', rows: [row('ggggg'), row('rrrrr')] });
     const weakCow = createAnimal({ id: 'weak', species: 'cattle', sex: 'female', rows: [row('rrrrr'), row('rrrrr')] });
-    const pairs = suggestPairs([bull, weakCow, cow]);
+    const pairs = suggestPairs([carrierBull, weakCow, carrierCow], 'allHigh');
     expect(pairs[0].female.id).toBe('cow');
   });
 
-  it('flags recorded relatives and applies the inbreeding penalty', () => {
-    const calf = createAnimal({ id: 'calf', species: 'cattle', sex: 'female', motherId: 'cow', fatherId: 'bull', rows: [row('ggggg'), row('ggggg')] });
-    const herd = [bull, cow, calf];
-    expect(relationBetween(bull, calf, herd)).toBe('parent-child');
+  it('flags recorded relatives and scores them as inbred', () => {
+    const calf = createAnimal({ id: 'calf', species: 'cattle', sex: 'female', motherId: 'cow', fatherId: 'bull', rows: [row('nnnnn'), row('nnnnn')] });
+    const herd = [pureBull, carrierCow, calf];
+    expect(relationBetween(pureBull, calf, herd)).toBe('parent-child');
     const sibling = createAnimal({ id: 'sib', species: 'cattle', sex: 'male', motherId: 'cow', fatherId: 'bull' });
     expect(relationBetween(sibling, calf, [...herd, sibling])).toBe('siblings');
 
-    const inbred = evaluatePair(bull, calf, herd);
+    const inbred = evaluatePair(pureBull, calf, herd);
     expect(inbred.relation).toBe('parent-child');
-    expect(inbred.expectedGeneFactor).toBeCloseTo(1.56 * 0.7);
+    // Every calf shows Good, but inbred Good acts as Ok.
+    expect(inbred.expectedGeneFactor).toBeCloseTo(1);
   });
 
   it('finds a shared grandparent', () => {

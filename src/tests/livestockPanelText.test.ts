@@ -116,15 +116,15 @@ describe('age and condition in the sale estimate', () => {
   it('prices from the reading: old and run-down sells for less', () => {
     const at = 1_000_000;
     const fresh = createAnimal({ rows: [row], observed: { ageSeconds: 3600, overall: 1, at } });
-    // 24h baseline lifespan: 18h lived is 75% -> age factor 0.75; 47.5% overall -> 0.7.
-    const old = createAnimal({ rows: [row], observed: { ageSeconds: 18 * 3600, overall: 0.475, at } });
+    // 48h lifespan at an Ok gene: 36h lived is 75% -> age factor 0.75; 47.5% overall -> 0.7.
+    const old = createAnimal({ rows: [row], observed: { ageSeconds: 36 * 3600, overall: 0.475, at } });
     expect(estimateAnimalPrice(fresh, {}, at).price).toBe(50);
     expect(estimateAnimalPrice(old, {}, at).exact).toBeCloseTo(50 * 0.75 * 0.7);
   });
 
   it('lets explicit what-if values override the reading', () => {
     const at = 1_000_000;
-    const old = createAnimal({ rows: [row], observed: { ageSeconds: 18 * 3600, overall: 0.475, at } });
+    const old = createAnimal({ rows: [row], observed: { ageSeconds: 36 * 3600, overall: 0.475, at } });
     expect(estimateAnimalPrice(old, { healthState: 1, ageLived: 0 }, at).price).toBe(50);
   });
 });
