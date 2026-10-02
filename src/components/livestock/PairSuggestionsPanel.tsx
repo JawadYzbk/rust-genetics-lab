@@ -16,7 +16,9 @@ import {
 import { LivestockAnimal, LivestockSpecies, displayName } from '../../domain/livestock/animal.ts';
 import { PairSortKey, RELATION_LABEL, suggestPairs } from '../../domain/livestock/pairing.ts';
 import { LIVESTOCK_GENES } from '../../domain/livestock/livestockGenes.ts';
-import { LivestockGenePanel } from './LivestockGeneBadges.tsx';
+import { LivestockGenePanel, LEVEL_COLOR } from './LivestockGeneBadges.tsx';
+import { GeneOutlook } from '../../domain/livestock/pairing.ts';
+import { LIVESTOCK_GENE_INFO } from '../../domain/livestock/livestockGenes.ts';
 
 const panelSx = { backgroundColor: 'var(--gl-panel-bg)', borderColor: 'var(--gl-border)', borderRadius: '6px' };
 
@@ -121,13 +123,7 @@ export const PairSuggestionsPanel: React.FC<{
             <Metric label="God clone" value={pct(pair.godCloneChance)} />
           </Box>
 
-          <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
-            {LIVESTOCK_GENES.map((gene, i) => (
-              <Typography key={gene} variant="caption" sx={{ fontFamily: 'monospace', color: 'var(--gl-text-muted)' }}>
-                {gene}: {pct(pair.perGene[i].high)} green, {pct(pair.perGene[i].breedsTrue)} pure
-              </Typography>
-            ))}
-          </Box>
+          <OffspringOutlook perGene={pair.perGene} />
         </Paper>
       ))}
     </Stack>
@@ -153,5 +149,65 @@ const Metric: React.FC<{ label: string; value: string }> = ({ label, value }) =>
     <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 800, color: 'var(--gl-text-primary)' }}>
       {value}
     </Typography>
+  </Box>
+);
+
+/**
+ * What the newborn is likely to show, gene by gene: a badge in its most likely colour, a bar
+ * split by the odds of Good / Ok / Bad, the chance of Good, and the chance it carries two
+ * Good copies (pure, so it always passes Good on).
+ */
+const OffspringOutlook: React.FC<{ perGene: GeneOutlook[] }> = ({ perGene }) => (
+  <Box sx={{ mt: 1.5 }}>
+    <Typography variant="caption" sx={{ color: 'var(--gl-text-muted)', fontWeight: 700, display: 'block', mb: 0.75 }}>
+      Expected newborn
+    </Typography>
+    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: 1 }}>
+      {LIVESTOCK_GENES.map((gene, i) => {
+        const g = perGene[i];
+        const mid = Math.max(0, 1 - g.high - g.low);
+        const likely = g.high >= mid && g.high >= g.low ? 'high' : mid >= g.low ? 'mid' : 'low';
+        const share = (value: number) => `${Math.round(value * 1000) / 10}%`;
+        return (
+          <Box
+            key={gene}
+            title={`${LIVESTOCK_GENE_INFO[gene].name}: Good ${share(g.high)}, Ok ${share(mid)}, Bad ${share(g.low)}. Pure Good ${share(g.breedsTrue)}.`}
+            sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5, minWidth: 0 }}
+          >
+            <Box
+              sx={{
+                width: 26,
+                height: 26,
+                borderRadius: '50%',
+                display: 'grid',
+                placeItems: 'center',
+                fontFamily: 'monospace',
+                fontWeight: 800,
+                fontSize: 13,
+                color: '#fff',
+                backgroundColor: LEVEL_COLOR[likely],
+                boxShadow: g.breedsTrue >= 0.5 ? '0 0 0 2px #F5C542' : 'inset 0 -2px 0 rgba(0,0,0,0.25)'
+              }}
+            >
+              {gene}
+            </Box>
+            <Box sx={{ display: 'flex', width: '100%', height: 8, borderRadius: 4, overflow: 'hidden', backgroundColor: 'var(--gl-border)' }}>
+              <Box sx={{ width: share(g.high), backgroundColor: LEVEL_COLOR.high }} />
+              <Box sx={{ width: share(mid), backgroundColor: LEVEL_COLOR.mid }} />
+              <Box sx={{ width: share(g.low), backgroundColor: LEVEL_COLOR.low }} />
+            </Box>
+            <Typography
+              variant="body2"
+              sx={{ fontFamily: 'monospace', fontWeight: 800, lineHeight: 1, color: g.high > 0 ? 'var(--gl-success)' : 'var(--gl-text-faint)' }}
+            >
+              {Math.round(g.high * 100)}%
+            </Typography>
+            <Typography variant="caption" sx={{ lineHeight: 1, color: g.breedsTrue > 0 ? '#C9A227' : 'var(--gl-text-faint)', whiteSpace: 'nowrap' }}>
+              {g.breedsTrue > 0 ? `\u2605 ${Math.round(g.breedsTrue * 100)}% pure` : 'no pure'}
+            </Typography>
+          </Box>
+        );
+      })}
+    </Box>
   </Box>
 );
