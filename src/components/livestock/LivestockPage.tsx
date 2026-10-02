@@ -32,6 +32,7 @@ import {
 import { estimateAnimalPrice } from '../../domain/livestock/pricing.ts';
 import { LIVESTOCK_DATA_AS_OF } from '../../domain/livestock/livestockGenes.ts';
 import { AnimalPortrait, kindLabel } from './LivestockImages.tsx';
+import { SexIcon, SexQuickPick } from './SexIcon.tsx';
 import { exportHerd, sanitizeHerd } from '../../domain/livestock/herdCodec.ts';
 import { isCameraSupported, isDesktopCaptureSupported } from '../../services/livestock/livestockScanSession.ts';
 import { LivestockGenePanel } from './LivestockGeneBadges.tsx';
@@ -294,11 +295,18 @@ export const LivestockPage: React.FC = () => {
                       <Typography variant="body2" sx={{ fontWeight: 800, color: 'var(--gl-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {displayName(animal)}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: 'var(--gl-text-muted)' }}>
-                        {kindLabel(animal)}
-                        {animal.sex !== 'unknown' && kindLabel(animal) !== animalKindLabel(animal.species, animal.sex) ? ` · ${animal.sex}` : ''}
-                        {animal.inbred ? ' · inbred' : ''}
-                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        {animal.sex === 'unknown' ? (
+                          <SexQuickPick animal={animal} size={13} onPick={(sex) => updateAnimal(animal.id, { sex })} />
+                        ) : (
+                          <SexIcon animal={animal} size={14} />
+                        )}
+                        <Typography variant="caption" sx={{ color: 'var(--gl-text-muted)' }}>
+                          {kindLabel(animal)}
+                          {animal.sex !== 'unknown' && kindLabel(animal) !== animalKindLabel(animal.species, animal.sex) ? ` · ${animal.sex}` : ''}
+                          {animal.inbred ? ' · inbred' : ''}
+                        </Typography>
+                      </Box>
                       </Box>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
@@ -324,6 +332,7 @@ export const LivestockPage: React.FC = () => {
               <AnimalDetail
                 animal={selected}
                 herd={herd}
+                onSetSex={(sex) => updateAnimal(selected.id, { sex })}
                 onEdit={() => openEditor(selected)}
                 onRemove={() => {
                   const removed = selected;

@@ -28,6 +28,7 @@ import {
   suggestAnimalName
 } from '../../domain/livestock/animal.ts';
 import { LivestockGenePanel } from './LivestockGeneBadges.tsx';
+import { SexToggleIcon } from './SexIcon.tsx';
 
 interface AnimalEditorDialogProps {
   open: boolean;
@@ -132,8 +133,8 @@ export const AnimalEditorDialog: React.FC<AnimalEditorDialogProps> = ({
               onChange={(_, sex: LivestockSex | null) => sex && patch({ sex })}
               aria-label="Sex"
             >
-              <ToggleButton value="female">{draft.species === 'cattle' ? 'Cow' : 'Ewe'}</ToggleButton>
-              <ToggleButton value="male">{draft.species === 'cattle' ? 'Bull' : 'Ram'}</ToggleButton>
+              <ToggleButton value="female"><SexToggleIcon sex="female" />{draft.species === 'cattle' ? 'Cow' : 'Ewe'}</ToggleButton>
+              <ToggleButton value="male"><SexToggleIcon sex="male" />{draft.species === 'cattle' ? 'Bull' : 'Ram'}</ToggleButton>
               <ToggleButton value="unknown">Unknown</ToggleButton>
             </ToggleButtonGroup>
           </Box>

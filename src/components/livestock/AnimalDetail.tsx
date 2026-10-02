@@ -8,6 +8,8 @@ import { currentCondition, estimateAnimalPrice } from '../../domain/livestock/pr
 import { LEVEL_LABEL, LIVESTOCK_GENES, LIVESTOCK_GENE_INFO, VENDOR_PRICES } from '../../domain/livestock/livestockGenes.ts';
 import { breedsTrue, hidesBad, inferHerdGenotypes } from '../../domain/livestock/genotype.ts';
 import { AnimalPortrait, ProductIcon, kindLabel } from './LivestockImages.tsx';
+import { SexIcon, SexQuickPick } from './SexIcon.tsx';
+import type { LivestockSex } from '../../domain/livestock/animal.ts';
 import { LivestockGenePanel, LEVEL_COLOR } from './LivestockGeneBadges.tsx';
 
 const panelSx = { backgroundColor: 'var(--gl-panel-bg)', borderColor: 'var(--gl-border)', borderRadius: '6px' };
@@ -25,7 +27,8 @@ export const AnimalDetail: React.FC<{
   herd: LivestockAnimal[];
   onEdit: () => void;
   onRemove: () => void;
-}> = ({ animal, herd, onEdit, onRemove }) => {
+  onSetSex: (sex: LivestockSex) => void;
+}> = ({ animal, herd, onEdit, onRemove, onSetSex }) => {
   const [health, setHealth] = useState(() => sliderDefaults(animal).health);
   const [age, setAge] = useState(() => sliderDefaults(animal).age);
   // A different animal, or a fresh reading of this one, resets the what-if sliders.
@@ -53,6 +56,7 @@ export const AnimalDetail: React.FC<{
             </Typography>
             <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', mt: 0.5 }}>
               <Chip size="small" label={kindLabel(animal)} />
+              {animal.sex === 'unknown' ? <SexQuickPick animal={animal} onPick={onSetSex} /> : <SexIcon animal={animal} size={18} />}
               {animal.inbred && <Chip size="small" color="warning" label="Inbred" />}
               {animal.source === 'scan' && <Chip size="small" variant="outlined" label="Scanned" />}
             </Box>
