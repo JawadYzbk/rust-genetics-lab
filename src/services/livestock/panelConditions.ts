@@ -1,6 +1,6 @@
 import { RasterImage } from '../scanner/scannerTypes.ts';
 import { LivestockPanelRead } from './livestockPanelReader.ts';
-import { readAgeSeconds, readPercent, textGlyphs } from './panelText.ts';
+import { NameRead, readAgeSeconds, readName, readPercent, textGlyphs } from './panelText.ts';
 
 /**
  * The AGE and CONDITIONS > OVERALL values from the live animal panel.
@@ -21,6 +21,24 @@ export interface PanelConditions {
   ageSeconds: number | null;
   /** CONDITIONS > OVERALL, 0..1; null when it could not be read. */
   overall: number | null;
+}
+
+/** The animal's name in the panel header, right of its portrait. */
+export const NAME_BOX = { x0: -3.0, x1: 5.3, cy: -1.86, halfHeight: 0.34 };
+
+export function readPanelName(image: RasterImage, read: LivestockPanelRead): NameRead | null {
+  if (read.bottom) return null;
+  const pitch = read.top.pitch;
+  const x1 = read.top.badges[0].cx;
+  const cy = read.top.cy + NAME_BOX.cy * pitch;
+  const box = {
+    x0: x1 + NAME_BOX.x0 * pitch,
+    x1: x1 + NAME_BOX.x1 * pitch,
+    y0: cy - NAME_BOX.halfHeight * pitch,
+    y1: cy + NAME_BOX.halfHeight * pitch
+  };
+  if (box.y0 < 0 || box.x0 < 0) return null;
+  return readName(textGlyphs(image, box));
 }
 
 export const PANEL_OFFSETS = {

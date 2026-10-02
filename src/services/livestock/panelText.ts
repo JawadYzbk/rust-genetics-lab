@@ -291,7 +291,18 @@ export function readDigits(glyphs: BinaryGlyph[], minScore = 0.6): number | null
   return Number(text);
 }
 
-const UNIT_SECONDS: Record<string, number> = { S: 1, M: 60, H: 3600, D: 86400 };
+// English units by first letter, and the Russian client's: СЕКУНД, МИНУТ, ЧАС, ДНЕЙ.
+const UNIT_SECONDS: Record<string, number> = {
+  S: 1,
+  M: 60,
+  H: 3600,
+  D: 86400,
+  'С': 1,
+  'М': 60,
+  'Ч': 3600,
+  'Д': 86400
+};
+const UNIT_LETTERS = Object.keys(UNIT_SECONDS).join('');
 
 /**
  * "0 SECONDS", "12 MINUTES", "1 HOUR 5 MINUTES" ... as seconds. Each unit word is known from
@@ -303,7 +314,7 @@ export function readAgeSeconds(glyphs: BinaryGlyph[]): number | null {
   let pending: number | null = null;
   let parts = 0;
   for (const word of words) {
-    const first = classifyGlyph(word[0], DIGITS + 'SMHD');
+    const first = classifyGlyph(word[0], DIGITS + UNIT_LETTERS);
     if (!first) return null;
     if (DIGITS.includes(first.char)) {
       if (pending !== null) return null;
@@ -326,4 +337,75 @@ export function readPercent(glyphs: BinaryGlyph[]): number | null {
   const digits = last && last.char === '%' ? glyphs.slice(0, -1) : glyphs;
   const value = readDigits(digits);
   return value === null || value > 100 ? null : value / 100;
+}
+
+const LATIN_UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const CYRILLIC_UPPER = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+const CYRILLIC_LOWER = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+
+/**
+ * Latin lowercase grouped by how a letter sits on the line. Shape alone confuses i/j and
+ * f/t at a dozen pixels; whether a letter rises to the capital height, or drops below the
+ * baseline, does not.
+ */
+const LATIN_LOWER_BY_PLACE = {
+  plain: 'acemnorstuvwxz',
+  tall: 'bdfhkli',
+  descender: 'gpqy',
+  tallDescender: 'j'
+};
+
+export interface NameRead {
+  text: string;
+  /** Weakest letter's match score; low means at least one letter is a guess. */
+  score: number;
+}
+
+function readInScript(glyphs: BinaryGlyph[], cyrillic: boolean): NameRead | null {
+  const capital = glyphs[0];
+  const baseline = [...glyphs.slice(1).map((g) => g.y0 + g.height)].sort((x, y) => x - y)[Math.floor((glyphs.length - 1) / 2)];
+  const capTop = capital.y0;
+  const capHeight = Math.max(1, baseline - capTop);
+  let text = '';
+  let total = 0;
+  let worst = Infinity;
+  for (let i = 0; i < glyphs.length; i++) {
+    const g = glyphs[i];
+    let allowed: string;
+    if (i === 0) {
+      allowed = cyrillic ? CYRILLIC_UPPER : LATIN_UPPER;
+    } else if (cyrillic || capHeight < 12) {
+      // Too small to judge placement (or a script without the table): shape only.
+      allowed = cyrillic ? CYRILLIC_LOWER : Object.values(LATIN_LOWER_BY_PLACE).join('');
+    } else {
+      const tall = (baseline - g.y0) / capHeight >= 0.9;
+      const descends = (g.y0 + g.height - baseline) / capHeight > 0.15;
+      allowed = tall
+        ? descends
+          ? LATIN_LOWER_BY_PLACE.tallDescender
+          : LATIN_LOWER_BY_PLACE.tall
+        : descends
+          ? LATIN_LOWER_BY_PLACE.descender
+          : LATIN_LOWER_BY_PLACE.plain;
+    }
+    const match = classifyGlyph(g, allowed);
+    if (!match) return null;
+    text += match.char;
+    total += match.score;
+    worst = Math.min(worst, match.score);
+  }
+  return { text, score: Math.min(worst, total / glyphs.length) };
+}
+
+/**
+ * An animal's name. The game writes it capitalised ("Naomi"), so the first letter is read
+ * against capitals and the rest against lowercase. Both Latin and Cyrillic are tried, for
+ * players on a Russian client, and the better-fitting reading wins.
+ */
+export function readName(glyphs: BinaryGlyph[]): NameRead | null {
+  if (glyphs.length < 2 || glyphs.length > 16) return null;
+  const latin = readInScript(glyphs, false);
+  const cyrillic = readInScript(glyphs, true);
+  const best = !cyrillic || (latin && latin.score >= cyrillic.score - 0.02) ? latin : cyrillic;
+  return best && best.score >= 0.45 ? best : null;
 }

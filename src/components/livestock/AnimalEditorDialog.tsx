@@ -106,6 +106,14 @@ export const AnimalEditorDialog: React.FC<AnimalEditorDialogProps> = ({
             }}
           />
 
+          <TextField
+            label="In-game name"
+            size="small"
+            value={draft.gameName ?? ''}
+            onChange={(e) => patch({ gameName: e.target.value.slice(0, 40) || undefined })}
+            helperText="As the animal's panel shows it. Scanning it again updates this animal instead of adding a new one."
+          />
+
           <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
             <ToggleButtonGroup
               exclusive

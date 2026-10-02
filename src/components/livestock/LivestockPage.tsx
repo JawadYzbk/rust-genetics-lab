@@ -60,9 +60,7 @@ export const LivestockPage: React.FC = () => {
     setSelectedId,
     scan,
     startDesktopScan,
-    stopScan,
-    pending,
-    resolvePending
+    stopScan
   } = useLivestock();
   const { notifySuccess, notifyError } = useNotification();
 
@@ -167,6 +165,11 @@ export const LivestockPage: React.FC = () => {
             {scan.live ? (
               <>
                 <LivestockGenePanel rows={scan.live.rows} size="md" />
+                {scan.liveName && (
+                  <Typography variant="body2" sx={{ fontWeight: 800, color: 'var(--gl-text-primary)' }}>
+                    {scan.liveName}
+                  </Typography>
+                )}
                 {scan.livePortrait && (
                   <Chip
                     size="small"
@@ -206,29 +209,6 @@ export const LivestockPage: React.FC = () => {
           </Typography>
         )}
 
-        {pending && (
-          <Alert
-            severity="info"
-            sx={{ mt: 1.5 }}
-            action={
-              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                {pending.observed && (
-                  <Button size="small" color="inherit" onClick={() => resolvePending({ kind: 'update', id: pending.matches[0].id })}>
-                    Update {displayName(pending.matches[0])}
-                  </Button>
-                )}
-                <Button size="small" color="inherit" onClick={() => resolvePending({ kind: 'add' })}>
-                  Add as new
-                </Button>
-                <Button size="small" color="inherit" onClick={() => resolvePending({ kind: 'skip' })}>
-                  Skip
-                </Button>
-              </Box>
-            }
-          >
-            Same genes as {pending.matches.map(displayName).join(', ')}. The same animal again (update its age and condition), or a different one?
-          </Alert>
-        )}
       </Paper>
 
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'minmax(340px, 440px) minmax(0, 1fr)' }, gap: 2, alignItems: 'start' }}>

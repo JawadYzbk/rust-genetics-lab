@@ -42,6 +42,8 @@ export interface LivestockAnimal {
   motherId?: string;
   fatherId?: string;
   notes?: string;
+  /** The name the game gives the animal, as read from its panel. Used to recognise it again. */
+  gameName?: string;
   observed?: ObservedCondition;
   source: 'scan' | 'manual';
   createdAt: number;
@@ -87,6 +89,7 @@ export function createAnimal(partial: Partial<LivestockAnimal> = {}): LivestockA
     motherId: partial.motherId,
     fatherId: partial.fatherId,
     notes: partial.notes,
+    gameName: partial.gameName,
     observed: partial.observed,
     source: partial.source ?? 'manual',
     createdAt: partial.createdAt ?? Date.now()
@@ -174,4 +177,69 @@ export function suggestAnimalName(
 
 export function displayName(animal: LivestockAnimal): string {
   return animal.name.trim() || animalKindLabel(animal.species, animal.sex);
+}
+
+/* Cyrillic letters drawn like Latin ones, and Latin letters a small reader mixes up. */
+const FOLD: Record<string, string> = {
+  а: 'a', в: 'b', е: 'e', ё: 'e', к: 'k', м: 'm', н: 'h', о: 'o', р: 'p', с: 'c', т: 't', у: 'y', х: 'x',
+  j: 'i', l: 'i', f: 't'
+};
+
+/** A name reduced to what survives reading errors: case, look-alike letters, script. */
+export function nameKey(name: string): string {
+  return [...name.trim().toLowerCase()]
+    .map((ch) => FOLD[ch] ?? ch)
+    .join('')
+    .replace(/rn/g, 'm');
+}
+
+function editDistance(a: string, b: string): number {
+  const row = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    let prev = row[0];
+    row[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const temp = row[j];
+      row[j] = Math.min(row[j] + 1, row[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1));
+      prev = temp;
+    }
+  }
+  return row[b.length];
+}
+
+/**
+ * Whether two read names are the same animal's. Exact after folding; one letter off is
+ * forgiven in names of five letters or more, where it is far likelier a misread than a
+ * different animal.
+ */
+export function namesMatch(a: string, b: string): boolean {
+  const ka = nameKey(a);
+  const kb = nameKey(b);
+  if (!ka || !kb) return false;
+  if (ka === kb) return true;
+  return Math.min(ka.length, kb.length) >= 5 && editDistance(ka, kb) <= 1;
+}
+
+/**
+ * The herd animal a scan belongs to, so one animal is never added twice.
+ *
+ * - With a name: the animal of that name (look-alike letters and one misread forgiven), even
+ *   if its genes or marker read differently this time. Failing that, an animal with the same
+ *   genes that has no name on record yet -- the same animal, scanned before names were read.
+ * - Without a name: an animal with exactly the same genes and marker.
+ *
+ * Species must agree whenever the scan knows it.
+ */
+export function findScannedAnimal(
+  herd: LivestockAnimal[],
+  scan: { rows: LivestockGeneRow[]; name: string | null; species: LivestockSpecies | null }
+): LivestockAnimal | null {
+  const sameSpecies = (a: LivestockAnimal) => !scan.species || a.species === scan.species;
+  const genes = encodeAnimalGenes(scan.rows);
+  if (scan.name) {
+    const byName = herd.find((a) => a.gameName && sameSpecies(a) && namesMatch(a.gameName, scan.name!));
+    if (byName) return byName;
+    return herd.find((a) => !a.gameName && sameSpecies(a) && encodeAnimalGenes(a.rows) === genes) ?? null;
+  }
+  return herd.find((a) => sameSpecies(a) && encodeAnimalGenes(a.rows) === genes) ?? null;
 }

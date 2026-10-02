@@ -10,6 +10,7 @@ import {
   createAnimal,
   displayName,
   encodeAnimalGenes,
+  findScannedAnimal,
   suggestAnimalName
 } from '../domain/livestock/animal.ts';
 import {
@@ -21,16 +22,6 @@ import { StableRead } from '../services/livestock/livestockReadStabilizer.ts';
 import { PortraitMatch, portraitSex } from '../services/livestock/portraitClassifier.ts';
 import { useNotification } from './NotificationContext.tsx';
 
-/** A scanned animal held back because its genes match one already in the herd. */
-export interface PendingScan {
-  read: StableRead;
-  observed: ObservedCondition | null;
-  portrait: PortraitMatch | null;
-  matches: LivestockAnimal[];
-}
-
-/** What to do with a pending scan: a new animal, a fresh reading of a known one, or nothing. */
-export type PendingChoice = { kind: 'add' } | { kind: 'update'; id: string } | { kind: 'skip' };
 
 interface LivestockContextValue {
   herd: LivestockAnimal[];
@@ -57,8 +48,6 @@ interface LivestockContextValue {
   startDesktopScan: () => Promise<void>;
   startCameraScan: (video: HTMLVideoElement) => Promise<void>;
   stopScan: () => void;
-  pending: PendingScan | null;
-  resolvePending: (choice: PendingChoice) => void;
 }
 
 const LivestockContext = createContext<LivestockContextValue | null>(null);
@@ -75,7 +64,6 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [scanSex, setScanSex] = useState<LivestockSex>('female');
   const [scanAuto, setScanAuto] = useState(true);
   const [scan, setScan] = useState<LivestockScanState>(IDLE_LIVESTOCK_SCAN_STATE);
-  const [pending, setPending] = useState<PendingScan | null>(null);
 
   // The session outlives renders; refs give its callbacks the current herd and settings.
   const herdRef = useRef(herd);
@@ -131,7 +119,7 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, []);
 
   const addScanned = useCallback(
-    (read: StableRead, observed: ObservedCondition | null, portrait: PortraitMatch | null) => {
+    (read: StableRead, observed: ObservedCondition | null, portrait: PortraitMatch | null, gameName: string | null) => {
       const manual = kindRef.current;
       let species = manual.species;
       let sex = manual.sex;
@@ -144,7 +132,8 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const animal = createAnimal({
         species,
         sex,
-        name: suggestAnimalName(species, sex, herdRef.current),
+        name: gameName ?? suggestAnimalName(species, sex, herdRef.current),
+        gameName: gameName ?? undefined,
         rows: rowsFromRead(read.rows),
         observed: observed ?? undefined,
         source: 'scan'
@@ -166,15 +155,42 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         if (event.type === 'state') {
           setScan(event.state);
         } else if (event.type === 'confirmed') {
-          const matches = herdRef.current.filter((a) => encodeAnimalGenes(a.rows) === event.read.key);
-          // Wild animals often share a genotype, so a match is a question, not a refusal.
-          if (matches.length > 0) setPending({ read: event.read, observed: event.observed, portrait: event.portrait, matches });
-          else addScanned(event.read, event.observed, event.portrait);
+          const existing = findScannedAnimal(herdRef.current, {
+            rows: event.read.rows,
+            name: event.name,
+            species: event.portrait?.species ?? null
+          });
+          if (!existing) {
+            addScanned(event.read, event.observed, event.portrait, event.name);
+            return;
+          }
+          // The same animal again: refresh it in place, never add a second copy.
+          const rows = rowsFromRead(event.read.rows);
+          const genesChanged = encodeAnimalGenes(rows) !== encodeAnimalGenes(existing.rows);
+          const named = !existing.gameName && !!event.name;
+          const sexFromPortrait = event.portrait?.kind ? portraitSex(event.portrait.kind) : null;
+          const updated: LivestockAnimal = {
+            ...existing,
+            rows,
+            observed: event.observed ?? existing.observed,
+            gameName: existing.gameName ?? event.name ?? undefined,
+            name: named && /^(Cow|Bull|Calf|Cattle|Ewe|Ram|Sheep|Lamb) \d+$/.test(existing.name) ? event.name! : existing.name,
+            sex: existing.sex === 'unknown' && sexFromPortrait ? sexFromPortrait : existing.sex
+          };
+          setHerd((current) => current.map((a) => (a.id === existing.id ? updated : a)));
+          setSelectedId(existing.id);
+          // A rescan that changes nothing but age and condition needs no announcement.
+          if (genesChanged || named) {
+            notifySuccess(`Updated ${displayName(updated)}${genesChanged ? ': genes changed' : ''}`, {
+              label: 'Undo',
+              onClick: () => setHerd((current) => current.map((a) => (a.id === existing.id ? existing : a)))
+            });
+          }
         }
       });
     }
     return sessionRef.current;
-  }, [addScanned]);
+  }, [addScanned, notifySuccess]);
 
   useEffect(() => () => sessionRef.current?.stop(), []);
 
@@ -197,23 +213,8 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const stopScan = useCallback(() => {
     sessionRef.current?.stop();
-    setPending(null);
   }, []);
 
-  const resolvePending = useCallback(
-    (choice: PendingChoice) => {
-      if (pending) {
-        if (choice.kind === 'add') addScanned(pending.read, pending.observed, pending.portrait);
-        if (choice.kind === 'update' && pending.observed) {
-          const observed = pending.observed;
-          setHerd((current) => current.map((a) => (a.id === choice.id ? { ...a, observed } : a)));
-          setSelectedId(choice.id);
-        }
-      }
-      setPending(null);
-    },
-    [pending, addScanned]
-  );
 
   const value = useMemo<LivestockContextValue>(
     () => ({
@@ -233,9 +234,7 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       scan,
       startDesktopScan,
       startCameraScan,
-      stopScan,
-      pending,
-      resolvePending
+      stopScan
     }),
     [
       herd,
@@ -252,9 +251,7 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       scan,
       startDesktopScan,
       startCameraScan,
-      stopScan,
-      pending,
-      resolvePending
+      stopScan
     ]
   );
 

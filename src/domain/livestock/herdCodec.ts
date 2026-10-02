@@ -55,6 +55,7 @@ export function sanitizeAnimal(raw: any): LivestockAnimal | null {
     fatherId: typeof raw.fatherId === 'string' ? raw.fatherId : undefined,
     notes: typeof raw.notes === 'string' ? raw.notes.slice(0, 500) : undefined,
     observed: sanitizeObserved(raw.observed),
+    gameName: typeof raw.gameName === 'string' && raw.gameName.trim() ? raw.gameName.trim().slice(0, 40) : undefined,
     source: raw.source === 'scan' ? 'scan' : 'manual',
     createdAt: Number.isFinite(raw.createdAt) ? raw.createdAt : Date.now()
   });

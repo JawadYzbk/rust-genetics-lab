@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   createAnimal,
   decodeGeneRow,
+  findScannedAnimal,
   encodeAnimalGenes,
   encodeGeneRow,
   LivestockGeneRow,
@@ -239,5 +240,35 @@ describe('livestock pairing (documented inheritance)', () => {
     const a = createAnimal({ id: 'a', species: 'cattle', sex: 'male', motherId: 'ma' });
     const b = createAnimal({ id: 'b', species: 'cattle', sex: 'female', motherId: 'mb' });
     expect(relationBetween(a, b, [grandma, mumA, mumB, a, b])).toBe('shared-ancestor');
+  });
+});
+
+describe('no duplicates: a scan finds the animal it belongs to', () => {
+  const naomi = createAnimal({ id: 'n', species: 'sheep', gameName: 'Naomi', rows: [row('nggng', { value: 10, color: 'lime' })] });
+  const unnamed = createAnimal({ id: 'u', species: 'cattle', rows: [row('rrgnn', { value: 6, color: 'purple' })] });
+  const herd = [naomi, unnamed];
+
+  it('finds an animal by name even when its genes and number read differently', () => {
+    const scan = { rows: [row('rrrrr', { value: 3, color: 'blue' })], name: 'Naomj', species: 'sheep' as const };
+    expect(findScannedAnimal(herd, scan)?.id).toBe('n');
+  });
+
+  it('gives a name to the same animal scanned before names were read', () => {
+    const scan = { rows: [row('rrgnn', { value: 6, color: 'purple' })], name: 'Desiree', species: 'cattle' as const };
+    expect(findScannedAnimal(herd, scan)?.id).toBe('u');
+  });
+
+  it('treats a different name as a different animal, even with the same genes', () => {
+    const scan = { rows: [row('nggng', { value: 10, color: 'lime' })], name: 'Miriam', species: 'sheep' as const };
+    expect(findScannedAnimal(herd, scan)).toBeNull();
+  });
+
+  it('falls back to identical genes when no name could be read', () => {
+    expect(findScannedAnimal(herd, { rows: naomi.rows, name: null, species: null })?.id).toBe('n');
+    expect(findScannedAnimal(herd, { rows: [row('ggggg')], name: null, species: null })).toBeNull();
+  });
+
+  it('never matches across species', () => {
+    expect(findScannedAnimal(herd, { rows: naomi.rows, name: 'Naomi', species: 'cattle' })).toBeNull();
   });
 });

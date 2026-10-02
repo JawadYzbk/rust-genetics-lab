@@ -4,19 +4,20 @@ import {
   classifyGlyph,
   readAgeSeconds,
   readDigits,
+  readName,
   readPercent
 } from '../services/livestock/panelText.ts';
 import { GLYPH_GRID_HEIGHT, GLYPH_GRID_WIDTH, GLYPH_TEMPLATES } from '../services/livestock/glyphTemplateData.ts';
 import { readLivestockPanel } from '../services/livestock/livestockPanelReader.ts';
 import { readMarkerDigit } from '../services/livestock/markerDigit.ts';
-import { readPanelConditions } from '../services/livestock/panelConditions.ts';
+import { readPanelConditions, readPanelName } from '../services/livestock/panelConditions.ts';
 import { classifyPortrait, portraitSex } from '../services/livestock/portraitClassifier.ts';
-import { createAnimal, decodeGeneRow } from '../domain/livestock/animal.ts';
+import { createAnimal, decodeGeneRow, namesMatch } from '../domain/livestock/animal.ts';
 import { currentCondition, estimateAnimalPrice } from '../domain/livestock/pricing.ts';
 import { RasterImage } from '../services/scanner/scannerTypes.ts';
 
 /** A character drawn from its own reference grid at `height` pixels, placed at `x0`. */
-function glyphOf(char: string, height: number, x0: number): BinaryGlyph {
+function glyphOf(char: string, height: number, x0: number, y0 = 0): BinaryGlyph {
   const t = GLYPH_TEMPLATES.find((g) => g.char === char)!;
   const width = Math.max(2, Math.round(height * t.aspect));
   const mask = new Uint8Array(width * height);
@@ -27,7 +28,34 @@ function glyphOf(char: string, height: number, x0: number): BinaryGlyph {
       mask[y * width + x] = Number(t.grid[gy * GLYPH_GRID_WIDTH + gx]) >= 5 ? 1 : 0;
     }
   }
-  return { mask, width, height, x0, y0: 0 };
+  return { mask, width, height, x0, y0 };
+}
+
+const TALL = 'bdfhklБб';
+const DESCENDERS = 'gpqyjдрруфцщ';
+
+/**
+ * Text as the game draws it: capitals and digits full height, lowercase at x-height on the
+ * same baseline, ascenders up to capital height, descenders below the baseline.
+ */
+function placed(text: string, cap = 20): BinaryGlyph[] {
+  const glyphs: BinaryGlyph[] = [];
+  let x = 0;
+  for (const ch of text) {
+    if (ch === ' ') {
+      x += cap;
+      continue;
+    }
+    const lower = ch !== ch.toUpperCase();
+    const tall = TALL.includes(ch) || ch === 'i' || ch === 'j' || !lower;
+    const descends = DESCENDERS.includes(ch);
+    const top = tall ? 0 : ch === 't' ? Math.round(cap * 0.2) : Math.round(cap * 0.3);
+    const bottom = descends ? Math.round(cap * 1.25) : cap;
+    const glyph = glyphOf(ch, bottom - top, x, top);
+    glyphs.push(glyph);
+    x += glyph.width + Math.round(cap * 0.12);
+  }
+  return glyphs;
 }
 
 /** A line of text as glyphs; spaces become word gaps. Only the first letter of a word matters. */
@@ -48,10 +76,21 @@ function line(text: string, height = 14): BinaryGlyph[] {
 }
 
 describe('panel glyph reading', () => {
-  it('recognises every reference character at small sizes', () => {
-    for (const t of GLYPH_TEMPLATES) {
-      const match = classifyGlyph(glyphOf(t.char, 12, 0), GLYPH_TEMPLATES.map((g) => g.char).join(''));
-      expect(match?.char, `char ${t.char}`).toBe(t.char);
+  it('recognises every reference character within the set it is read against', () => {
+    // The reader never compares across sets: digits, Latin capitals, Latin lowercase,
+    // Cyrillic capitals and Cyrillic lowercase are each read on their own.
+    const sets = [
+      '0123456789%',
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+      'abcdefghijklmnopqrstuvwxyz',
+      'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ',
+      'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
+    ];
+    for (const set of sets) {
+      for (const ch of set) {
+        if (ch === 'Ё' || ch === 'ё') continue; // differs from Е/е only by dots that merge at this size
+        expect(classifyGlyph(glyphOf(ch, 14, 0), set)?.char, `char ${ch}`).toBe(ch);
+      }
     }
   });
 
@@ -154,5 +193,47 @@ describe('portrait: which animal the panel belongs to', () => {
     const image = await loadFixture('livestock-desiree-ui10', 495, 85);
     const read = readLivestockPanel(image, { readMarkerDigit })!;
     expect(classifyPortrait(image, read)).toBeNull();
+  });
+});
+
+describe('animal names', () => {
+  it('reads names from real panels', async () => {
+    const cases: Array<[string, number, number, string]> = [
+      ['livestock-desiree-panel-ui07', 355, 350, 'Desiree'],
+      ['livestock-nelson-header-ui10', 505, 180, 'Nelson'],
+      ['livestock-naomi-header-ui10', 497, 160, 'Naomi']
+    ];
+    for (const [fixture, w, h, name] of cases) {
+      const image = await loadFixture(fixture, w, h);
+      const read = readLivestockPanel(image, { readMarkerDigit })!;
+      expect(read, fixture).not.toBeNull();
+      expect(readPanelName(image, read)?.text, fixture).toBe(name);
+    }
+  });
+
+  it('keeps English names English and Russian names Russian', () => {
+    for (const name of ['Naomi', 'Winifred', 'Elisabeth', 'Marshall', 'Dustin', 'Kathleen', 'Miriam', 'Nelson']) {
+      expect(readName(placed(name))?.text, name).toBe(name);
+    }
+    for (const name of ['Наоми', 'Борис', 'Людмила', 'Зоя', 'Фёкла', 'Мирон', 'Олег']) {
+      const read = readName(placed(name))?.text;
+      expect(/^[А-яЁё]+$/.test(read ?? ''), `${name} read as ${read}`).toBe(true);
+      expect(namesMatch(read ?? '', name), `${name} read as ${read}`).toBe(true);
+    }
+  });
+
+  it('reads Russian age units', () => {
+    expect(readAgeSeconds(line('12 МИНУТ'))).toBe(720);
+    expect(readAgeSeconds(line('2 ЧАСА'))).toBe(7200);
+  });
+
+  it('matches the same animal across small misreads, scripts and case', () => {
+    expect(namesMatch('Winifred', 'Winitred')).toBe(true);
+    expect(namesMatch('Naomi', 'Naomj')).toBe(true);
+    expect(namesMatch('Наоми', 'Haomi')).toBe(true);
+    expect(namesMatch('Nelson', 'nelson')).toBe(true);
+    expect(namesMatch('Nelson', 'Dustin')).toBe(false);
+    // Short names must match exactly: one letter is a different animal.
+    expect(namesMatch('Ada', 'Ida')).toBe(false);
   });
 });

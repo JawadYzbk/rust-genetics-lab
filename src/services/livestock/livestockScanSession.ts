@@ -8,7 +8,7 @@ import {
   createVideoFrameSource
 } from '../scanner/vision/captureFrameSource.ts';
 import type { LivestockReaderRequest, LivestockReaderResponse } from '../../workers/livestockReader.worker.ts';
-import { PanelConditions, readPanelConditions } from './panelConditions.ts';
+import { PanelConditions, readPanelConditions, readPanelName } from './panelConditions.ts';
 import { PortraitMatch, classifyPortrait } from './portraitClassifier.ts';
 
 /**
@@ -32,6 +32,8 @@ export interface LivestockScanState {
   liveConditions: PanelConditions | null;
   /** Which animal the header portrait shows, when it could tell. */
   livePortrait: PortraitMatch | null;
+  /** The animal's in-game name, when it could be read. */
+  liveName: string | null;
   /** Size of the analysed frame, so overlays can map read coordinates onto a preview. */
   frameSize: { width: number; height: number } | null;
   /** Milliseconds the reader spent on the last frame. */
@@ -40,7 +42,7 @@ export interface LivestockScanState {
 
 export type LivestockScanEvent =
   | { type: 'state'; state: LivestockScanState }
-  | { type: 'confirmed'; read: StableRead; observed: ObservedCondition | null; portrait: PortraitMatch | null }
+  | { type: 'confirmed'; read: StableRead; observed: ObservedCondition | null; portrait: PortraitMatch | null; name: string | null }
   | { type: 'lost' };
 
 export const IDLE_LIVESTOCK_SCAN_STATE: LivestockScanState = {
@@ -50,6 +52,7 @@ export const IDLE_LIVESTOCK_SCAN_STATE: LivestockScanState = {
   live: null,
   liveConditions: null,
   livePortrait: null,
+  liveName: null,
   frameSize: null,
   lastReadMs: 0
 };
@@ -238,7 +241,7 @@ export class LivestockScanSession {
       });
       this.worker.onmessage = (event: MessageEvent<LivestockReaderResponse>) => {
         this.workerBusy = false;
-        this.handleRead(event.data.read, event.data.conditions, event.data.portrait, event.data.elapsedMs);
+        this.handleRead(event.data.read, event.data.conditions, event.data.portrait, event.data.name, event.data.elapsedMs);
       };
       this.worker.onerror = () => {
         // Fall back to reading on the main thread, at the same cadence.
@@ -314,7 +317,8 @@ export class LivestockScanSession {
       const raster = { data: frame.data, width: frame.width, height: frame.height };
       const conditions = read ? readPanelConditions(raster, read) : null;
       const portrait = read ? classifyPortrait(raster, read) : null;
-      this.handleRead(read, conditions, portrait, performance.now() - started);
+      const name = read ? readPanelName(raster, read)?.text ?? null : null;
+      this.handleRead(read, conditions, portrait, name, performance.now() - started);
     }
   }
 
@@ -322,6 +326,7 @@ export class LivestockScanSession {
     read: LivestockPanelRead | null,
     conditions: PanelConditions | null,
     portrait: PortraitMatch | null,
+    name: string | null,
     elapsedMs: number
   ): void {
     if (this.state.status !== 'scanning') return;
@@ -329,12 +334,12 @@ export class LivestockScanSession {
     // Keep the last confident portrait while the same panel stays in view: one blurred frame
     // should not forget what the animal is.
     const keptPortrait = portrait ?? (read ? this.state.livePortrait : null);
-    this.setState({ live: read, liveConditions: conditions, livePortrait: keptPortrait, lastReadMs: elapsedMs });
+    this.setState({ live: read, liveConditions: conditions, livePortrait: keptPortrait, liveName: name, lastReadMs: elapsedMs });
 
-    const event = this.stabilizer.push(read ? { rows: read.rows, confidence: read.confidence } : null, performance.now());
+    const event = this.stabilizer.push(read ? { rows: read.rows, confidence: read.confidence, name } : null, performance.now());
     if (!event) return;
     if (event.type === 'confirmed') {
-      this.onEvent({ ...event, observed: conditions ? { ...conditions, at: Date.now() } : null, portrait: keptPortrait });
+      this.onEvent({ ...event, observed: conditions ? { ...conditions, at: Date.now() } : null, portrait: keptPortrait, name });
     } else {
       this.onEvent(event);
     }

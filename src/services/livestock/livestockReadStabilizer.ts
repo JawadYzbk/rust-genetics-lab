@@ -62,7 +62,7 @@ export class LivestockReadStabilizer {
   }
 
   push(
-    read: { rows: LivestockGeneRow[]; confidence: number } | null,
+    read: { rows: LivestockGeneRow[]; confidence: number; name?: string | null } | null,
     now: number
   ): StabilizerEvent {
     if (!read) {
@@ -76,7 +76,8 @@ export class LivestockReadStabilizer {
     }
 
     this.lastSeenAt = now;
-    const key = encodeAnimalGenes(read.rows);
+    // The name is part of the identity: two animals with the same genes are still two.
+    const key = read.name ? `${encodeAnimalGenes(read.rows)}#${read.name}` : encodeAnimalGenes(read.rows);
     if (key === this.confirmedKey) return null;
 
     if (key === this.candidateKey) {
