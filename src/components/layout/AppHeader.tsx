@@ -149,6 +149,7 @@ export const AppHeader: React.FC = () => {
             <Tab value="workspace" label={isCompact ? 'Breed' : 'Breeding Workspace'} sx={{ minWidth: 0, px: { xs: 0.5, sm: 2 } }} />
             <Tab value="planner" label={isCompact ? 'Planner' : 'Farm Planner'} sx={{ minWidth: 0, px: { xs: 0.5, sm: 2 } }} />
             <Tab value="recipes" label={isCompact ? 'Recipes' : 'Tea Recipes'} sx={{ minWidth: 0, px: { xs: 0.5, sm: 2 } }} />
+            <Tab value="livestock" label={isCompact ? 'Animals' : 'Livestock'} sx={{ minWidth: 0, px: { xs: 0.5, sm: 2 } }} />
             <Tab value="guide" label={isCompact ? 'Guide' : 'Genetics Guide'} sx={{ minWidth: 0, px: { xs: 0.5, sm: 2 } }} />
           </Tabs>
         </Box>
