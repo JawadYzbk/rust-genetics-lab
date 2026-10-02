@@ -126,6 +126,7 @@ export const LivestockPage: React.FC = () => {
         <Box>
           <Typography component="h1" variant="h5" sx={{ fontWeight: 800, color: 'var(--gl-text-primary)' }}>
             Livestock Genetics
+            <Chip size="small" label="BETA" sx={{ ml: 1, height: 20, fontSize: '0.65rem', fontWeight: 900, backgroundColor: '#F59E0B', color: '#111827', verticalAlign: 'middle' }} />
           </Typography>
           <Typography variant="body2" sx={{ color: 'var(--gl-text-muted)', mt: 0.5 }}>
             Scan cows, bulls and sheep straight from Rust, see what their genes do, and find the pairs worth breeding.

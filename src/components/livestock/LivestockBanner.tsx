@@ -42,9 +42,9 @@ export const LivestockBanner: React.FC = () => {
         Scan cows and sheep from Rust: herd stats, sale value and pair suggestions
         <Box
           component="span"
-          sx={{ ml: 0.75, px: 0.5, fontSize: '0.58rem', borderRadius: '3px', backgroundColor: '#00E5FF', color: '#0E0E0E', fontWeight: 900 }}
+          sx={{ ml: 0.75, px: 0.5, fontSize: '0.58rem', borderRadius: '3px', backgroundColor: '#F59E0B', color: '#111827', fontWeight: 900 }}
         >
-          NEW
+          BETA
         </Box>
       </Typography>
       <Button
