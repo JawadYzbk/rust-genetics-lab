@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.6.0](https://github.com/JawadYzbk/rust-genetics-lab/releases/tag/v1.6.0) (2026-10-02)
+
+### 🚀 Features
+
+* feat(livestock): update genetics rules and add a Rules tab ([41ba649](https://github.com/JawadYzbk/rust-genetics-lab/commit/41ba649ff2a28a95418db646d64b732936b8ad15))
+
+**Full Changelog**: https://github.com/JawadYzbk/rust-genetics-lab/compare/v1.5.0...v1.6.0
+All notable changes to this project will be documented in this file.
+
 ## [1.5.0](https://github.com/JawadYzbk/rust-genetics-lab/releases/tag/v1.5.0) (2026-10-02)
 
 ### 🚀 Features
