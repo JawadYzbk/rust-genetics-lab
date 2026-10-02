@@ -12,21 +12,29 @@ const KINDS: Array<{ value: string; label: string; species: LivestockSpecies; se
   { value: 'sheep:unknown', label: 'Sheep (sex unknown)', species: 'sheep', sex: 'unknown' }
 ];
 
-/** The gene panel does not say what the animal is, so scans are filed under this choice. */
+/**
+ * What scanned animals are filed as. Auto-detect reads the panel's portrait: species always,
+ * sex for adult cattle (cow vs bull). The manual kinds force a choice instead.
+ */
 export const ScanKindSelect: React.FC = () => {
-  const { scanSpecies, scanSex, setScanKind } = useLivestock();
+  const { scanAuto, setScanAuto, scanSpecies, scanSex, setScanKind } = useLivestock();
   return (
-    <FormControl size="small" sx={{ minWidth: 150 }}>
+    <FormControl size="small" sx={{ minWidth: 170 }}>
       <InputLabel id="livestock-scan-kind">Add scans as</InputLabel>
       <Select
         labelId="livestock-scan-kind"
         label="Add scans as"
-        value={`${scanSpecies}:${scanSex}`}
+        value={scanAuto ? 'auto' : `${scanSpecies}:${scanSex}`}
         onChange={(e) => {
+          if (e.target.value === 'auto') {
+            setScanAuto(true);
+            return;
+          }
           const kind = KINDS.find((k) => k.value === e.target.value);
           if (kind) setScanKind(kind.species, kind.sex);
         }}
       >
+        <MenuItem value="auto">Auto-detect</MenuItem>
         {KINDS.map((kind) => (
           <MenuItem key={kind.value} value={kind.value}>
             {kind.label}

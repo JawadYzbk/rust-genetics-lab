@@ -10,6 +10,7 @@ import { GLYPH_GRID_HEIGHT, GLYPH_GRID_WIDTH, GLYPH_TEMPLATES } from '../service
 import { readLivestockPanel } from '../services/livestock/livestockPanelReader.ts';
 import { readMarkerDigit } from '../services/livestock/markerDigit.ts';
 import { readPanelConditions } from '../services/livestock/panelConditions.ts';
+import { classifyPortrait, portraitSex } from '../services/livestock/portraitClassifier.ts';
 import { createAnimal, decodeGeneRow } from '../domain/livestock/animal.ts';
 import { currentCondition, estimateAnimalPrice } from '../domain/livestock/pricing.ts';
 import { RasterImage } from '../services/scanner/scannerTypes.ts';
@@ -126,5 +127,29 @@ describe('age and condition in the sale estimate', () => {
     const at = 1_000_000;
     const old = createAnimal({ rows: [row], observed: { ageSeconds: 36 * 3600, overall: 0.475, at } });
     expect(estimateAnimalPrice(old, { healthState: 1, ageLived: 0 }, at).price).toBe(50);
+  });
+});
+
+describe('portrait: which animal the panel belongs to', () => {
+  it('recognises a cow from the panel header', async () => {
+    const image = await loadFixture('livestock-desiree-panel-ui07', 355, 350);
+    const read = readLivestockPanel(image, { readMarkerDigit })!;
+    expect(classifyPortrait(image, read)?.kind).toBe('cow');
+  });
+
+  it('recognises a bull from the panel header', async () => {
+    const image = await loadFixture('livestock-nelson-header-ui10', 505, 180);
+    const read = readLivestockPanel(image, { readMarkerDigit })!;
+    expect(read).not.toBeNull();
+    const match = classifyPortrait(image, read);
+    expect(match?.kind).toBe('bull');
+    expect(portraitSex(match!.kind)).toBe('male');
+  });
+
+  it('gives no answer when the header is cut off', async () => {
+    // The gene-bar crop has no header above the badges.
+    const image = await loadFixture('livestock-desiree-ui10', 495, 85);
+    const read = readLivestockPanel(image, { readMarkerDigit })!;
+    expect(classifyPortrait(image, read)).toBeNull();
   });
 });

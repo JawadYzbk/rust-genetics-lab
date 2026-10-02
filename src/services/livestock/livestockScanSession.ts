@@ -9,6 +9,7 @@ import {
 } from '../scanner/vision/captureFrameSource.ts';
 import type { LivestockReaderRequest, LivestockReaderResponse } from '../../workers/livestockReader.worker.ts';
 import { PanelConditions, readPanelConditions } from './panelConditions.ts';
+import { PortraitMatch, classifyPortrait } from './portraitClassifier.ts';
 
 /**
  * One livestock scanning session: a frame source (the player's screen, or a phone camera
@@ -29,6 +30,8 @@ export interface LivestockScanState {
   live: LivestockPanelRead | null;
   /** AGE and OVERALL from the same frame. */
   liveConditions: PanelConditions | null;
+  /** Which animal the header portrait shows, when it could tell. */
+  livePortrait: PortraitMatch | null;
   /** Size of the analysed frame, so overlays can map read coordinates onto a preview. */
   frameSize: { width: number; height: number } | null;
   /** Milliseconds the reader spent on the last frame. */
@@ -37,7 +40,7 @@ export interface LivestockScanState {
 
 export type LivestockScanEvent =
   | { type: 'state'; state: LivestockScanState }
-  | { type: 'confirmed'; read: StableRead; observed: ObservedCondition | null }
+  | { type: 'confirmed'; read: StableRead; observed: ObservedCondition | null; portrait: PortraitMatch | null }
   | { type: 'lost' };
 
 export const IDLE_LIVESTOCK_SCAN_STATE: LivestockScanState = {
@@ -46,6 +49,7 @@ export const IDLE_LIVESTOCK_SCAN_STATE: LivestockScanState = {
   error: null,
   live: null,
   liveConditions: null,
+  livePortrait: null,
   frameSize: null,
   lastReadMs: 0
 };
@@ -234,7 +238,7 @@ export class LivestockScanSession {
       });
       this.worker.onmessage = (event: MessageEvent<LivestockReaderResponse>) => {
         this.workerBusy = false;
-        this.handleRead(event.data.read, event.data.conditions, event.data.elapsedMs);
+        this.handleRead(event.data.read, event.data.conditions, event.data.portrait, event.data.elapsedMs);
       };
       this.worker.onerror = () => {
         // Fall back to reading on the main thread, at the same cadence.
@@ -307,22 +311,30 @@ export class LivestockScanSession {
         { data: frame.data, width: frame.width, height: frame.height },
         { readMarkerDigit }
       );
-      const conditions = read
-        ? readPanelConditions({ data: frame.data, width: frame.width, height: frame.height }, read)
-        : null;
-      this.handleRead(read, conditions, performance.now() - started);
+      const raster = { data: frame.data, width: frame.width, height: frame.height };
+      const conditions = read ? readPanelConditions(raster, read) : null;
+      const portrait = read ? classifyPortrait(raster, read) : null;
+      this.handleRead(read, conditions, portrait, performance.now() - started);
     }
   }
 
-  private handleRead(read: LivestockPanelRead | null, conditions: PanelConditions | null, elapsedMs: number): void {
+  private handleRead(
+    read: LivestockPanelRead | null,
+    conditions: PanelConditions | null,
+    portrait: PortraitMatch | null,
+    elapsedMs: number
+  ): void {
     if (this.state.status !== 'scanning') return;
     this.hint = read ? read.bounds : null;
-    this.setState({ live: read, liveConditions: conditions, lastReadMs: elapsedMs });
+    // Keep the last confident portrait while the same panel stays in view: one blurred frame
+    // should not forget what the animal is.
+    const keptPortrait = portrait ?? (read ? this.state.livePortrait : null);
+    this.setState({ live: read, liveConditions: conditions, livePortrait: keptPortrait, lastReadMs: elapsedMs });
 
     const event = this.stabilizer.push(read ? { rows: read.rows, confidence: read.confidence } : null, performance.now());
     if (!event) return;
     if (event.type === 'confirmed') {
-      this.onEvent({ ...event, observed: conditions ? { ...conditions, at: Date.now() } : null });
+      this.onEvent({ ...event, observed: conditions ? { ...conditions, at: Date.now() } : null, portrait: keptPortrait });
     } else {
       this.onEvent(event);
     }

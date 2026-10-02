@@ -167,6 +167,14 @@ export const LivestockPage: React.FC = () => {
             {scan.live ? (
               <>
                 <LivestockGenePanel rows={scan.live.rows} size="md" />
+                {scan.livePortrait && (
+                  <Chip
+                    size="small"
+                    color="primary"
+                    variant="outlined"
+                    label={`Detected: ${scan.livePortrait.kind[0].toUpperCase()}${scan.livePortrait.kind.slice(1)}`}
+                  />
+                )}
                 {scan.liveConditions && (
                   <Typography variant="body2" sx={{ color: 'var(--gl-text-secondary)', fontFamily: 'monospace' }}>
                     Age {scan.liveConditions.ageSeconds === null ? '?' : formatDuration(scan.liveConditions.ageSeconds)} · Overall{' '}
@@ -186,7 +194,9 @@ export const LivestockPage: React.FC = () => {
         )}
         {!desktopScanning && (
           <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'var(--gl-text-muted)' }}>
-            No calibration needed: the gene panel is found anywhere on screen. Scanned animals are added as the kind chosen in "Add scans as".
+            No calibration needed: the gene panel is found anywhere on screen. With Auto-detect, the panel's portrait sets the
+            species, and cow or bull for adult cattle. The game shows one portrait for both sexes of calves, lambs and sheep, so
+            set their sex on the animal (or pick a kind in "Add scans as").
           </Typography>
         )}
 

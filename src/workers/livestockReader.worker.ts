@@ -10,6 +10,7 @@
 import { readLivestockPanel, LivestockPanelRead, LivestockRowRead } from '../services/livestock/livestockPanelReader.ts';
 import { readMarkerDigit } from '../services/livestock/markerDigit.ts';
 import { PanelConditions, readPanelConditions } from '../services/livestock/panelConditions.ts';
+import { PortraitMatch, classifyPortrait } from '../services/livestock/portraitClassifier.ts';
 
 export interface LivestockReaderRequest {
   id: number;
@@ -25,6 +26,8 @@ export interface LivestockReaderResponse {
   read: LivestockPanelRead | null;
   /** AGE and OVERALL from the same frame, when the panel has them. */
   conditions: PanelConditions | null;
+  /** Which animal, from the header portrait. */
+  portrait: PortraitMatch | null;
   elapsedMs: number;
   /** True when the hint region was enough. */
   fromHint: boolean;
@@ -98,6 +101,7 @@ self.onmessage = (event: MessageEvent<LivestockReaderRequest>) => {
   }
 
   const conditions = read ? readPanelConditions({ data, width, height }, read) : null;
-  const response: LivestockReaderResponse = { id, read, conditions, elapsedMs: performance.now() - started, fromHint };
+  const portrait = read ? classifyPortrait({ data, width, height }, read) : null;
+  const response: LivestockReaderResponse = { id, read, conditions, portrait, elapsedMs: performance.now() - started, fromHint };
   (self as unknown as Worker).postMessage(response);
 };

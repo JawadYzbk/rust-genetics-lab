@@ -18,12 +18,14 @@ import {
   LivestockScanState
 } from '../services/livestock/livestockScanSession.ts';
 import { StableRead } from '../services/livestock/livestockReadStabilizer.ts';
+import { PortraitMatch, portraitSex, portraitSpecies } from '../services/livestock/portraitClassifier.ts';
 import { useNotification } from './NotificationContext.tsx';
 
 /** A scanned animal held back because its genes match one already in the herd. */
 export interface PendingScan {
   read: StableRead;
   observed: ObservedCondition | null;
+  portrait: PortraitMatch | null;
   matches: LivestockAnimal[];
 }
 
@@ -41,7 +43,12 @@ interface LivestockContextValue {
   selectedId: string | null;
   setSelectedId: (id: string | null) => void;
 
-  /** What a scanned animal is added as; the panel itself does not say. */
+  /**
+   * What a scanned animal is added as. With `scanAuto`, the panel's portrait decides the
+   * species (and the sex of adult cattle); the manual kind is the fallback.
+   */
+  scanAuto: boolean;
+  setScanAuto: (auto: boolean) => void;
   scanSpecies: LivestockSpecies;
   scanSex: LivestockSex;
   setScanKind: (species: LivestockSpecies, sex: LivestockSex) => void;
@@ -66,14 +73,15 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [scanSpecies, setScanSpecies] = useState<LivestockSpecies>('cattle');
   const [scanSex, setScanSex] = useState<LivestockSex>('female');
+  const [scanAuto, setScanAuto] = useState(true);
   const [scan, setScan] = useState<LivestockScanState>(IDLE_LIVESTOCK_SCAN_STATE);
   const [pending, setPending] = useState<PendingScan | null>(null);
 
   // The session outlives renders; refs give its callbacks the current herd and settings.
   const herdRef = useRef(herd);
-  const kindRef = useRef({ species: scanSpecies, sex: scanSex });
+  const kindRef = useRef({ species: scanSpecies, sex: scanSex, auto: scanAuto });
   herdRef.current = herd;
-  kindRef.current = { species: scanSpecies, sex: scanSex };
+  kindRef.current = { species: scanSpecies, sex: scanSex, auto: scanAuto };
 
   useEffect(() => {
     StorageService.saveLivestockHerdRaw(herd);
@@ -119,11 +127,19 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const setScanKind = useCallback((species: LivestockSpecies, sex: LivestockSex) => {
     setScanSpecies(species);
     setScanSex(sex);
+    setScanAuto(false);
   }, []);
 
   const addScanned = useCallback(
-    (read: StableRead, observed: ObservedCondition | null) => {
-      const { species, sex } = kindRef.current;
+    (read: StableRead, observed: ObservedCondition | null, portrait: PortraitMatch | null) => {
+      const manual = kindRef.current;
+      let species = manual.species;
+      let sex = manual.sex;
+      if (manual.auto && portrait) {
+        species = portraitSpecies(portrait.kind);
+        // Calves, lambs and sheep share one portrait for both sexes: the panel cannot say.
+        sex = portraitSex(portrait.kind) ?? 'unknown';
+      }
       const animal = createAnimal({
         species,
         sex,
@@ -151,8 +167,8 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         } else if (event.type === 'confirmed') {
           const matches = herdRef.current.filter((a) => encodeAnimalGenes(a.rows) === event.read.key);
           // Wild animals often share a genotype, so a match is a question, not a refusal.
-          if (matches.length > 0) setPending({ read: event.read, observed: event.observed, matches });
-          else addScanned(event.read, event.observed);
+          if (matches.length > 0) setPending({ read: event.read, observed: event.observed, portrait: event.portrait, matches });
+          else addScanned(event.read, event.observed, event.portrait);
         }
       });
     }
@@ -186,7 +202,7 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const resolvePending = useCallback(
     (choice: PendingChoice) => {
       if (pending) {
-        if (choice.kind === 'add') addScanned(pending.read, pending.observed);
+        if (choice.kind === 'add') addScanned(pending.read, pending.observed, pending.portrait);
         if (choice.kind === 'update' && pending.observed) {
           const observed = pending.observed;
           setHerd((current) => current.map((a) => (a.id === choice.id ? { ...a, observed } : a)));
@@ -208,6 +224,8 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       clearHerd,
       selectedId,
       setSelectedId,
+      scanAuto,
+      setScanAuto,
       scanSpecies,
       scanSex,
       setScanKind,
@@ -226,6 +244,7 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       replaceHerd,
       clearHerd,
       selectedId,
+      scanAuto,
       scanSpecies,
       scanSex,
       setScanKind,
