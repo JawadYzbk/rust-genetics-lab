@@ -30,7 +30,7 @@ import {
   displayName
 } from '../../domain/livestock/animal.ts';
 import { estimateAnimalPrice } from '../../domain/livestock/pricing.ts';
-import { LIVESTOCK_DATA_AS_OF, LIVESTOCK_DATA_SOURCE } from '../../domain/livestock/livestockGenes.ts';
+import { LIVESTOCK_DATA_AS_OF } from '../../domain/livestock/livestockGenes.ts';
 import { AnimalPortrait, kindLabel } from './LivestockImages.tsx';
 import { exportHerd, sanitizeHerd } from '../../domain/livestock/herdCodec.ts';
 import { isCameraSupported, isDesktopCaptureSupported } from '../../services/livestock/livestockScanSession.ts';
@@ -133,8 +133,8 @@ export const LivestockPage: React.FC = () => {
             Scan cows, bulls and sheep straight from Rust, see what their genes do, and find the pairs worth breeding.
           </Typography>
         </Box>
-        <Tooltip title="Gene effects and breeding rules from RustHelp, checked against the live game. The sale formula is a community measurement.">
-          <Chip size="small" variant="outlined" label={`${LIVESTOCK_DATA_SOURCE} data, ${LIVESTOCK_DATA_AS_OF}`} sx={{ color: 'var(--gl-text-secondary)' }} />
+        <Tooltip title="Gene effects and breeding rules checked against the live game. The sale formula is a community measurement.">
+          <Chip size="small" variant="outlined" label={`Game data, ${LIVESTOCK_DATA_AS_OF}`} sx={{ color: 'var(--gl-text-secondary)' }} />
         </Tooltip>
       </Box>
 

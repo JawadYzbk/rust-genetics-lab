@@ -4,7 +4,7 @@ import { LivestockAnimal, animalKindLabel } from '../../domain/livestock/animal.
 import { currentCondition } from '../../domain/livestock/pricing.ts';
 
 /**
- * Portraits and product icons, from the game's own art (via RustHelp's CDN), shipped under
+ * Portraits and product icons, from the game's own art, shipped under
  * public/img/livestock.
  */
 

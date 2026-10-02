@@ -102,7 +102,7 @@ describe('livestock sale price', () => {
   });
 });
 
-describe('livestock stats (RustHelp values)', () => {
+describe('livestock stats (game values)', () => {
   it('reads a cow\'s effects from its expressed genes', () => {
     const cow = createAnimal({ species: 'cattle', sex: 'female', rows: [row('ggrgn')] });
     const byLabel = Object.fromEntries(animalStats(cow).map((s) => [s.label, s.value]));

@@ -597,7 +597,7 @@ const BASE_RECIPES: Recipe[] = [
  *
  * Every Pure tea except Crafting Quality has a Milky and a Creamy version: one Pure tea plus
  * three Milk or three Cream. Milk makes the effect last 50% longer; Cream makes it stronger
- * and shorter. Values from RustHelp, verified against the game on 2026-10-01.
+ * and shorter. Values verified against the game on 2026-10-01.
  * ------------------------------------------------------------------ */
 
 const DAIRY_RECIPES: Recipe[] = [

@@ -6,8 +6,7 @@
  * that fixed order, as the colour of its badge: red Bad, grey Ok, green Good. A newborn gets
  * one random copy of each gene from each parent.
  *
- * Values from RustHelp (rusthelp.com/world/cow, /bull, /sheep, /calf, /lamb), verified
- * against the live game on 2026-10-01. Every effect is a base value scaled by the gene's
+ * Values verified against the live game on 2026-10-01. Every effect is a base value scaled by the gene's
  * multiplier, so a balance change is a one-line edit here.
  */
 
@@ -17,9 +16,8 @@ export type LivestockGene = (typeof LIVESTOCK_GENES)[number];
 export const GENE_LEVELS = ['low', 'mid', 'high'] as const;
 export type GeneLevel = (typeof GENE_LEVELS)[number];
 
-/** Date the gene values were last checked against the game, and where they came from. */
+/** Date the gene values were last checked against the game. */
 export const LIVESTOCK_DATA_AS_OF = '2026-10-01';
-export const LIVESTOCK_DATA_SOURCE = 'RustHelp';
 
 export interface LivestockGeneInfo {
   gene: LivestockGene;

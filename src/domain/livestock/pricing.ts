@@ -11,7 +11,7 @@ import { LivestockAnimal, LivestockGeneRow, LivestockSpecies } from './animal.ts
  * - health: 0.40 below 15% state, 0.70 at 47.5%, 1.00 from 80% up
  * - age: 1.00 up to half its lifespan, 0.75 at 75%, 0.50 at the end
  *
- * From a community infographic (2026-09-17); RustHelp documents no sale formula. The anchor
+ * From a community infographic (2026-09-17); no official sale formula is published. The anchor
  * points are measured, the stretches between them are interpolated linearly, and the game
  * randomises the offer, so the result is an estimate, not a quote.
  */
