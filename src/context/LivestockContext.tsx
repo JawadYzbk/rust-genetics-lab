@@ -4,6 +4,7 @@ import { sanitizeHerd } from '../domain/livestock/herdCodec.ts';
 import {
   LivestockAnimal,
   LivestockGeneRow,
+  ObservedCondition,
   LivestockSex,
   LivestockSpecies,
   createAnimal,
@@ -22,8 +23,12 @@ import { useNotification } from './NotificationContext.tsx';
 /** A scanned animal held back because its genes match one already in the herd. */
 export interface PendingScan {
   read: StableRead;
+  observed: ObservedCondition | null;
   matches: LivestockAnimal[];
 }
+
+/** What to do with a pending scan: a new animal, a fresh reading of a known one, or nothing. */
+export type PendingChoice = { kind: 'add' } | { kind: 'update'; id: string } | { kind: 'skip' };
 
 interface LivestockContextValue {
   herd: LivestockAnimal[];
@@ -31,6 +36,7 @@ interface LivestockContextValue {
   updateAnimal: (id: string, patch: Partial<LivestockAnimal>) => void;
   removeAnimal: (id: string) => void;
   replaceHerd: (herd: LivestockAnimal[]) => void;
+  clearHerd: () => void;
 
   selectedId: string | null;
   setSelectedId: (id: string | null) => void;
@@ -45,7 +51,7 @@ interface LivestockContextValue {
   startCameraScan: (video: HTMLVideoElement) => Promise<void>;
   stopScan: () => void;
   pending: PendingScan | null;
-  resolvePending: (add: boolean) => void;
+  resolvePending: (choice: PendingChoice) => void;
 }
 
 const LivestockContext = createContext<LivestockContextValue | null>(null);
@@ -100,19 +106,30 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setSelectedId(null);
   }, []);
 
+  const clearHerd = useCallback(() => {
+    const previous = herdRef.current;
+    setHerd([]);
+    setSelectedId(null);
+    notifySuccess(`Removed ${previous.length} animal${previous.length === 1 ? '' : 's'}`, {
+      label: 'Undo',
+      onClick: () => setHerd(previous)
+    });
+  }, [notifySuccess]);
+
   const setScanKind = useCallback((species: LivestockSpecies, sex: LivestockSex) => {
     setScanSpecies(species);
     setScanSex(sex);
   }, []);
 
   const addScanned = useCallback(
-    (read: StableRead) => {
+    (read: StableRead, observed: ObservedCondition | null) => {
       const { species, sex } = kindRef.current;
       const animal = createAnimal({
         species,
         sex,
         name: suggestAnimalName(species, sex, herdRef.current),
         rows: rowsFromRead(read.rows),
+        observed: observed ?? undefined,
         source: 'scan'
       });
       setHerd((current) => [...current, animal]);
@@ -134,8 +151,8 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         } else if (event.type === 'confirmed') {
           const matches = herdRef.current.filter((a) => encodeAnimalGenes(a.rows) === event.read.key);
           // Wild animals often share a genotype, so a match is a question, not a refusal.
-          if (matches.length > 0) setPending({ read: event.read, matches });
-          else addScanned(event.read);
+          if (matches.length > 0) setPending({ read: event.read, observed: event.observed, matches });
+          else addScanned(event.read, event.observed);
         }
       });
     }
@@ -167,8 +184,15 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, []);
 
   const resolvePending = useCallback(
-    (add: boolean) => {
-      if (pending && add) addScanned(pending.read);
+    (choice: PendingChoice) => {
+      if (pending) {
+        if (choice.kind === 'add') addScanned(pending.read, pending.observed);
+        if (choice.kind === 'update' && pending.observed) {
+          const observed = pending.observed;
+          setHerd((current) => current.map((a) => (a.id === choice.id ? { ...a, observed } : a)));
+          setSelectedId(choice.id);
+        }
+      }
       setPending(null);
     },
     [pending, addScanned]
@@ -181,6 +205,7 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       updateAnimal,
       removeAnimal,
       replaceHerd,
+      clearHerd,
       selectedId,
       setSelectedId,
       scanSpecies,
@@ -199,6 +224,7 @@ export const LivestockProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       updateAnimal,
       removeAnimal,
       replaceHerd,
+      clearHerd,
       selectedId,
       scanSpecies,
       scanSex,

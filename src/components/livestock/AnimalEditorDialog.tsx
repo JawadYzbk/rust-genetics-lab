@@ -170,6 +170,40 @@ export const AnimalEditorDialog: React.FC<AnimalEditorDialogProps> = ({
             </Box>
           </Box>
 
+          <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+            <TextField
+              label="Age (hours)"
+              size="small"
+              type="number"
+              value={draft.observed?.ageSeconds === null || draft.observed?.ageSeconds === undefined ? '' : Math.round((draft.observed.ageSeconds / 3600) * 10) / 10}
+              onChange={(e) => {
+                const hours = e.target.value === '' ? null : Math.max(0, Number(e.target.value));
+                patch({
+                  observed: { ageSeconds: hours === null || !Number.isFinite(hours) ? null : hours * 3600, overall: draft.observed?.overall ?? null, at: Date.now() }
+                });
+              }}
+              slotProps={{ htmlInput: { min: 0, step: 0.1 } }}
+              sx={{ width: 140 }}
+            />
+            <TextField
+              label="Overall condition %"
+              size="small"
+              type="number"
+              value={draft.observed?.overall === null || draft.observed?.overall === undefined ? '' : Math.round(draft.observed.overall * 100)}
+              onChange={(e) => {
+                const pct = e.target.value === '' ? null : Math.min(100, Math.max(0, Number(e.target.value)));
+                patch({
+                  observed: { ageSeconds: draft.observed?.ageSeconds ?? null, overall: pct === null || !Number.isFinite(pct) ? null : pct / 100, at: Date.now() }
+                });
+              }}
+              slotProps={{ htmlInput: { min: 0, max: 100 } }}
+              sx={{ width: 170 }}
+            />
+          </Box>
+          <Typography variant="caption" sx={{ color: 'var(--gl-text-muted)', mt: -1 }}>
+            From the AGE and CONDITIONS rows of the panel. Scanning fills these in; age keeps counting from when it was entered.
+          </Typography>
+
           <FormControlLabel
             control={<Checkbox checked={draft.inbred} onChange={(e) => patch({ inbred: e.target.checked })} />}
             label="Inbred (sells for less and lives shorter)"

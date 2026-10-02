@@ -1,4 +1,4 @@
-import { LivestockGene, LIVESTOCK_GENES, geneMultiplier } from './livestockGenes.ts';
+import { LivestockGene, LIVESTOCK_GENES, LIVESTOCK_GENE_EFFECTS, geneMultiplier } from './livestockGenes.ts';
 import { LivestockAnimal, LivestockGeneRow, LivestockSpecies } from './animal.ts';
 
 /**
@@ -89,18 +89,62 @@ export function estimateSalePrice(input: SalePriceInput): SalePriceEstimate {
   return { price: Math.round(exact), exact, factors };
 }
 
+/** Animals grow up one hour after birth, and only grown animals can be sold. */
+export const ADULT_AGE_SECONDS = 3600;
+
+export function lifespanSeconds(animal: LivestockAnimal): number {
+  const level = animal.rows[0].levels[1] ?? 'mid'; // L
+  const hours = animal.inbred
+    ? LIVESTOCK_GENE_EFFECTS.L.inbredLifespanHours[level]
+    : LIVESTOCK_GENE_EFFECTS.L.lifespanHours[level];
+  return hours * 3600;
+}
+
+export interface CurrentCondition {
+  /** Age now, counted on from the last reading; null when never read. */
+  ageSeconds: number | null;
+  /** Fraction of the lifespan lived, 0..1. */
+  ageLived: number | null;
+  healthState: number | null;
+  isBaby: boolean | null;
+  /** How old the reading is, ms. */
+  readingAgeMs: number | null;
+}
+
 /**
- * Estimate from the animal's top row, which is the one this app treats as the animal's own
- * genes until the meaning of the second row is known.
+ * Where the animal stands now, from the last panel reading. Age keeps counting while the
+ * player is away, so it is projected forward from when it was read; condition is not, as it
+ * depends on care the app cannot see.
+ */
+export function currentCondition(animal: LivestockAnimal, now: number = Date.now()): CurrentCondition {
+  const observed = animal.observed;
+  if (!observed) return { ageSeconds: null, ageLived: null, healthState: null, isBaby: null, readingAgeMs: null };
+  const elapsed = Math.max(0, now - observed.at);
+  const ageSeconds = observed.ageSeconds === null ? null : observed.ageSeconds + elapsed / 1000;
+  return {
+    ageSeconds,
+    ageLived: ageSeconds === null ? null : Math.min(1, ageSeconds / lifespanSeconds(animal)),
+    healthState: observed.overall,
+    isBaby: ageSeconds === null ? null : ageSeconds < ADULT_AGE_SECONDS,
+    readingAgeMs: elapsed
+  };
+}
+
+/**
+ * Estimate from the animal's own (top) row. Health and age come from `conditions` when
+ * given, else from the last reading, else full health and a young adult.
  */
 export function estimateAnimalPrice(
   animal: LivestockAnimal,
-  conditions: { healthState?: number; ageLived?: number } = {}
+  conditions: { healthState?: number; ageLived?: number } = {},
+  now: number = Date.now()
 ): SalePriceEstimate {
+  const current = currentCondition(animal, now);
   return estimateSalePrice({
     species: animal.species,
     row: animal.rows[0],
     inbred: animal.inbred,
-    ...conditions
+    healthState: conditions.healthState ?? current.healthState ?? undefined,
+    ageLived: conditions.ageLived ?? current.ageLived ?? undefined
   });
 }

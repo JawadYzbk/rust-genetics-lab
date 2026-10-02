@@ -1,13 +1,14 @@
 import { LivestockPanelRead, readLivestockPanel } from './livestockPanelReader.ts';
 import { readMarkerDigit } from './markerDigit.ts';
 import { LivestockReadStabilizer, StableRead } from './livestockReadStabilizer.ts';
+import type { ObservedCondition } from '../../domain/livestock/animal.ts';
 import {
   CaptureFrameSource,
   createTrackFrameSource,
   createVideoFrameSource
 } from '../scanner/vision/captureFrameSource.ts';
 import type { LivestockReaderRequest, LivestockReaderResponse } from '../../workers/livestockReader.worker.ts';
-import { prepareMarkerCrop, readMarkerNumber, warmMarkerOcr } from './markerOcr.ts';
+import { PanelConditions, readPanelConditions } from './panelConditions.ts';
 
 /**
  * One livestock scanning session: a frame source (the player's screen, or a phone camera
@@ -26,6 +27,8 @@ export interface LivestockScanState {
   error: string | null;
   /** Most recent per-frame read, confirmed or not; null while no panel is in view. */
   live: LivestockPanelRead | null;
+  /** AGE and OVERALL from the same frame. */
+  liveConditions: PanelConditions | null;
   /** Size of the analysed frame, so overlays can map read coordinates onto a preview. */
   frameSize: { width: number; height: number } | null;
   /** Milliseconds the reader spent on the last frame. */
@@ -34,7 +37,7 @@ export interface LivestockScanState {
 
 export type LivestockScanEvent =
   | { type: 'state'; state: LivestockScanState }
-  | { type: 'confirmed'; read: StableRead }
+  | { type: 'confirmed'; read: StableRead; observed: ObservedCondition | null }
   | { type: 'lost' };
 
 export const IDLE_LIVESTOCK_SCAN_STATE: LivestockScanState = {
@@ -42,6 +45,7 @@ export const IDLE_LIVESTOCK_SCAN_STATE: LivestockScanState = {
   source: null,
   error: null,
   live: null,
+  liveConditions: null,
   frameSize: null,
   lastReadMs: 0
 };
@@ -218,8 +222,6 @@ export class LivestockScanSession {
     this.stabilizer.reset();
     this.hint = null;
     this.ensureWorker();
-    // Marker numbers past 0 and 1 need OCR; load it now so the first animal does not wait.
-    warmMarkerOcr();
     this.setState({ status: 'scanning', source, error: null });
     this.timer = setInterval(() => this.tick(), TICK_MS);
   }
@@ -232,7 +234,7 @@ export class LivestockScanSession {
       });
       this.worker.onmessage = (event: MessageEvent<LivestockReaderResponse>) => {
         this.workerBusy = false;
-        this.handleRead(event.data.read, event.data.elapsedMs);
+        this.handleRead(event.data.read, event.data.conditions, event.data.elapsedMs);
       };
       this.worker.onerror = () => {
         // Fall back to reading on the main thread, at the same cadence.
@@ -305,39 +307,25 @@ export class LivestockScanSession {
         { data: frame.data, width: frame.width, height: frame.height },
         { readMarkerDigit }
       );
-      this.handleRead(read, performance.now() - started);
+      const conditions = read
+        ? readPanelConditions({ data: frame.data, width: frame.width, height: frame.height }, read)
+        : null;
+      this.handleRead(read, conditions, performance.now() - started);
     }
   }
 
-  private handleRead(read: LivestockPanelRead | null, elapsedMs: number): void {
+  private handleRead(read: LivestockPanelRead | null, conditions: PanelConditions | null, elapsedMs: number): void {
     if (this.state.status !== 'scanning') return;
     this.hint = read ? read.bounds : null;
-    this.setState({ live: read, lastReadMs: elapsedMs });
+    this.setState({ live: read, liveConditions: conditions, lastReadMs: elapsedMs });
 
     const event = this.stabilizer.push(read ? { rows: read.rows, confidence: read.confidence } : null, performance.now());
     if (!event) return;
-    if (event.type !== 'confirmed' || !read) {
+    if (event.type === 'confirmed') {
+      this.onEvent({ ...event, observed: conditions ? { ...conditions, at: Date.now() } : null });
+    } else {
       this.onEvent(event);
-      return;
     }
-
-    // Numbers the shape reader could not settle are read by OCR before the animal is
-    // reported. The crop is taken now, while the canvas still holds this exact frame.
-    const markers = [read.top, read.bottom].map((row, i) =>
-      row && event.read.rows[i] && event.read.rows[i].marker.value === null && this.canvas
-        ? prepareMarkerCrop(this.canvas, row.badges[row.badges.length - 1])
-        : null
-    );
-    if (markers.every((crop) => !crop)) {
-      this.onEvent(event);
-      return;
-    }
-    void Promise.all(markers.map((crop) => (crop ? readMarkerNumber(crop) : Promise.resolve(null)))).then((values) => {
-      const rows = event.read.rows.map((row, i) =>
-        values[i] === null || values[i] === undefined ? row : { ...row, marker: { ...row.marker, value: values[i] } }
-      );
-      this.onEvent({ type: 'confirmed', read: { ...event.read, rows } });
-    });
   }
 
   private teardown(): void {

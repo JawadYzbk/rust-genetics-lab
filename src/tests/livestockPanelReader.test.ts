@@ -17,7 +17,7 @@ const PANEL: RGB = [55, 50, 40];
 const COLOURS: Record<string, RGB> = {
   r: [190, 70, 46], // red gene badge
   g: [108, 152, 44], // green gene badge
-  n: [36, 36, 36], // neutral gene badge
+  n: [128, 127, 126], // neutral gene badge: light grey in game
   p: [206, 104, 104], // pink marker
   b: [70, 118, 214] // blue marker
 };

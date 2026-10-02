@@ -1,6 +1,8 @@
 import { GeneLevel } from '../../domain/livestock/livestockGenes.ts';
 import { LivestockGeneRow, MarkerColor } from '../../domain/livestock/animal.ts';
 import { RasterImage } from '../scanner/scannerTypes.ts';
+import { classifyGlyph } from './panelText.ts';
+import { extractMarkerGlyph } from './markerDigit.ts';
 
 /**
  * Finds and reads the livestock gene panel in a frame.
@@ -25,11 +27,14 @@ import { RasterImage } from '../scanner/scannerTypes.ts';
  * Pure: plain RGBA in, plain data out, so it is tested with synthetic and real pixels.
  */
 
-export type BadgeHue = 'red' | 'pink' | 'green' | 'teal' | 'blue' | 'purple' | 'grey' | 'unknown';
+export type BadgeHue = 'red' | 'pink' | 'lime' | 'green' | 'teal' | 'blue' | 'purple' | 'grey' | 'unknown';
 
-/** Colours only the numbered marker badge takes; no gene badge is ever drawn in these. */
-const MARKER_HUES: ReadonlySet<BadgeHue> = new Set<BadgeHue>(['pink', 'teal', 'blue', 'purple']);
-const GENE_HUES: ReadonlySet<BadgeHue> = new Set<BadgeHue>(['red', 'green', 'grey']);
+/**
+ * The gene badges only ever use these three. The marker badge can be any colour, including
+ * the gene green (seen: pink, lime, green, teal, blue, purple), so it is never used to
+ * decide whether a row is a livestock panel.
+ */
+const GENE_HUES: ReadonlySet<BadgeHue> = new Set<BadgeHue>(['red', 'green', 'grey'])
 
 export interface LivestockBadgeRead {
   cx: number;
@@ -116,7 +121,9 @@ export function classifyBadgeColor(r: number, g: number, b: number): BadgeHue {
   // Measured in game: gene green ~81 deg, red ~11 deg; markers teal ~168, blue ~236,
   // purple ~255, pink ~0 (rose).
   const h = hueDegrees(r, g, b);
-  if (h >= 60 && h < 150) return 'green';
+  // Lime (a marker colour, ~70 deg) sits just short of the gene green (~81 deg).
+  if (h >= 45 && h < 75) return 'lime';
+  if (h >= 75 && h < 150) return 'green';
   if (h >= 150 && h < 200) return 'teal';
   if (h >= 200 && h < 248) return 'blue';
   if (h >= 248 && h < 290) return 'purple';
@@ -131,7 +138,7 @@ export function classifyBadgeColor(r: number, g: number, b: number): BadgeHue {
 
 export function hueToLevel(hue: BadgeHue): GeneLevel | null {
   if (hue === 'red' || hue === 'pink') return 'low';
-  if (hue === 'green') return 'high';
+  if (hue === 'green' || hue === 'lime') return 'high';
   if (hue === 'grey') return 'mid';
   return null;
 }
@@ -243,8 +250,10 @@ function centreBrightness(lum: Lum, cx: number, cy: number, diameter: number): n
 }
 
 /**
- * Is there a badge centred here? A badge is a flat-coloured ring around a markedly brighter
- * centre. This is what finds the neutral badges, and what confirms gap-filling guesses.
+ * Is there a badge centred here? A badge is a flat-coloured disc with a markedly brighter
+ * letter in the middle, and -- the part that matters -- a different colour from whatever is
+ * just outside it. Without that last test, a word of panel text (the GENETICS label) passes
+ * as a neutral badge: flat surroundings, bright middle. That shifted whole rows by a slot.
  */
 function probeBadge(
   image: RasterImage,
@@ -256,8 +265,13 @@ function probeBadge(
   const ring = sampleRing(image, lum, cx, cy, diameter);
   if (!ring) return null;
   const contrast = centreBrightness(lum, cx, cy, diameter) - ring.lum;
-  // A flat ring (badges are a single fill) with a letter on it.
   if (ring.spread > 70 || contrast < 40) return null;
+  const outside = sampleRing(image, lum, cx, cy, diameter, 0.6, 0.68);
+  if (outside) {
+    const edge =
+      Math.abs(ring.rgb[0] - outside.rgb[0]) + Math.abs(ring.rgb[1] - outside.rgb[1]) + Math.abs(ring.rgb[2] - outside.rgb[2]);
+    if (edge < 40) return null;
+  }
   return { ring, contrast };
 }
 
@@ -637,6 +651,31 @@ function strayGeneHues(row: LivestockRowRead): number {
   return row.badges.slice(0, GENES_PER_ROW).filter((b) => !GENE_HUES.has(b.hue)).length;
 }
 
+/**
+ * Is this six-badge row an animal's, not a plant clone's? Any neutral (grey) badge settles
+ * it: plant genes are only ever red or green. Otherwise the letters decide. An animal's
+ * second and fourth badges are always L and F, and neither letter exists in plant genetics
+ * (G, H, Y, W, X), so reading those two is enough. Letters too small to read leave the
+ * question open; the row is then accepted only if its marker is not a gene colour.
+ */
+function looksLikeLivestockRow(image: RasterImage, row: LivestockRowRead): boolean {
+  if (row.badges.slice(0, GENES_PER_ROW).some((b) => b.hue === 'grey')) return true;
+  let yes = 0;
+  let no = 0;
+  for (const [slot, letter] of [[1, 'L'], [3, 'F']] as const) {
+    const glyph = extractMarkerGlyph(image, row.badges[slot]);
+    if (!glyph || glyph.height < 7) continue;
+    const match = classifyGlyph({ ...glyph, x0: 0, y0: 0 }, 'LFGHYWX');
+    if (!match) continue;
+    if (match.char === letter) yes++;
+    else if (match.margin > 0.03) no++;
+  }
+  if (no > 0) return false;
+  if (yes > 0) return true;
+  const marker = row.badges[GENES_PER_ROW].hue;
+  return marker !== 'red' && marker !== 'green';
+}
+
 function rowBounds(row: LivestockRowRead) {
   const first = row.badges[0];
   const last = row.badges[BADGES_PER_ROW - 1];
@@ -652,9 +691,8 @@ export interface ReadPanelOptions extends Partial<LivestockReaderOptions> {
 /**
  * Finds the gene panel. Two shapes are accepted:
  *
- * - one row of six (the live panel): five gene colours, then a badge in a marker colour.
- *   The marker colour is what tells this apart from a plant clone's six-badge row, whose
- *   badges are only ever red or green.
+ * - one row of six (the live panel): five badges in gene colours, then the numbered marker
+ *   in any colour.
  * - two rows (an earlier panel): a large row over a smaller one on the same pitch.
  *
  * The candidate with the most directly detected badges wins, so a two-row panel is never
@@ -700,8 +738,9 @@ export function readLivestockPanel(
     if (fit.detected + 1 < bestScore()) break;
     const row = readCached(fit);
     if (!row) continue;
-    if (!MARKER_HUES.has(row.badges[GENES_PER_ROW].hue)) continue;
+    if (row.badges[GENES_PER_ROW].hue === 'unknown') continue;
     if (strayGeneHues(row) > 1) continue;
+    if (!looksLikeLivestockRow(image, row)) continue;
     consider(row, null, fit.detected, BADGES_PER_ROW);
   }
 
@@ -723,8 +762,6 @@ export function readLivestockPanel(
       const bottomRow = topRow ? readCached(bottom) : null;
       if (!topRow || !bottomRow) continue;
       if (strayGeneHues(topRow) + strayGeneHues(bottomRow) > 2) continue;
-      // At least one marker must look like a marker, or this is two unrelated rows of discs.
-      if (!MARKER_HUES.has(topRow.badges[GENES_PER_ROW].hue) && !MARKER_HUES.has(bottomRow.badges[GENES_PER_ROW].hue)) continue;
       consider(topRow, bottomRow, detected, BADGES_PER_ROW * 2);
     }
   }

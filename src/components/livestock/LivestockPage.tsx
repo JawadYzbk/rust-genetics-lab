@@ -39,6 +39,8 @@ import { AnimalDetail } from './AnimalDetail.tsx';
 import { PairSuggestionsPanel } from './PairSuggestionsPanel.tsx';
 import { LivestockCameraDialog } from './LivestockCameraDialog.tsx';
 import { ScanKindSelect } from './ScanKindSelect.tsx';
+import { ConfirmDialog } from '../common/ConfirmDialog.tsx';
+import { formatDuration } from '../../domain/livestock/stats.ts';
 
 const panelSx = { backgroundColor: 'var(--gl-panel-bg)', borderColor: 'var(--gl-border)', borderRadius: '6px' };
 
@@ -52,6 +54,7 @@ export const LivestockPage: React.FC = () => {
     updateAnimal,
     removeAnimal,
     replaceHerd,
+    clearHerd,
     selectedId,
     setSelectedId,
     scan,
@@ -68,6 +71,7 @@ export const LivestockPage: React.FC = () => {
   const [editing, setEditing] = useState<LivestockAnimal | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
+  const [confirmClear, setConfirmClear] = useState(false);
   const fileInput = useRef<HTMLInputElement | null>(null);
 
   const visible = useMemo(() => herd.filter((a) => filter === 'all' || a.species === filter), [herd, filter]);
@@ -162,6 +166,12 @@ export const LivestockPage: React.FC = () => {
             {scan.live ? (
               <>
                 <LivestockGenePanel rows={scan.live.rows} size="md" />
+                {scan.liveConditions && (
+                  <Typography variant="body2" sx={{ color: 'var(--gl-text-secondary)', fontFamily: 'monospace' }}>
+                    Age {scan.liveConditions.ageSeconds === null ? '?' : formatDuration(scan.liveConditions.ageSeconds)} · Overall{' '}
+                    {scan.liveConditions.overall === null ? '?' : `${Math.round(scan.liveConditions.overall * 100)}%`}
+                  </Typography>
+                )}
                 <Typography variant="body2" sx={{ color: 'var(--gl-text-secondary)' }}>
                   Reading this animal. It is added as soon as two frames agree.
                 </Typography>
@@ -184,17 +194,22 @@ export const LivestockPage: React.FC = () => {
             severity="info"
             sx={{ mt: 1.5 }}
             action={
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Button size="small" color="inherit" onClick={() => resolvePending(true)}>
-                  Add anyway
+              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                {pending.observed && (
+                  <Button size="small" color="inherit" onClick={() => resolvePending({ kind: 'update', id: pending.matches[0].id })}>
+                    Update {displayName(pending.matches[0])}
+                  </Button>
+                )}
+                <Button size="small" color="inherit" onClick={() => resolvePending({ kind: 'add' })}>
+                  Add as new
                 </Button>
-                <Button size="small" color="inherit" onClick={() => resolvePending(false)}>
+                <Button size="small" color="inherit" onClick={() => resolvePending({ kind: 'skip' })}>
                   Skip
                 </Button>
               </Box>
             }
           >
-            Same genes as {pending.matches.map(displayName).join(', ')}. A different animal, or the same one again?
+            Same genes as {pending.matches.map(displayName).join(', ')}. The same animal again (update its age and condition), or a different one?
           </Alert>
         )}
       </Paper>
@@ -219,6 +234,13 @@ export const LivestockPage: React.FC = () => {
                   Export herd (JSON)
                 </MenuItem>
                 <MenuItem onClick={() => { setMenuAnchor(null); fileInput.current?.click(); }}>Import herd</MenuItem>
+                <MenuItem
+                  disabled={herd.length === 0}
+                  onClick={() => { setMenuAnchor(null); setConfirmClear(true); }}
+                  sx={{ color: 'var(--gl-error)' }}
+                >
+                  Clear herd
+                </MenuItem>
               </Menu>
               <input
                 ref={fileInput}
@@ -297,7 +319,16 @@ export const LivestockPage: React.FC = () => {
           </Tabs>
           {rightTab === 'animal' &&
             (selected ? (
-              <AnimalDetail animal={selected} herd={herd} onEdit={() => openEditor(selected)} />
+              <AnimalDetail
+                animal={selected}
+                herd={herd}
+                onEdit={() => openEditor(selected)}
+                onRemove={() => {
+                  const removed = selected;
+                  removeAnimal(removed.id);
+                  notifySuccess(`Removed ${displayName(removed)}`, { label: 'Undo', onClick: () => addAnimal(removed) });
+                }}
+              />
             ) : (
               <Paper variant="outlined" sx={{ ...panelSx, p: 3 }}>
                 <Typography variant="body2" sx={{ color: 'var(--gl-text-muted)' }}>
@@ -329,6 +360,18 @@ export const LivestockPage: React.FC = () => {
         }}
       />
       <LivestockCameraDialog open={cameraOpen} onClose={() => setCameraOpen(false)} />
+      <ConfirmDialog
+        open={confirmClear}
+        title="Clear herd?"
+        message={`Remove all ${herd.length} animals from this device. You can undo straight after, or export the herd first from the same menu.`}
+        confirmLabel="Clear herd"
+        isDestructive
+        onConfirm={() => {
+          setConfirmClear(false);
+          clearHerd();
+        }}
+        onCancel={() => setConfirmClear(false)}
+      />
     </Box>
   );
 };

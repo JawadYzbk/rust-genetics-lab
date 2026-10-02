@@ -1,21 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, Chip, Paper, Slider, Stack, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import { LivestockAnimal, animalKindLabel, displayName } from '../../domain/livestock/animal.ts';
-import { animalStats } from '../../domain/livestock/stats.ts';
-import { estimateAnimalPrice } from '../../domain/livestock/pricing.ts';
+import { animalStats, formatDuration } from '../../domain/livestock/stats.ts';
+import { currentCondition, estimateAnimalPrice } from '../../domain/livestock/pricing.ts';
 import { LIVESTOCK_GENE_INFO } from '../../domain/livestock/livestockGenes.ts';
 import { LivestockGenePanel, LEVEL_COLOR } from './LivestockGeneBadges.tsx';
 
 const panelSx = { backgroundColor: 'var(--gl-panel-bg)', borderColor: 'var(--gl-border)', borderRadius: '6px' };
 
+function sliderDefaults(animal: LivestockAnimal) {
+  const current = currentCondition(animal);
+  return {
+    health: current.healthState === null ? 100 : Math.round(current.healthState * 100),
+    age: current.ageLived === null ? 25 : Math.round(current.ageLived * 100)
+  };
+}
+
 export const AnimalDetail: React.FC<{
   animal: LivestockAnimal;
   herd: LivestockAnimal[];
   onEdit: () => void;
-}> = ({ animal, herd, onEdit }) => {
-  const [health, setHealth] = useState(100);
-  const [age, setAge] = useState(25);
+  onRemove: () => void;
+}> = ({ animal, herd, onEdit, onRemove }) => {
+  const [health, setHealth] = useState(() => sliderDefaults(animal).health);
+  const [age, setAge] = useState(() => sliderDefaults(animal).age);
+  // A different animal, or a fresh reading of this one, resets the what-if sliders.
+  useEffect(() => {
+    const defaults = sliderDefaults(animal);
+    setHealth(defaults.health);
+    setAge(defaults.age);
+  }, [animal.id, animal.observed?.at]);
+  const current = currentCondition(animal);
   const estimate = estimateAnimalPrice(animal, { healthState: health / 100, ageLived: age / 100 });
   const stats = animalStats(animal);
   const mother = herd.find((a) => a.id === animal.motherId);
@@ -35,13 +52,34 @@ export const AnimalDetail: React.FC<{
               {animal.source === 'scan' && <Chip size="small" variant="outlined" label="Scanned" />}
             </Box>
           </Box>
-          <Button size="small" variant="outlined" startIcon={<EditIcon />} onClick={onEdit}>
-            Edit
-          </Button>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button size="small" variant="outlined" startIcon={<EditIcon />} onClick={onEdit}>
+              Edit
+            </Button>
+            <Button size="small" variant="outlined" color="error" startIcon={<DeleteOutlineIcon />} onClick={onRemove}>
+              Remove
+            </Button>
+          </Box>
         </Box>
         <Box sx={{ mt: 2 }}>
           <LivestockGenePanel rows={animal.rows} size="lg" />
         </Box>
+        {animal.observed && (
+          <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', mt: 1.5 }}>
+            {current.ageSeconds !== null && (
+              <Chip size="small" variant="outlined" label={`Age ~${formatDuration(current.ageSeconds)}`} />
+            )}
+            {current.healthState !== null && (
+              <Chip size="small" variant="outlined" label={`Overall ${Math.round(current.healthState * 100)}%`} />
+            )}
+            {current.isBaby && <Chip size="small" color="info" label="Baby: sellable once 1h old" />}
+            {current.readingAgeMs !== null && (
+              <Typography variant="caption" sx={{ color: 'var(--gl-text-muted)', alignSelf: 'center' }}>
+                read {formatDuration(current.readingAgeMs / 1000)} ago
+              </Typography>
+            )}
+          </Box>
+        )}
         {(mother || father) && (
           <Typography variant="body2" sx={{ color: 'var(--gl-text-secondary)', mt: 1.5 }}>
             {mother && <>Mother: <b>{displayName(mother)}</b>. </>}
@@ -123,6 +161,11 @@ export const AnimalDetail: React.FC<{
             scrap (range 3-78)
           </Typography>
         </Box>
+        {animal.observed && (
+          <Typography variant="caption" sx={{ color: 'var(--gl-text-secondary)', display: 'block' }}>
+            Health and age start from the last reading of the panel; move the sliders to try other values.
+          </Typography>
+        )}
         <Typography variant="caption" sx={{ color: 'var(--gl-text-muted)', display: 'block' }}>
           50 x type {estimate.factors.type} x genes {estimate.factors.genes.toFixed(2)} x health{' '}
           {estimate.factors.health.toFixed(2)} x age {estimate.factors.age.toFixed(2)}. The game randomises the actual offer.

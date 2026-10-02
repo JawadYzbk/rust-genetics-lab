@@ -20,6 +20,7 @@ export const MARKER_COLOR: Record<MarkerColor, string> = {
   blue: '#686DB5',
   purple: '#735BB8',
   teal: '#5FB3A3',
+  lime: '#A6BE3E',
   red: '#AC472E',
   green: '#89AF44',
   grey: '#8C8C8C',
@@ -28,7 +29,7 @@ export const MARKER_COLOR: Record<MarkerColor, string> = {
 
 const SIZES = { xs: 16, sm: 20, md: 26, lg: 34 } as const;
 
-const MARKER_CYCLE: MarkerColor[] = ['blue', 'purple', 'teal', 'pink', 'grey', 'unknown'];
+const MARKER_CYCLE: MarkerColor[] = ['blue', 'purple', 'teal', 'lime', 'green', 'pink', 'grey', 'unknown'];
 
 export interface LivestockGeneBadgesProps {
   row: LivestockGeneRow;

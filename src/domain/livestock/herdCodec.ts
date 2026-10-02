@@ -15,7 +15,7 @@ import {
 
 const SPECIES: LivestockSpecies[] = ['cattle', 'sheep'];
 const SEXES: LivestockSex[] = ['male', 'female', 'unknown'];
-const MARKERS: MarkerColor[] = ['pink', 'blue', 'purple', 'teal', 'red', 'green', 'grey', 'unknown'];
+const MARKERS: MarkerColor[] = ['pink', 'blue', 'purple', 'teal', 'lime', 'red', 'green', 'grey', 'unknown'];
 
 function sanitizeRow(raw: any): LivestockGeneRow | null {
   if (!raw || !Array.isArray(raw.levels) || raw.levels.length !== 5) return null;
@@ -30,6 +30,13 @@ function sanitizeRow(raw: any): LivestockGeneRow | null {
       color: MARKERS.includes(raw.marker?.color) ? raw.marker.color : 'unknown'
     }
   };
+}
+
+function sanitizeObserved(raw: any): LivestockAnimal['observed'] {
+  if (!raw || typeof raw !== 'object' || !Number.isFinite(raw.at)) return undefined;
+  const age = Number.isFinite(raw.ageSeconds) && raw.ageSeconds >= 0 ? raw.ageSeconds : null;
+  const overall = Number.isFinite(raw.overall) && raw.overall >= 0 && raw.overall <= 1 ? raw.overall : null;
+  return age === null && overall === null ? undefined : { ageSeconds: age, overall, at: raw.at };
 }
 
 export function sanitizeAnimal(raw: any): LivestockAnimal | null {
@@ -47,6 +54,7 @@ export function sanitizeAnimal(raw: any): LivestockAnimal | null {
     motherId: typeof raw.motherId === 'string' ? raw.motherId : undefined,
     fatherId: typeof raw.fatherId === 'string' ? raw.fatherId : undefined,
     notes: typeof raw.notes === 'string' ? raw.notes.slice(0, 500) : undefined,
+    observed: sanitizeObserved(raw.observed),
     source: raw.source === 'scan' ? 'scan' : 'manual',
     createdAt: Number.isFinite(raw.createdAt) ? raw.createdAt : Date.now()
   });

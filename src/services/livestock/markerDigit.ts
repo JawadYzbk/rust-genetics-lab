@@ -1,5 +1,6 @@
 import { RasterImage } from '../scanner/scannerTypes.ts';
 import { LivestockBadgeRead } from './livestockPanelReader.ts';
+import { readDigits, segmentGlyphs } from './panelText.ts';
 
 /**
  * Instant read of the number on a marker badge, for the shapes that are unambiguous even a
@@ -130,7 +131,17 @@ export function classifyMarkerGlyph(glyph: MarkerGlyph): number | null {
   return null;
 }
 
+/**
+ * The marker's number: template matching first (any value, one or more digits), then the
+ * shape rules for a 0 or 1 too small for templates to be trusted.
+ */
 export function readMarkerDigit(image: RasterImage, badge: LivestockBadgeRead): number | null {
   const glyph = extractMarkerGlyph(image, badge);
-  return glyph ? classifyMarkerGlyph(glyph) : null;
+  if (!glyph) return null;
+  const digits = segmentGlyphs(glyph.mask, glyph.width, glyph.height).filter(
+    (g) => g.height >= glyph.height * 0.6
+  );
+  const value = readDigits(digits);
+  if (value !== null) return value;
+  return classifyMarkerGlyph(glyph);
 }

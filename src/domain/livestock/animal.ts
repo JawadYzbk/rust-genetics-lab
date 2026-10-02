@@ -5,15 +5,25 @@ export type LivestockSex = 'male' | 'female' | 'unknown';
 
 /**
  * Colour of the sixth badge, which carries a number. Its meaning is not documented yet
- * (captures show 0 on pink, 4 on teal, 6 on purple, 14 on blue), so it is stored exactly as
+ * (captures show 0 on pink, 2 on green, 4 on teal, 6 on purple, 10 on lime, 14 on blue), so it is stored exactly as
  * read and never interpreted.
  */
-export type MarkerColor = 'pink' | 'blue' | 'purple' | 'teal' | 'red' | 'green' | 'grey' | 'unknown';
+export type MarkerColor = 'pink' | 'blue' | 'purple' | 'teal' | 'lime' | 'red' | 'green' | 'grey' | 'unknown';
 
 export interface LivestockGeneRow {
   /** One level per gene in D, L, Y, F, H order; `null` where the badge could not be read. */
   levels: Array<GeneLevel | null>;
   marker: { value: number | null; color: MarkerColor };
+}
+
+/** AGE and CONDITIONS > OVERALL as last read from the game (or entered by hand). */
+export interface ObservedCondition {
+  /** Age shown in the panel, in seconds, at `at`. */
+  ageSeconds: number | null;
+  /** Overall condition, 0..1. */
+  overall: number | null;
+  /** When it was read, ms since epoch. Age keeps counting from here. */
+  at: number;
 }
 
 export interface LivestockAnimal {
@@ -32,6 +42,7 @@ export interface LivestockAnimal {
   motherId?: string;
   fatherId?: string;
   notes?: string;
+  observed?: ObservedCondition;
   source: 'scan' | 'manual';
   createdAt: number;
 }
@@ -76,6 +87,7 @@ export function createAnimal(partial: Partial<LivestockAnimal> = {}): LivestockA
     motherId: partial.motherId,
     fatherId: partial.fatherId,
     notes: partial.notes,
+    observed: partial.observed,
     source: partial.source ?? 'manual',
     createdAt: partial.createdAt ?? Date.now()
   };
@@ -88,6 +100,7 @@ const MARKER_CODE: Record<MarkerColor, string> = {
   blue: 'b',
   purple: 'v',
   teal: 't',
+  lime: 'l',
   red: 'r',
   green: 'g',
   grey: 'n',
@@ -98,6 +111,7 @@ const CODE_MARKER: Record<string, MarkerColor> = {
   b: 'blue',
   v: 'purple',
   t: 'teal',
+  l: 'lime',
   r: 'red',
   g: 'green',
   n: 'grey',
@@ -116,7 +130,7 @@ export function encodeGeneRow(row: LivestockGeneRow): string {
 }
 
 export function decodeGeneRow(code: string): LivestockGeneRow | null {
-  const match = /^([rng?]{5})\|(\?|\d{1,3})([pbvtrgn?])$/i.exec(code.trim());
+  const match = /^([rng?]{5})\|(\?|\d{1,3})([pbvtlrgn?])$/i.exec(code.trim());
   if (!match) return null;
   const levels = match[1]
     .toLowerCase()

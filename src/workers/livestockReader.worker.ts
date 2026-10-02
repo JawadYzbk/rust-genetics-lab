@@ -9,6 +9,7 @@
 
 import { readLivestockPanel, LivestockPanelRead, LivestockRowRead } from '../services/livestock/livestockPanelReader.ts';
 import { readMarkerDigit } from '../services/livestock/markerDigit.ts';
+import { PanelConditions, readPanelConditions } from '../services/livestock/panelConditions.ts';
 
 export interface LivestockReaderRequest {
   id: number;
@@ -22,6 +23,8 @@ export interface LivestockReaderRequest {
 export interface LivestockReaderResponse {
   id: number;
   read: LivestockPanelRead | null;
+  /** AGE and OVERALL from the same frame, when the panel has them. */
+  conditions: PanelConditions | null;
   elapsedMs: number;
   /** True when the hint region was enough. */
   fromHint: boolean;
@@ -94,6 +97,7 @@ self.onmessage = (event: MessageEvent<LivestockReaderRequest>) => {
     read = readLivestockPanel({ data, width, height }, { readMarkerDigit });
   }
 
-  const response: LivestockReaderResponse = { id, read, elapsedMs: performance.now() - started, fromHint };
+  const conditions = read ? readPanelConditions({ data, width, height }, read) : null;
+  const response: LivestockReaderResponse = { id, read, conditions, elapsedMs: performance.now() - started, fromHint };
   (self as unknown as Worker).postMessage(response);
 };
