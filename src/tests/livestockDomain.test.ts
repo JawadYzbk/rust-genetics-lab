@@ -107,11 +107,11 @@ describe('livestock stats (game values)', () => {
   it('reads a cow\'s effects from its expressed genes', () => {
     const cow = createAnimal({ species: 'cattle', sex: 'female', rows: [row('ggrgn')] });
     const byLabel = Object.fromEntries(animalStats(cow).map((s) => [s.label, s.value]));
-    expect(byLabel['Dung interval']).toBe('6m 15s (9.6/h)');
+    expect(byLabel['Dung interval']).toBe('12m 30s (4.8/h)');
     expect(byLabel['Adult lifespan']).toBe('72h');
     expect(byLabel['Milking cooldown']).toBe('8m 20s');
     expect(byLabel['Milk per milking']).toBe('1');
-    expect(byLabel['Cooldown after giving birth']).toBe('41m');
+    expect(byLabel['Cooldown after giving birth']).toBe('41m 15s');
     expect(byLabel['Twins chance']).toBe('60%');
     expect(byLabel['Male breeding cooldown']).toBeUndefined();
   });
@@ -119,9 +119,9 @@ describe('livestock stats (game values)', () => {
   it('matches the documented Ok and Bad values', () => {
     const bull = createAnimal({ species: 'cattle', sex: 'male', rows: [row('rnrrr')] });
     const byLabel = Object.fromEntries(animalStats(bull).map((s) => [s.label, s.value]));
-    expect(byLabel['Male breeding cooldown']).toBe('15m');
+    expect(byLabel['Male breeding cooldown']).toBe('15m 23s');
     expect(byLabel['Adult lifespan']).toBe('48h');
-    expect(byLabel['Dung interval']).toBe('17m (3.6/h)');
+    expect(byLabel['Dung interval']).toBe('33m 20s (1.8/h)');
     expect(byLabel['Lowest need for full condition']).toBe('71%');
   });
 
@@ -130,14 +130,27 @@ describe('livestock stats (game values)', () => {
     const byLabel = Object.fromEntries(animalStats(ram).map((s) => [s.label, s.value]));
     expect(byLabel['Wool per full fleece']).toBe('10');
     expect(byLabel['Fleece regrow']).toBe('5m');
-    expect(byLabel['Dung interval']).toBe('10m (6/h)');
+    expect(byLabel['Dung interval']).toBe('20m (3/h)');
   });
 
-  it('weakens inbred genes: Good acts as Ok, Ok falls halfway to Bad', () => {
-    const good = createAnimal({ inbred: true, rows: [row('ngnnn')] });
-    const ok = createAnimal({ inbred: true, rows: [row('nnnnn')] });
-    expect(animalStats(good).find((s) => s.gene === 'L')?.value).toBe('48h');
-    expect(animalStats(ok).find((s) => s.gene === 'L')?.value).toBe('39h 36m');
+  it('needs 21 Good-dung adults per Biofuel Generator, and no dung from babies', () => {
+    const cow = createAnimal({ species: 'cattle', sex: 'female', rows: [row('gnnnn')] });
+    expect(animalStats(cow).find((s) => s.gene === 'D')?.note).toMatch(/^21 adults/);
+    const calf = createAnimal({ species: 'cattle', rows: [row('gnnnn')], observed: { ageSeconds: 600, overall: 1, at: Date.now() } });
+    expect(animalStats(calf).find((s) => s.gene === 'D')?.applies).toBe(false);
+  });
+
+  it('weakens every inbred gene effect to x0.7', () => {
+    const lifespan = (genes: string) =>
+      animalStats(createAnimal({ inbred: true, rows: [row(genes)] })).find((s) => s.gene === 'L')?.value;
+    expect(lifespan('nrnnn')).toBe('21h 50m');
+    expect(lifespan('nnnnn')).toBe('33h 36m');
+    expect(lifespan('ngnnn')).toBe('50h 24m');
+
+    const cow = createAnimal({ inbred: true, species: 'cattle', sex: 'female', rows: [row('nngnn')] });
+    expect(animalStats(cow).find((s) => s.label === 'Milk per milking')?.value).toBe('1');
+    const sheep = createAnimal({ inbred: true, species: 'sheep', rows: [row('nngnn')] });
+    expect(animalStats(sheep).find((s) => s.label === 'Wool per full fleece')?.value).toBe('11');
   });
 });
 
@@ -229,8 +242,8 @@ describe('livestock pairing (documented inheritance)', () => {
 
     const inbred = evaluatePair(pureBull, calf, herd);
     expect(inbred.relation).toBe('parent-child');
-    // Every calf shows Good, but inbred Good acts as Ok.
-    expect(inbred.expectedGeneFactor).toBeCloseTo(1);
+    // Every calf shows Good, weakened to x0.7 by inbreeding: mean 1.56 x 0.7.
+    expect(inbred.expectedGeneFactor).toBeCloseTo(1.092);
   });
 
   it('finds a shared grandparent', () => {

@@ -17,7 +17,7 @@ export const GENE_LEVELS = ['low', 'mid', 'high'] as const;
 export type GeneLevel = (typeof GENE_LEVELS)[number];
 
 /** Date the gene values were last checked against the game. */
-export const LIVESTOCK_DATA_AS_OF = '2026-10-01';
+export const LIVESTOCK_DATA_AS_OF = '2026-10-02';
 
 export interface LivestockGeneInfo {
   gene: LivestockGene;
@@ -25,11 +25,15 @@ export interface LivestockGeneInfo {
   summary: string;
   multipliers: Record<GeneLevel, number>;
   /**
-   * Inbred animals' genes act weaker: Good acts as Ok, Ok falls halfway to Bad. Bad stays
-   * Bad. Inbred animals still pass on their Good copies.
+   * Inbred animals' genes act weaker: every effect is scaled by 0.7 (an inbred Good sheep
+   * gives 11 wool instead of 16, inbred lifespans are 21.8h / 33.6h / 50.4h). Inbred animals
+   * still pass on their Good copies.
    */
   inbredMultipliers: Record<GeneLevel, number>;
 }
+
+/** Inbreeding scales every gene effect by this. */
+export const INBRED_EFFECT = 0.7;
 
 function gene(
   gene: LivestockGene,
@@ -43,7 +47,7 @@ function gene(
     name,
     summary,
     multipliers: { low: bad, mid: 1, high: good },
-    inbredMultipliers: { low: bad, mid: (1 + bad) / 2, high: 1 }
+    inbredMultipliers: { low: bad * INBRED_EFFECT, mid: INBRED_EFFECT, high: good * INBRED_EFFECT }
   };
 }
 
@@ -77,11 +81,17 @@ export const LIVESTOCK_BASE = {
   woolPerFleece: 10,
   maleBreedingCooldownSeconds: 600,
   femaleCooldownAfterBirthSeconds: 3960,
-  /** Dung interval at full condition, seconds (±20%). Tame animals only. */
-  dungIntervalSeconds: 600,
+  /**
+   * Dung interval at full condition, seconds (±20%). Tame adults only: cows, bulls and sheep
+   * all drop dung, calves and lambs do not. One dung is 36s of biofuel.
+   */
+  dungIntervalSeconds: 1200,
   /** Chance of twins with a Good fertility gene. */
   goodFertilityTwinChance: 0.6
 } as const;
+
+/** The Biofuel Generator burns one dung every this many seconds (100 an hour). */
+export const BIOFUEL_SECONDS_PER_DUNG = 36;
 
 /** Lowest need level that still counts as full condition, per Hardiness level. */
 export const HARDINESS_FULL_CONDITION: Record<GeneLevel, number> = { low: 0.71, mid: 0.5, high: 0.33 };

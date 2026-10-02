@@ -39,6 +39,7 @@ import { LivestockGenePanel } from './LivestockGeneBadges.tsx';
 import { AnimalEditorDialog } from './AnimalEditorDialog.tsx';
 import { AnimalDetail } from './AnimalDetail.tsx';
 import { PairSuggestionsPanel } from './PairSuggestionsPanel.tsx';
+import { LivestockRulesPanel } from './LivestockRulesPanel.tsx';
 import { LivestockCameraDialog } from './LivestockCameraDialog.tsx';
 import { ScanKindSelect } from './ScanKindSelect.tsx';
 import { ConfirmDialog } from '../common/ConfirmDialog.tsx';
@@ -47,7 +48,7 @@ import { formatDuration } from '../../domain/livestock/stats.ts';
 const panelSx = { backgroundColor: 'var(--gl-panel-bg)', borderColor: 'var(--gl-border)', borderRadius: '6px' };
 
 type SpeciesFilter = 'all' | LivestockSpecies;
-type RightTab = 'animal' | 'pairs';
+type RightTab = 'animal' | 'pairs' | 'rules';
 
 export const LivestockPage: React.FC = () => {
   const {
@@ -326,6 +327,7 @@ export const LivestockPage: React.FC = () => {
           <Tabs value={rightTab} onChange={(_, v: RightTab) => setRightTab(v)} sx={{ mb: 1.5, minHeight: 40 }}>
             <Tab value="animal" label="Animal" sx={{ minHeight: 40 }} />
             <Tab value="pairs" label="Pair suggestions" sx={{ minHeight: 40 }} />
+            <Tab value="rules" label="Rules" sx={{ minHeight: 40 }} />
           </Tabs>
           {rightTab === 'animal' &&
             (selected ? (
@@ -356,6 +358,7 @@ export const LivestockPage: React.FC = () => {
               }}
             />
           )}
+          {rightTab === 'rules' && <LivestockRulesPanel />}
         </Box>
       </Box>
 

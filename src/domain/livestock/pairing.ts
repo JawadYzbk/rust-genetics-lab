@@ -1,6 +1,6 @@
 import { GeneLevel, LIVESTOCK_GENES, geneMultiplier } from './livestockGenes.ts';
 import { LivestockAnimal, LivestockSex } from './animal.ts';
-import { BASE_SALE_PRICE, SPECIES_PRICE_FACTOR, INBRED_GENE_FACTOR } from './pricing.ts';
+import { BASE_SALE_PRICE, SPECIES_PRICE_FACTOR } from './pricing.ts';
 import {
   GenotypeDist,
   HerdGenotypes,
@@ -142,8 +142,8 @@ export function evaluatePair(
   const femaleDists = genotypes.get(female.id) ?? LIVESTOCK_GENES.map(() => WILD_GENOTYPE);
   const perGene = LIVESTOCK_GENES.map((_, i) => geneOutlook(i, femaleDists[i], maleDists[i], inbred));
   const meanMultiplier = perGene.reduce((sum, g) => sum + g.expectedMultiplier, 0) / perGene.length;
-  // The sale formula's own inbred penalty applies on top of the weaker genes.
-  const saleFactor = inbred ? meanMultiplier * INBRED_GENE_FACTOR : meanMultiplier;
+  // Inbred multipliers already carry the x0.7 the sale formula applies to inbred animals.
+  const saleFactor = meanMultiplier;
 
   return {
     male,

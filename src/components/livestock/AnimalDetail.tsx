@@ -130,7 +130,7 @@ export const AnimalDetail: React.FC<{
           What these genes do
         </Typography>
         <Typography variant="caption" sx={{ color: 'var(--gl-text-muted)', display: 'block', mb: 1 }}>
-          From the genes the panel shows{animal.inbred ? ', weakened by inbreeding (Good acts as Ok, Ok halfway to Bad)' : ''}. Values checked against the game on 1 Oct 2026.
+          From the genes the panel shows{animal.inbred ? ', weakened by inbreeding (every gene effect x0.7)' : ''}. Values checked against the game on 2 Oct 2026.
         </Typography>
         <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto auto', columnGap: 1.5, rowGap: 0.75, alignItems: 'center' }}>
           {stats.map((stat) => (
@@ -177,6 +177,11 @@ export const AnimalDetail: React.FC<{
               <Typography variant="caption" sx={{ color: 'var(--gl-text-faint)', fontFamily: 'monospace', textAlign: 'right' }}>
                 base {stat.baseline}
               </Typography>
+              {stat.note && (
+                <Typography variant="caption" sx={{ gridColumn: '2 / -1', mt: -0.5, color: 'var(--gl-text-muted)' }}>
+                  {stat.note}
+                </Typography>
+              )}
             </React.Fragment>
           ))}
         </Box>
