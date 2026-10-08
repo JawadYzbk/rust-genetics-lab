@@ -223,7 +223,7 @@ export const RecipesPage: React.FC = () => {
                 sx={{
                   py: 0.25,
                   px: 1,
-                  backgroundColor: viewMode === 'list' ? 'rgba(0, 229, 255, 0.15)' : 'transparent',
+                  backgroundColor: viewMode === 'list' ? 'rgba(var(--gl-primary-rgb), 0.15)' : 'transparent',
                   color: viewMode === 'list' ? 'var(--gl-primary)' : 'var(--gl-text-muted)',
                   borderColor: 'var(--gl-border-strong)'
                 }}
@@ -239,7 +239,7 @@ export const RecipesPage: React.FC = () => {
                 sx={{
                   py: 0.25,
                   px: 1,
-                  backgroundColor: viewMode === 'grid' ? 'rgba(0, 229, 255, 0.15)' : 'transparent',
+                  backgroundColor: viewMode === 'grid' ? 'rgba(var(--gl-primary-rgb), 0.15)' : 'transparent',
                   color: viewMode === 'grid' ? 'var(--gl-primary)' : 'var(--gl-text-muted)',
                   borderColor: 'var(--gl-border-strong)'
                 }}
@@ -309,7 +309,7 @@ export const RecipesPage: React.FC = () => {
                             sx={{
                               fontWeight: 700,
                               color: 'var(--gl-text-primary)',
-                              fontFamily: '"Roboto Mono", monospace',
+                              fontFamily: 'var(--font-family-mono)',
                               fontSize: '0.85rem'
                             }}
                           >
@@ -374,7 +374,7 @@ export const RecipesPage: React.FC = () => {
                               onClick={() => toggleRowExpansion(recipe.id)}
                               sx={{
                                 color: isExpanded ? 'var(--gl-primary)' : 'var(--gl-text-muted)',
-                                backgroundColor: isExpanded ? 'rgba(0, 229, 255, 0.1)' : 'transparent',
+                                backgroundColor: isExpanded ? 'rgba(var(--gl-primary-rgb), 0.1)' : 'transparent',
                                 '&:hover': { color: 'var(--gl-primary)' }
                               }}
                             >
@@ -456,7 +456,7 @@ export const RecipesPage: React.FC = () => {
                       sx={{
                         fontWeight: 700,
                         color: 'var(--gl-text-primary)',
-                        fontFamily: '"Roboto Mono", monospace',
+                        fontFamily: 'var(--font-family-mono)',
                         lineHeight: 1.2
                       }}
                     >
