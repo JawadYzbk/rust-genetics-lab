@@ -26,7 +26,7 @@ import GridViewIcon from '@mui/icons-material/GridView';
 import SearchIcon from '@mui/icons-material/Search';
 import FunctionsIcon from '@mui/icons-material/Functions';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { RUST_RECIPES, getItemImageSlug, Recipe } from '../../domain/recipes/recipesData.ts';
+import { RUST_RECIPES, STATION_LABELS, getItemImageSlug } from '../../domain/recipes/recipesData.ts';
 import { RecipeEngine } from '../../domain/recipes/recipeEngine.ts';
 
 const recipeEngine = new RecipeEngine(RUST_RECIPES);
@@ -59,6 +59,20 @@ const ItemIcon: React.FC<{ name: string; size: number }> = ({ name, size }) => (
       sx={{ width: size, height: size, objectFit: 'contain' }}
     />
   </Box>
+);
+
+/** Effect text and crafting station shown under a recipe name. */
+const RecipeDetails: React.FC<{ description?: string; station: string }> = ({ description, station }) => (
+  <>
+    {description && (
+      <Typography variant="caption" sx={{ display: 'block', color: 'var(--gl-text-secondary)', lineHeight: 1.35 }}>
+        {description}
+      </Typography>
+    )}
+    <Typography variant="caption" sx={{ display: 'block', color: 'var(--gl-text-muted)', fontSize: '0.7rem' }}>
+      {station}
+    </Typography>
+  </>
 );
 
 export const RecipesPage: React.FC = () => {
@@ -304,17 +318,20 @@ export const RecipesPage: React.FC = () => {
                       <TableCell sx={{ borderColor: 'var(--gl-elevated-bg)', py: 1.2 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                           <ItemIcon name={recipe.name} size={28} />
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              fontWeight: 700,
-                              color: 'var(--gl-text-primary)',
-                              fontFamily: 'var(--font-family-mono)',
-                              fontSize: '0.85rem'
-                            }}
-                          >
-                            {recipe.name}
-                          </Typography>
+                          <Box sx={{ minWidth: 0 }}>
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                fontWeight: 700,
+                                color: 'var(--gl-text-primary)',
+                                fontFamily: 'var(--font-family-mono)',
+                                fontSize: '0.85rem'
+                              }}
+                            >
+                              {recipe.name}
+                            </Typography>
+                            <RecipeDetails description={recipe.description} station={STATION_LABELS[recipe.station]} />
+                          </Box>
                         </Box>
                       </TableCell>
 
@@ -466,6 +483,9 @@ export const RecipesPage: React.FC = () => {
                       Yield: {recipe.output.quantity * multiplier}x
                     </Typography>
                   </Box>
+                </Box>
+                <Box sx={{ mt: -0.75, mb: 1.5 }}>
+                  <RecipeDetails description={recipe.description} station={STATION_LABELS[recipe.station]} />
                 </Box>
 
                 {/* Direct Ingredients */}
