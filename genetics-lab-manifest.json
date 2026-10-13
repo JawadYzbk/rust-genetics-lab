@@ -1,11 +1,23 @@
 {
   "schema": 1,
   "name": "genetics-lab",
-  "version": "1.10.0",
-  "buildId": "451089cc641ccb491460f5155030f919d8144853a988b6796ffdead8d9ef73ef",
+  "version": "1.11.0",
+  "buildId": "1a50ba6c4df294cd230fb93774fa74bb6a049a9cacc75683bec7cd6a413e8400",
   "minDesktopVersion": null,
-  "distRef": "dist-v1.10.0",
+  "distRef": "dist-v1.11.0",
   "changelog": [
+    {
+      "version": "1.11.0",
+      "date": "2026-10-13",
+      "sections": [
+        {
+          "title": "Features",
+          "items": [
+            "Show the guided breeding step in a 3D planter; fix black plant leaves"
+          ]
+        }
+      ]
+    },
     {
       "version": "1.10.0",
       "date": "2026-10-13",
@@ -219,27 +231,27 @@
       ]
     }
   ],
-  "generatedAt": "2026-10-13T09:58:48.180Z",
+  "generatedAt": "2026-10-13T10:12:41.172Z",
   "files": [
     {
-      "path": "assets/DynamicGeneLocator-BtjLsT_b.js",
-      "sha256": "97470f7dfcfb6733ab1477ec15b9c5452961c465cea0781b43685c419ad746e0",
+      "path": "assets/DynamicGeneLocator-hVjxGwv1.js",
+      "sha256": "2c781641f2db9c683811f4ed53c4f3b72dec0f68680e8fb9bc71070a55d9c3f8",
       "size": 12676
     },
     {
-      "path": "assets/LivestockPage-CrJeLJvS.js",
-      "sha256": "f66fa033961995ea47c28cc1dd3ad16777ec00ec033db2152b1dd5f944565919",
+      "path": "assets/LivestockPage-DtblAesy.js",
+      "sha256": "b64b4935043c865ed61ec83e333288768bd20c78dd3f5362382f7499a148d796",
       "size": 46944
     },
     {
-      "path": "assets/MobileCameraScanner-B7kr4JNb.js",
-      "sha256": "cd5d35e55ad27959e0886791b11f36c62bb5f5bee9d6fdc9d14e1a8ef5f42088",
+      "path": "assets/MobileCameraScanner-DLXDK6Fs.js",
+      "sha256": "ba91693dbf59c418d5d8fb884c96f24ecf9d970e8dfc52d67c555fcb9b47a2eb",
       "size": 15914
     },
     {
-      "path": "assets/Planter3DView-VOrIIo6Q.js",
-      "sha256": "b003d6f325f43251a47840ae471e657a4aaf0c8c2805d9accd42b9b69053a7af",
-      "size": 20718
+      "path": "assets/Planter3DView-BvHmfwBy.js",
+      "sha256": "2877e8c1895ffcde35dc42f072440820b4b8b36711a5079b4e6fef812d306e00",
+      "size": 20834
     },
     {
       "path": "assets/cameraScannerConfig-Bwgt-29W.js",
@@ -247,8 +259,8 @@
       "size": 902
     },
     {
-      "path": "assets/cameraScannerService-hCDqCyPa.js",
-      "sha256": "88c931e17f42fa537764b52f40f1acc729dbc05ac574fcef709c2df78b5fd5d1",
+      "path": "assets/cameraScannerService-BC-eN66-.js",
+      "sha256": "5cc057170754a26a3b48630652062647915c9b678a7ca55db0cadf97b36bf0ab",
       "size": 20833
     },
     {
@@ -277,14 +289,14 @@
       "size": 58456
     },
     {
-      "path": "assets/index-BZ0knD5e.js",
-      "sha256": "dc907f24b930394c52b48db94be1ec992824be8b7cf895f4037fe91bfd944bd6",
-      "size": 488025
-    },
-    {
       "path": "assets/index-DObK7Mmk.css",
       "sha256": "57ee8fde9500fd58edcfcca3086ba633def0fb145d615817c0da9840c8433993",
       "size": 5316
+    },
+    {
+      "path": "assets/index-D_6zL3xQ.js",
+      "sha256": "626f35700618e6623a6f18572e66489d7fd1f6a7e2366aba201ee3796e30bace",
+      "size": 490378
     },
     {
       "path": "assets/livestockReader.worker-DmWaPnnL.js",
@@ -307,9 +319,9 @@
       "size": 46378
     },
     {
-      "path": "assets/vendor-mui-gL0ZtvXk.js",
-      "sha256": "e7d5871d7fb5ad4aac2948d7dfd3cb36e07afba2788f4f650711f26059e3cfe2",
-      "size": 389656
+      "path": "assets/vendor-mui-CUDa3EXl.js",
+      "sha256": "0ad742977bdb8b8a4c3bfd2c533db94200e2cdfb980a002cbb8083b56e758baa",
+      "size": 389737
     },
     {
       "path": "assets/vendor-react-BrcHJDSH.js",
@@ -317,9 +329,9 @@
       "size": 150650
     },
     {
-      "path": "assets/vendor-three-DcxYJAn1.js",
-      "sha256": "31bb32c91594a34c5aa7ddc6f6bd8aede2baa1621dfca9275fdd6b16c7838e78",
-      "size": 671838
+      "path": "assets/vendor-three-CQu_iG34.js",
+      "sha256": "8da60fc54e7485ab0804b45b1ce1868c77c698edc40dcf7ea2d521240ddda2ef",
+      "size": 671846
     },
     {
       "path": "audio/headshot.mp3",
@@ -973,7 +985,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "510b26aef2e4eeb93ada733717f6bebb74711159a116ba51e78e3f2b33263cb9",
+      "sha256": "ef8b6b15b2e021e37ae52dc39ccd7cfe03a5084a62cbdf5a3d1a394b50dfd678",
       "size": 4532
     },
     {
