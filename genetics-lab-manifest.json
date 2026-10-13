@@ -1,11 +1,23 @@
 {
   "schema": 1,
   "name": "genetics-lab",
-  "version": "1.8.0",
-  "buildId": "32d0adcd16cb0ef054127d8b0af0d745ff05ef17d3b69e3d5c2b2bb14c9f3e65",
+  "version": "1.9.0",
+  "buildId": "15628ef58143f250895649436bed4af7b0ad431b880903a7d3c44eb459e27518",
   "minDesktopVersion": null,
-  "distRef": "dist-v1.8.0",
+  "distRef": "dist-v1.9.0",
   "changelog": [
+    {
+      "version": "1.9.0",
+      "date": "2026-10-13",
+      "sections": [
+        {
+          "title": "Features",
+          "items": [
+            "Open patch notes at any time"
+          ]
+        }
+      ]
+    },
     {
       "version": "1.8.0",
       "date": "2026-10-13",
@@ -195,21 +207,21 @@
       ]
     }
   ],
-  "generatedAt": "2026-10-13T09:10:22.518Z",
+  "generatedAt": "2026-10-13T09:23:55.558Z",
   "files": [
     {
-      "path": "assets/DynamicGeneLocator-DLOPIjFg.js",
-      "sha256": "821307613a636e660de481d64db8bf9ee7cac1107a92d710bbfc57a5078633fc",
+      "path": "assets/DynamicGeneLocator-D-1Z28nP.js",
+      "sha256": "29db14f4ab73dd9c9507af4c2ecb0d201866756c3b18662a5c15bba0600dbd90",
       "size": 12676
     },
     {
-      "path": "assets/LivestockPage-CEnaazLI.js",
-      "sha256": "d03f14b836941afa8c003ef761cc3f24205e4739b284d21b4edc0ae0499eb4d7",
+      "path": "assets/LivestockPage-tuqU8zue.js",
+      "sha256": "1966e8fee6f6f4ce6437bcc2b96aeb6b2fbac2c443510c8aa1752d9602207b01",
       "size": 46944
     },
     {
-      "path": "assets/MobileCameraScanner-CdqVJnmm.js",
-      "sha256": "0b074ca0756d2fe8b8122dc773cffe419f217bba0f738071c4d4b5425dddddde",
+      "path": "assets/MobileCameraScanner-DdDJiLLz.js",
+      "sha256": "bfe648f75af07437823dac5bbd7f3ef9643df40607000ff7f80b1fe83357ae3e",
       "size": 15914
     },
     {
@@ -218,14 +230,14 @@
       "size": 902
     },
     {
-      "path": "assets/cameraScannerService-DiOVs5sJ.js",
-      "sha256": "d7ed9eb5ec435ee0e1b0c0c485232442be21cea6b5541c2a239cc14377b8164b",
+      "path": "assets/cameraScannerService-BIkf7vYv.js",
+      "sha256": "e7341911f4f62e9ea3ded6e65e526cf29a42b7318447df749369683081f184c0",
       "size": 20833
     },
     {
-      "path": "assets/index-BmolswVg.js",
-      "sha256": "92109a208a1adccfdec8b8d0821d586331c8f5ae321ae4987f596d8585cb970d",
-      "size": 470617
+      "path": "assets/index-B6P74wD7.js",
+      "sha256": "4ffa76522251e3d8d2356a61f86b44cd8aced812f8f0bf2e113cb5d2a4bbf4aa",
+      "size": 472373
     },
     {
       "path": "assets/index-DObK7Mmk.css",
@@ -253,8 +265,8 @@
       "size": 46378
     },
     {
-      "path": "assets/vendor-mui-B2lhInV3.js",
-      "sha256": "c1413d09057bde8c57336929f0b9115f1b3f25328ed92eb5ff239ae344c94042",
+      "path": "assets/vendor-mui-C-Vucpfb.js",
+      "sha256": "389c97c42dae8f622286f401ed686bdfe7b2d4b66d28c4112b0b7e564492dd83",
       "size": 388145
     },
     {
@@ -904,7 +916,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "88017d6955591a622a9af761667e488a20ae8c4c9227aa97d7bdf997c210945d",
+      "sha256": "217baebe7ed3d13a68f41057d47979a9548bb8c3bdfe9645f81b2299fb2bad04",
       "size": 4532
     },
     {
