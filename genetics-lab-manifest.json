@@ -1,11 +1,23 @@
 {
   "schema": 1,
   "name": "genetics-lab",
-  "version": "1.14.0",
-  "buildId": "6171a4a6db3301d05a8a3104551607df7842c138a3dbfd19a1b11dc6d0173ba7",
+  "version": "1.14.1",
+  "buildId": "2c6ef702f18fb6276f747bb85c102f3206cc51bb47aec140c8fa91079b038983",
   "minDesktopVersion": null,
-  "distRef": "dist-v1.14.0",
+  "distRef": "dist-v1.14.1",
   "changelog": [
+    {
+      "version": "1.14.1",
+      "date": "2026-10-13",
+      "sections": [
+        {
+          "title": "Bug Fixes",
+          "items": [
+            "Read the plant name over bright terrain; tell R from P"
+          ]
+        }
+      ]
+    },
     {
       "version": "1.14.0",
       "date": "2026-10-13",
@@ -187,40 +199,28 @@
           ]
         }
       ]
-    },
-    {
-      "version": "1.2.1",
-      "date": "2026-09-04",
-      "sections": [
-        {
-          "title": "Bug Fixes",
-          "items": [
-            "Replace awk in release notes extraction with node script"
-          ]
-        }
-      ]
     }
   ],
-  "generatedAt": "2026-10-13T11:13:49.558Z",
+  "generatedAt": "2026-10-13T11:33:58.676Z",
   "files": [
     {
-      "path": "assets/DynamicGeneLocator-DAOBSIi3.js",
-      "sha256": "3064fbeb6d03867e2cd169ca53ab087fc154633bbbb93ba1add625abc801f188",
+      "path": "assets/DynamicGeneLocator-DSEDGaMr.js",
+      "sha256": "f2bbb0d1ccd0468f08b7b6e929b8012bf5e32beb449d72ea7e1088f84dbb965b",
       "size": 12676
     },
     {
-      "path": "assets/LivestockPage-Cv2fG578.js",
-      "sha256": "1a77d21573d3b7c334af4d8a81bdd7325cb7a98eae7d86e3e24aaa8808151c9f",
+      "path": "assets/LivestockPage-DHJX5YSm.js",
+      "sha256": "b76093784bd4cf0deb8c6b2b6942649ab10d680ff82d070bc06d742c16a6facd",
       "size": 46945
     },
     {
-      "path": "assets/MobileCameraScanner-BatVFetD.js",
-      "sha256": "96d2b5a9e20280b2ef710cb3faa2c32cf1a734cfd90898ddbbf9faca00e13057",
+      "path": "assets/MobileCameraScanner-RXOTDZ-g.js",
+      "sha256": "498392cb77f343399b6a94672faeb5b48e2489984927e6cc593b05cd01b68cbb",
       "size": 15914
     },
     {
-      "path": "assets/Planter3DView-Dg0ZVkhm.js",
-      "sha256": "01943ad29109da5e52b595ab4538f368ad7fa512665b1a365e14cfcc15ed1e2f",
+      "path": "assets/Planter3DView-C9uUEzvG.js",
+      "sha256": "49c8a044d019bfc6e32e2a2f3979d6cba25c833f2276bfa88d6f8caef5c51222",
       "size": 21962
     },
     {
@@ -229,8 +229,8 @@
       "size": 902
     },
     {
-      "path": "assets/cameraScannerService-BWxEROXY.js",
-      "sha256": "6205788ae9d2844f4a7e1aa20b4255a3946a3412a549c68a6797a3d4207ea229",
+      "path": "assets/cameraScannerService-CCDE_EdI.js",
+      "sha256": "18404186efc29e00b621273dfc5f21d6d1a70e4b91fc108be9fc48c876e314cd",
       "size": 20833
     },
     {
@@ -259,14 +259,14 @@
       "size": 58456
     },
     {
-      "path": "assets/index-CES_LXL1.js",
-      "sha256": "638538be903da04f9202344eaf0a2fd2395ec8988df5f34a82e4f1c753a46972",
-      "size": 507864
-    },
-    {
       "path": "assets/index-DObK7Mmk.css",
       "sha256": "57ee8fde9500fd58edcfcca3086ba633def0fb145d615817c0da9840c8433993",
       "size": 5316
+    },
+    {
+      "path": "assets/index-IMuDqYIr.js",
+      "sha256": "df0bb572526a0b4187f57c6c49f3a3b9b1c212139dce48f3ce5ec0838e8e7544",
+      "size": 509075
     },
     {
       "path": "assets/livestockReader.worker-DmWaPnnL.js",
@@ -955,7 +955,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "ce3e4d773a877529d5d9ab5a265bb8f28d52d0eaadc6317c3b2e6756d9e09daa",
+      "sha256": "50aed8c5102d3098dcb58260119f7032a2033bfd419449a47140ba55e73fa4a2",
       "size": 4532
     },
     {
