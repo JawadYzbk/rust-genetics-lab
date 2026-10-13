@@ -1,0 +1,1016 @@
+{
+  "schema": 1,
+  "name": "genetics-lab",
+  "version": "1.8.0",
+  "buildId": "32d0adcd16cb0ef054127d8b0af0d745ff05ef17d3b69e3d5c2b2bb14c9f3e65",
+  "minDesktopVersion": null,
+  "distRef": "dist-v1.8.0",
+  "changelog": [
+    {
+      "version": "1.8.0",
+      "date": "2026-10-13",
+      "sections": [
+        {
+          "title": "Features",
+          "items": [
+            "Ship update manifests and show updates inside Genetics Lab"
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.7.0",
+      "date": "2026-10-12",
+      "sections": [
+        {
+          "title": "Features",
+          "items": [
+            "Correct every recipe and add the livestock-update pies and breads"
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.6.0",
+      "date": "2026-10-02",
+      "sections": [
+        {
+          "title": "Features",
+          "items": [
+            "Update genetics rules and add a Rules tab"
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.5.0",
+      "date": "2026-10-02",
+      "sections": [
+        {
+          "title": "Features",
+          "items": [
+            "Show each pair's expected newborn gene by gene"
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.4.0",
+      "date": "2026-10-02",
+      "sections": [
+        {
+          "title": "Features",
+          "items": [
+            "Show sex with icons and set it in one click",
+            "Mark livestock genetics as beta",
+            "Read animal names and never add one animal twice",
+            "Add the Milky and Creamy teas from the livestock update",
+            "Detect the animal's kind from the panel portrait",
+            "Model hidden gene copies and real inheritance",
+            "Scan livestock genes and suggest breeding pairs"
+          ]
+        },
+        {
+          "title": "Bug Fixes",
+          "items": [
+            "Tell lamb from sheep and stay unsure between cow and calf",
+            "Read marker numbers, age and condition from the live panel"
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.3.1",
+      "date": "2026-09-11",
+      "sections": [
+        {
+          "title": "Bug Fixes",
+          "items": [
+            "Take capture frames off the track, not the video element",
+            "Read gene rows from the badges instead of saved coordinates"
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.3.0",
+      "date": "2026-09-07",
+      "sections": [
+        {
+          "title": "Features",
+          "items": [
+            "Improve route grouping, default presets, and clone readiness feedback"
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.2.1",
+      "date": "2026-09-04",
+      "sections": [
+        {
+          "title": "Bug Fixes",
+          "items": [
+            "Replace awk in release notes extraction with node script"
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.2.0",
+      "date": "2026-09-04",
+      "sections": [
+        {
+          "title": "Features",
+          "items": [
+            "Display version in About modal title and under gene input"
+          ]
+        },
+        {
+          "title": "Performance Improvements",
+          "items": [
+            "Accelerate GitHub Actions with multi-layer caching and single-pass build"
+          ]
+        },
+        {
+          "title": "Code Refactoring",
+          "items": [
+            "Decouple version bumping and release publishing into standalone workflows"
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.1.0",
+      "date": "2026-09-04",
+      "sections": [
+        {
+          "title": "Features",
+          "items": [
+            "Add automated version bumping, releases, and dist asset packaging",
+            "Desktop capture path with slot extraction and auto-calibration",
+            "Add NVIDIA Reflex ON + BOOST notice, graphics.reflexmode 2 command, and scanner optimizations",
+            "Read genes with two recognisers and report why a slot fails",
+            "Add manual capture with confirmation, fix detection flicker",
+            "Classify gene glyphs by template instead of running OCR",
+            "Add phone camera scanner (beta)",
+            "Redesign route inspector workflow",
+            "Rebuild farm operations planner",
+            "Refine genetics workspace and solver",
+            "Default anonymous stats on",
+            "Complete responsive accessibility remediation",
+            "Implement 2-level breeding routes sorting and OCR warmup improvements",
+            "Auto-advance to next line after 6 genes, wrap overflow",
+            "Match-mode filtering, responsive layout, perf & UX fixes",
+            "Rework scan/typing sounds",
+            "V1.0.0 — route grouping, alt-plan selection, generation markers, promo slot",
+            "Editable target input, smarter presets, tooltips, hover-scroll tabs, light-mode fixes",
+            "Configure Coolify Docker deployment and Nginx SPA hosting",
+            "Add real-time starvation detection and in-game <= 50 FPS cap warning",
+            "Add GitHub repository and contribute links to header and about modal",
+            "Initialize standalone Rust Genetics Lab web application repository"
+          ]
+        },
+        {
+          "title": "Bug Fixes",
+          "items": [
+            "Ignore ink detached from the glyph, and let OCR abstain",
+            "Match glyph shape instead of glyph ink",
+            "Let the recogniser judge legibility, and give capture a target",
+            "Threshold glyphs with Otsu and show the real OCR input",
+            "Apply the raised distance limit and hold the accepted state",
+            "Read genes per slot and stop discarding good samples",
+            "Unblock camera OCR and tolerate handheld shake",
+            "De-duplicate scanned clones and fix scan sound effects",
+            "Improve light mode color contrast and UI tokens across all components"
+          ]
+        },
+        {
+          "title": "Performance Improvements",
+          "items": [
+            "Rewrite crossbreeding core around pre-allocation admission test",
+            "Prune unreliable plans and prioritize 100%/low-gen routes"
+          ]
+        }
+      ]
+    }
+  ],
+  "generatedAt": "2026-10-13T09:10:22.518Z",
+  "files": [
+    {
+      "path": "assets/DynamicGeneLocator-DLOPIjFg.js",
+      "sha256": "821307613a636e660de481d64db8bf9ee7cac1107a92d710bbfc57a5078633fc",
+      "size": 12676
+    },
+    {
+      "path": "assets/LivestockPage-CEnaazLI.js",
+      "sha256": "d03f14b836941afa8c003ef761cc3f24205e4739b284d21b4edc0ae0499eb4d7",
+      "size": 46944
+    },
+    {
+      "path": "assets/MobileCameraScanner-CdqVJnmm.js",
+      "sha256": "0b074ca0756d2fe8b8122dc773cffe419f217bba0f738071c4d4b5425dddddde",
+      "size": 15914
+    },
+    {
+      "path": "assets/cameraScannerConfig-Bwgt-29W.js",
+      "sha256": "4cea5fc740b610aec1bf0f76ef34401eca05b207e3508c38907f6cbcfff4c75f",
+      "size": 902
+    },
+    {
+      "path": "assets/cameraScannerService-DiOVs5sJ.js",
+      "sha256": "d7ed9eb5ec435ee0e1b0c0c485232442be21cea6b5541c2a239cc14377b8164b",
+      "size": 20833
+    },
+    {
+      "path": "assets/index-BmolswVg.js",
+      "sha256": "92109a208a1adccfdec8b8d0821d586331c8f5ae321ae4987f596d8585cb970d",
+      "size": 470617
+    },
+    {
+      "path": "assets/index-DObK7Mmk.css",
+      "sha256": "57ee8fde9500fd58edcfcca3086ba633def0fb145d615817c0da9840c8433993",
+      "size": 5316
+    },
+    {
+      "path": "assets/livestockReader.worker-DmWaPnnL.js",
+      "sha256": "43db52961bb9dd249a9b87e8b21f45371f503dd515f20245baf4d0c3a37bb56d",
+      "size": 79694
+    },
+    {
+      "path": "assets/mixed-berry-1l6NPBL3.webp",
+      "sha256": "6ecdd864ca6e01f7b685717c28d05fcb7bcf6b4882c0eeb4e393307d857eb11c",
+      "size": 3310
+    },
+    {
+      "path": "assets/solver.worker-tteNa4QZ.js",
+      "sha256": "1db80db9ed0a3100536d36f9003891a046f01ab9ad9509825b13d909f3e59847",
+      "size": 9992
+    },
+    {
+      "path": "assets/vendor-DDY9h8Hn.js",
+      "sha256": "a45109661156b4fc5eeccf229416ceb2fe77c2c54e2feb51e9d5d4bfeae27fc6",
+      "size": 46378
+    },
+    {
+      "path": "assets/vendor-mui-B2lhInV3.js",
+      "sha256": "c1413d09057bde8c57336929f0b9115f1b3f25328ed92eb5ff239ae344c94042",
+      "size": 388145
+    },
+    {
+      "path": "assets/vendor-react-BrcHJDSH.js",
+      "sha256": "04dcf881d4d35d43e85ea9460d6ef7001eda162b276a526c48da12db3481d547",
+      "size": 150650
+    },
+    {
+      "path": "audio/headshot.mp3",
+      "sha256": "c5102bcf55c6603fd67137bf2b7feaebdef4e675bfe2dc3e2fb78a1cad80aa64",
+      "size": 17553
+    },
+    {
+      "path": "audio/pop.mp3",
+      "sha256": "49fa23bc79c9b0e6756a2e28f1d483623959ecbf52f8d368f23e18f7d9740d5c",
+      "size": 3480
+    },
+    {
+      "path": "img/Nvidia-Reflex.png",
+      "sha256": "bb25cf2e6ab7137650b111ebd0147947b9f29ebb3298cb35d6df6f55186c1f9e",
+      "size": 53010
+    },
+    {
+      "path": "img/items/5_56-rifle-ammo.webp",
+      "sha256": "1866721c8f41128c5744a4c86b7ef99affbb2422ed36c97e17f28b3a7f7499ed",
+      "size": 2368
+    },
+    {
+      "path": "img/items/advanced-anti-rad-tea.webp",
+      "sha256": "221fdb851c03a8c9633b2f48725feb0f2f63d2b4709cd6bb8309fe0a8e7a2d81",
+      "size": 2288
+    },
+    {
+      "path": "img/items/advanced-cooling-tea.webp",
+      "sha256": "9f6686bc5400815ac4651b49121a819826bf1ce198ad867b6b4a083852cb1de1",
+      "size": 2448
+    },
+    {
+      "path": "img/items/advanced-crafting-quality-tea.webp",
+      "sha256": "c5f49633d928cf8113490b8e6950d53f02cc957b168ef8f77911243d5a2afd60",
+      "size": 2192
+    },
+    {
+      "path": "img/items/advanced-harvesting-tea.webp",
+      "sha256": "28ffb167c9aab1bcad74ece565caf6899a1ca0644b948d7e0894901da4f3d316",
+      "size": 2268
+    },
+    {
+      "path": "img/items/advanced-healing-tea.webp",
+      "sha256": "1f6c999ea4d3e955d630a26701a8086617ae2a3c6ddd843f730a64d620c9738c",
+      "size": 2026
+    },
+    {
+      "path": "img/items/advanced-max-health-tea.webp",
+      "sha256": "713cbe5c9928302cb87d02d5820928d98837f6444b5913e478d8e969d5d540d7",
+      "size": 2108
+    },
+    {
+      "path": "img/items/advanced-ore-tea.webp",
+      "sha256": "4dcf921fb58bad527fd923660f42f0ae164cfa08d35314042391733d15254393",
+      "size": 2146
+    },
+    {
+      "path": "img/items/advanced-scrap-tea.webp",
+      "sha256": "773ea0dea8b7b426e6e1057362ae839879a3d419cc19b70b146f20ad6a4fa1c6",
+      "size": 2100
+    },
+    {
+      "path": "img/items/advanced-warming-tea.webp",
+      "sha256": "54d39a56e7737f919295d3f8d8c1a448a531d76fbde5d5d1e267323d67300fa6",
+      "size": 2218
+    },
+    {
+      "path": "img/items/advanced-wood-tea.webp",
+      "sha256": "45fb7d7938dd9f4d07772eb435581e83287627ebc2538299c59067fec2e3794e",
+      "size": 2122
+    },
+    {
+      "path": "img/items/animal-fat.webp",
+      "sha256": "0f10c03d3f9b58c571a240d8ba6a8327d0082205665332d5238ceb8b1e1a0900",
+      "size": 2728
+    },
+    {
+      "path": "img/items/apple-pie.webp",
+      "sha256": "d28e3e77dd5a12c37c4cf28f2763411576dec4001c898ecaa0bd27e4cc7c0e84",
+      "size": 2418
+    },
+    {
+      "path": "img/items/apple.webp",
+      "sha256": "e51a90fa553e999b23c2ebac861f18037970c351f1aa7a044459d5fd09a6fee2",
+      "size": 2712
+    },
+    {
+      "path": "img/items/basic-anti-rad-tea.webp",
+      "sha256": "3492078e4e4d3b10ee3d2efe232a967378e6b0e61af9284773a87a6240d2d5d5",
+      "size": 2158
+    },
+    {
+      "path": "img/items/basic-cooling-tea.webp",
+      "sha256": "fa6f24af68dd1b4833d54bb5cc9424de9503a7ba2fbbfe10ca034d6ea434ed47",
+      "size": 2254
+    },
+    {
+      "path": "img/items/basic-crafting-quality-tea.webp",
+      "sha256": "b957de826c2f38f58ffdf348972e7403307d7691ef65c4890f9ef443856c309b",
+      "size": 2106
+    },
+    {
+      "path": "img/items/basic-harvesting-tea.webp",
+      "sha256": "fb6d47f8e125c9b13847b92e6abb89b49c85ce2c48a3515d24f812bde81d9cd8",
+      "size": 2128
+    },
+    {
+      "path": "img/items/basic-healing-tea.webp",
+      "sha256": "1fb63153f5d65f99512d1dac497289fc083a2bc74f1cb0d696dda6f254f8f0cd",
+      "size": 2048
+    },
+    {
+      "path": "img/items/basic-max-health-tea.webp",
+      "sha256": "3962ba58aa43ab6c77ba13f5629e0ac72566780a27cc082d92253fa42f9bedef",
+      "size": 2100
+    },
+    {
+      "path": "img/items/basic-ore-tea.webp",
+      "sha256": "070df536f58755642caaeed832af507b84ff594e33ea4c7abcba64328a360e1b",
+      "size": 2140
+    },
+    {
+      "path": "img/items/basic-scrap-tea.webp",
+      "sha256": "379fe7518bdc5c40c7de9d99e3c11746b2bc38b4ef83612458c13f9e387f3282",
+      "size": 2026
+    },
+    {
+      "path": "img/items/basic-warming-tea.webp",
+      "sha256": "cfc8ce1796ae7000a9fe62c03e469bbff1d2658284308df575f2e981a397b45d",
+      "size": 2112
+    },
+    {
+      "path": "img/items/basic-wood-tea.webp",
+      "sha256": "c60e3783637ff5e71967ed35a025b9ac9a8349085d185114cb23a840da76e887",
+      "size": 2088
+    },
+    {
+      "path": "img/items/bear-pie.webp",
+      "sha256": "35a23eaf7f2239ef25e91d87c31776e337c879ac673b22be170d27c277b75a9c",
+      "size": 2502
+    },
+    {
+      "path": "img/items/beef-pie.webp",
+      "sha256": "3f534d06046a30734d4f8be4e236c18d183f36acc819551919655b080414f9a9",
+      "size": 11756
+    },
+    {
+      "path": "img/items/big-cat-pie.webp",
+      "sha256": "f1a4458d04b5b7ca7bca8e63bbd931418bd53edd1dfb05c7ba6148461b05f1c3",
+      "size": 2656
+    },
+    {
+      "path": "img/items/blue-berry.webp",
+      "sha256": "20c2afcb76284471159766cfb6d01e823c06097602ded8a20128116338f6b74e",
+      "size": 3300
+    },
+    {
+      "path": "img/items/bread-loaf.webp",
+      "sha256": "f4c6ebf5370be0e56e2daba52f0c6d8d0a0d7a3c5ff51d7b3dd1a23c139daf8b",
+      "size": 2270
+    },
+    {
+      "path": "img/items/brioche-bread.webp",
+      "sha256": "f4c180463c71fa8efb364843d680f97fc796c80c400bf2bf4f2aeeb056d7f1a3",
+      "size": 10808
+    },
+    {
+      "path": "img/items/charcoal.webp",
+      "sha256": "f25abc6d29bfeb01027ceb5f78b9f45208cf68b1f013058f59940ebb3b9b909d",
+      "size": 2198
+    },
+    {
+      "path": "img/items/chicken-pie.webp",
+      "sha256": "7605819398a0256b03b378187bbff82fe3b607a5b08f2c2bf5665db3ac1e7294",
+      "size": 2472
+    },
+    {
+      "path": "img/items/cloth.webp",
+      "sha256": "bcadd2af504bb61f3d8dc3ed854dde8f97d91770949f8b42e07b468090a42269",
+      "size": 3036
+    },
+    {
+      "path": "img/items/cooked-bear-meat.webp",
+      "sha256": "48e8f2368f4f2f3968a17969efa9249686e689bb4a12225066474d6c0ddd9206",
+      "size": 3012
+    },
+    {
+      "path": "img/items/cooked-beef.webp",
+      "sha256": "28aca68e18146c2e35777cdaf8fd757d0844e5debf06d56bea3960b43fd05995",
+      "size": 10546
+    },
+    {
+      "path": "img/items/cooked-big-cat-meat.webp",
+      "sha256": "7e91c2b95b014b7de24b6dd25c58eccf45805228b64f8a5b736356cbb5218b6f",
+      "size": 2256
+    },
+    {
+      "path": "img/items/cooked-chicken.webp",
+      "sha256": "18a1733c9f80a85121c09c1f887d1acfaf7f29f11d77f95f334b10e0774570dd",
+      "size": 2942
+    },
+    {
+      "path": "img/items/cooked-deer-meat.webp",
+      "sha256": "5cfef8023901d2f7c97b06285c8f0cf31ce0c01bca12a1dc4171a560f51cded6",
+      "size": 2648
+    },
+    {
+      "path": "img/items/cooked-fish.webp",
+      "sha256": "d08c2facffdb8e73b1802b4f7411fc0fb4385fc681827dbdb23e16042b651f90",
+      "size": 1978
+    },
+    {
+      "path": "img/items/cooked-mutton.webp",
+      "sha256": "5baa66c9ff673ff375f2202f28d9b0553a4cb4d56c6264375a509efc62caf13a",
+      "size": 11178
+    },
+    {
+      "path": "img/items/cooked-pork.webp",
+      "sha256": "2bbf3ab4b7698aafb45f10b6b38c6604bb8c2fd79251ad5274ef9732976873b2",
+      "size": 2520
+    },
+    {
+      "path": "img/items/corn.webp",
+      "sha256": "cc8b9b0af008f394d1ad23bfe166f4281544be7d47efe7d16d72406e3bb14556",
+      "size": 3126
+    },
+    {
+      "path": "img/items/cream.webp",
+      "sha256": "8c2fd2ef93b7203a2ed2d88a5bf54d0682d71ba70fcbc51c91c4533badec0cf6",
+      "size": 8516
+    },
+    {
+      "path": "img/items/creamy-pure-anti-rad-tea.webp",
+      "sha256": "7c4376703f194138190a309d85fa3d5683dadac6679677a4e85e2dbe5144d7d0",
+      "size": 13494
+    },
+    {
+      "path": "img/items/creamy-pure-cooling-tea.webp",
+      "sha256": "be2b5fbebd1d4c601ad95a05e2ce10c17d503bb6c62318f96ed1d87f04990c89",
+      "size": 13966
+    },
+    {
+      "path": "img/items/creamy-pure-harvesting-tea.webp",
+      "sha256": "4f7880e6a65b3cb1b376bdcb2dbdd790d3209d13d477560257bcf771c8c4e9ca",
+      "size": 13464
+    },
+    {
+      "path": "img/items/creamy-pure-healing-tea.webp",
+      "sha256": "f4e782636006dd48d69a365bb27f0f0a93a465752c4d0b01678c5d4e413512f6",
+      "size": 11802
+    },
+    {
+      "path": "img/items/creamy-pure-max-health-tea.webp",
+      "sha256": "277edcc37f0b59ff1c030da1a76c400df1ce7d6747b3d5ce3eba58fdebd4f4c3",
+      "size": 11872
+    },
+    {
+      "path": "img/items/creamy-pure-ore-tea.webp",
+      "sha256": "6d298d13c4b8c8399fa7730c988884ff32be46a94c5cb989b99bab0d128ec794",
+      "size": 12322
+    },
+    {
+      "path": "img/items/creamy-pure-scrap-tea.webp",
+      "sha256": "f50880e1129045208ca0bfd0c5d30e671c9f7f2cef34e333908e527676e5ac5c",
+      "size": 11610
+    },
+    {
+      "path": "img/items/creamy-pure-warming-tea.webp",
+      "sha256": "f703f0d587db728d495dc44b73693c963b28db8a6cf6c65e8f0d3c93c355e5e0",
+      "size": 12558
+    },
+    {
+      "path": "img/items/creamy-pure-wood-tea.webp",
+      "sha256": "d1a908db7a2121943c2fc12014e4501d4d9e9ea50e7bc9be2150aacf562f2776",
+      "size": 11924
+    },
+    {
+      "path": "img/items/egg.webp",
+      "sha256": "d254dbd2aa6d6b9f2b2e6fa6d3bd9752e3cd198cf451cc7c5a252454313d721c",
+      "size": 1154
+    },
+    {
+      "path": "img/items/explosives.webp",
+      "sha256": "f4c11dc334061f4f0f22a739148281ed70e6d607b84f2bb8a55e4918b9c1ca00",
+      "size": 2620
+    },
+    {
+      "path": "img/items/fish-pie.webp",
+      "sha256": "42714a9246550b93e57c9f68a38c0279348032aad0127af3907f792bbbc9b93d",
+      "size": 2402
+    },
+    {
+      "path": "img/items/green-berry.webp",
+      "sha256": "10dc84e961558ea7437edd4851412a448237a5c42eca9b2055d877fbe8bb1015",
+      "size": 3236
+    },
+    {
+      "path": "img/items/gun-powder.webp",
+      "sha256": "a8e6f682015a2a048c6bc3ff4ac2fcc2ea1475ba16d02f5e3b70d9ddb7855960",
+      "size": 3106
+    },
+    {
+      "path": "img/items/hemp.webp",
+      "sha256": "045a3715a737bbe5bc2f75b460023727451fa6355ce9f520aa7c808c614c1f75",
+      "size": 3008
+    },
+    {
+      "path": "img/items/hunters-pie.webp",
+      "sha256": "1afb0eaed3b5d971e82ae72877cd4e95a333d8348120682657bf4184d170a363",
+      "size": 2520
+    },
+    {
+      "path": "img/items/hv-5_56-rifle-ammo.webp",
+      "sha256": "7be6853399e2ac94f003465a611a9abdd15ac4a4d1d6e0644bf17ad9db497200",
+      "size": 2584
+    },
+    {
+      "path": "img/items/hv-pistol-ammo.webp",
+      "sha256": "2aafa68c7f23e421932446d0fba74a6c94ee4e3c1285de84204c3313d51d8d9f",
+      "size": 2128
+    },
+    {
+      "path": "img/items/incendiary-5_56-rifle-ammo.webp",
+      "sha256": "dff728ce8bca101127d5effaae34cece1ce657aa2dccb4ffa44518048ceec16b",
+      "size": 2486
+    },
+    {
+      "path": "img/items/incendiary-pistol-bullet.webp",
+      "sha256": "486365d9f0e527c22c1e5502d20145e6aaac07deaae201531cfe1daa8aec6945",
+      "size": 2094
+    },
+    {
+      "path": "img/items/jar-of-honey.webp",
+      "sha256": "132289973ee923a4559c78101f423136afd1647a186eeac8ea4422a9da006652",
+      "size": 2032
+    },
+    {
+      "path": "img/items/low-grade-fuel.webp",
+      "sha256": "62fd3c79b1daa6811d2714f74a4b87cf1ed9d847015b2b89d9de9884020cbedf",
+      "size": 4066
+    },
+    {
+      "path": "img/items/metal-fragments.webp",
+      "sha256": "32c304e9b010c20373e4e763bf1cbd6615b49ed90b85f4b60e020b147a3207f6",
+      "size": 2976
+    },
+    {
+      "path": "img/items/milk.webp",
+      "sha256": "6981b70e3ebdc7a819a08a7752bd6f960f7be5791ebaa8c52d95683c300cd065",
+      "size": 8390
+    },
+    {
+      "path": "img/items/milky-pure-anti-rad-tea.webp",
+      "sha256": "50188543bcdd2c2f4a3874912c5aff50093b58ffdf4061b9d82abbe718c0517c",
+      "size": 13130
+    },
+    {
+      "path": "img/items/milky-pure-cooling-tea.webp",
+      "sha256": "6e836b3faa48c7c1dc4372d3aa456564b9efa9672e30efd67201233a190c77a8",
+      "size": 13536
+    },
+    {
+      "path": "img/items/milky-pure-harvesting-tea.webp",
+      "sha256": "2fdc3a47edcf61f07667625a4ba858b8462fb4954b5542e587ac3b6d9f245e42",
+      "size": 12652
+    },
+    {
+      "path": "img/items/milky-pure-healing-tea.webp",
+      "sha256": "af6ee923c1b01e0ae9ce1a5b3d6bc757563b2d8c7bc5e1bf5ba5f3c48b96ae4f",
+      "size": 11284
+    },
+    {
+      "path": "img/items/milky-pure-max-health-tea.webp",
+      "sha256": "6d4372ea67edf6361f28d6a71fb7a081919c152c8bb8aeb7218a3f0b16bf95ed",
+      "size": 11270
+    },
+    {
+      "path": "img/items/milky-pure-ore-tea.webp",
+      "sha256": "0713d34a146398a59f7f6489ef1b26eb5f54a476a4f033cec7aeadf8b3cd11bf",
+      "size": 11754
+    },
+    {
+      "path": "img/items/milky-pure-scrap-tea.webp",
+      "sha256": "c125829fc6811577319bad321b246602243eaa4d7e0b84ebefb8b46a2036cef2",
+      "size": 11244
+    },
+    {
+      "path": "img/items/milky-pure-warming-tea.webp",
+      "sha256": "cddc386bbff91751d517aeacb1c2c8b243576eb188d54296558358c1504447fa",
+      "size": 12158
+    },
+    {
+      "path": "img/items/milky-pure-wood-tea.webp",
+      "sha256": "651d07faa811b3bf1a7b8a5b00896f53ab4131899c851a9c081c5015f6559420",
+      "size": 11446
+    },
+    {
+      "path": "img/items/mixed-berry.webp",
+      "sha256": "6ecdd864ca6e01f7b685717c28d05fcb7bcf6b4882c0eeb4e393307d857eb11c",
+      "size": 3310
+    },
+    {
+      "path": "img/items/mushroom.webp",
+      "sha256": "bd6e210dc4388bd56c85453d70727cfffedb1890d821bc3bb6363f963d6b6b44",
+      "size": 2916
+    },
+    {
+      "path": "img/items/orchid.webp",
+      "sha256": "d4a4f4a67fddaf0393e51933f69bf03e307d63828cb958a87c40757f8544b50a",
+      "size": 2370
+    },
+    {
+      "path": "img/items/pistol-bullet.webp",
+      "sha256": "3e42200cf45174ab2741932cca5c2118794f08a1d409b11a6b60bee5331849e4",
+      "size": 2026
+    },
+    {
+      "path": "img/items/pork-pie.webp",
+      "sha256": "bce4c091089e066f1df8f15a18ad3f27a2b3b99d6abef458405f76640390ecb6",
+      "size": 2546
+    },
+    {
+      "path": "img/items/potato.webp",
+      "sha256": "36eb72bdaa3e4c54f6d9d57f48f38b1b2111bdcd62eb88078c7b775d34f1508b",
+      "size": 2284
+    },
+    {
+      "path": "img/items/pumpkin-pie.webp",
+      "sha256": "30e41cd260dfc93ccfb04a5e1dde265267599ebdd3e70687fe077338a620ba51",
+      "size": 2538
+    },
+    {
+      "path": "img/items/pumpkin.webp",
+      "sha256": "f25bb40afbbd4246af05913466c598d99945df468e4e4379049e043acfc1d457",
+      "size": 3176
+    },
+    {
+      "path": "img/items/pure-anti-rad-tea.webp",
+      "sha256": "5a6698cba1b5b51c713f02d8ad7cb61ceacb8787de41b4b123f2c1f4cdaf74fe",
+      "size": 2644
+    },
+    {
+      "path": "img/items/pure-cooling-tea.webp",
+      "sha256": "898cf93ca3017360c5e4a0860aa62538bb4d32fdfb984499b08daf4a817970a7",
+      "size": 2634
+    },
+    {
+      "path": "img/items/pure-crafting-quality-tea.webp",
+      "sha256": "26487759f542c1333b0b2ff7d81e0aa5a0a8fee9f006dee757b0102aa6a644b9",
+      "size": 2330
+    },
+    {
+      "path": "img/items/pure-harvesting-tea.webp",
+      "sha256": "04e3b23c3275fe4cee46626db3aebb98caadeb8b61d5cc19df7d1d3379509f22",
+      "size": 2378
+    },
+    {
+      "path": "img/items/pure-healing-tea.webp",
+      "sha256": "1887a565e0f2755c16213040918690c3daf2bc3c4905a00b54db5dc42880b7f2",
+      "size": 2090
+    },
+    {
+      "path": "img/items/pure-max-health-tea.webp",
+      "sha256": "da7d596d81232e214bfb05bc371870b369733e1847ce970689ff5982905b69c4",
+      "size": 2140
+    },
+    {
+      "path": "img/items/pure-ore-tea.webp",
+      "sha256": "2e27251a864b74bb83c40a76ceb7e39d194c255bd24ba8af4bbd93472b31a2cd",
+      "size": 2266
+    },
+    {
+      "path": "img/items/pure-scrap-tea.webp",
+      "sha256": "2ec9fafe904373a5b4a98f6f8a5638cb0cb12d8aace565c7fb0e9b66f6ab5ecb",
+      "size": 2208
+    },
+    {
+      "path": "img/items/pure-warming-tea.webp",
+      "sha256": "1c84780c28fda23fc6e71c58fef98be67d735287275cc950be477c2c1820299f",
+      "size": 2414
+    },
+    {
+      "path": "img/items/pure-wood-tea.webp",
+      "sha256": "0e1971e4415dc762ce69b324c40c9bcdcaa6a2883beb9c0a5a9499cef55d0cbd",
+      "size": 2078
+    },
+    {
+      "path": "img/items/red-berry.webp",
+      "sha256": "32e4a67ccc610cdafb58a860b24ba59976784dfedffeaf3fee17359f5af3c4d1",
+      "size": 3286
+    },
+    {
+      "path": "img/items/rich-apple-pie.webp",
+      "sha256": "88ce27e002b75e91bbc3289d8296670b10358aca81603200fd4c663b5f9e0caa",
+      "size": 13016
+    },
+    {
+      "path": "img/items/rich-bear-pie.webp",
+      "sha256": "ef936608c8465ea78ca9ca01529304709d7f33bcb1dc35b7b4eafb884aee13bf",
+      "size": 13058
+    },
+    {
+      "path": "img/items/rich-beef-pie.webp",
+      "sha256": "2fe424852da9e47c3e94869db50e8e36c1e87ce4a179ae43bf674d4a1b9e305f",
+      "size": 12738
+    },
+    {
+      "path": "img/items/rich-big-cat-pie.webp",
+      "sha256": "d6c0aca8a76f790bdf075c19975772716846a8cbb51f43c8e33fed64d19200aa",
+      "size": 13760
+    },
+    {
+      "path": "img/items/rich-chicken-pie.webp",
+      "sha256": "b77ce3ee7fef9ae8f558284965e43ce5e3caa51d683d0de12a29376be1efe54f",
+      "size": 12958
+    },
+    {
+      "path": "img/items/rich-fish-pie.webp",
+      "sha256": "6a5a57b2f5e37df5d7e095b399c6d5124985dd082d52567bd273806752a63906",
+      "size": 12612
+    },
+    {
+      "path": "img/items/rich-hunters-pie.webp",
+      "sha256": "055ebacf0c366d5ed9d00efe739526bce5f35d475ab61b99a584b95341537854",
+      "size": 13380
+    },
+    {
+      "path": "img/items/rich-pork-pie.webp",
+      "sha256": "2c553de785e1ad35da0caf2536dde6598d5e8ffc7f129f1aa6e4a1b6bc98387d",
+      "size": 13372
+    },
+    {
+      "path": "img/items/rich-pumpkin-pie.webp",
+      "sha256": "6ec7c64230dc8fd6c2034dfb027f8ed1bd376aec690d2b7e7a0e35c03b18dcb2",
+      "size": 13034
+    },
+    {
+      "path": "img/items/rich-shepherds-pie.webp",
+      "sha256": "aa90168c4e4b776a4133fde4912588013a1f95421aeba38a65098bd1721ee497",
+      "size": 12776
+    },
+    {
+      "path": "img/items/rose.webp",
+      "sha256": "c6c35922b71aa6b272daa2220e6ff48663300b49a4ab25d3baedb7baec17304a",
+      "size": 2060
+    },
+    {
+      "path": "img/items/shepherds-pie.webp",
+      "sha256": "b6aefcb3fcee5bebb7c46d187987c906b53c4cc097d593d605e619906827be06",
+      "size": 11556
+    },
+    {
+      "path": "img/items/skimmed-milk.webp",
+      "sha256": "79e866f807015ca7fe9778450099dd4494084eb2ff3442edea3d44a47189ec46",
+      "size": 8594
+    },
+    {
+      "path": "img/items/sulfur.webp",
+      "sha256": "8be392db66145b1ca9ecc03a491a1dbf0d6828b477c48db85f4ea22448ad5568",
+      "size": 2810
+    },
+    {
+      "path": "img/items/sunflower.webp",
+      "sha256": "2789a29e81a0861cd65f5f58e6ce3f6b369bbaf9ae49ee3b07825c4206e0d853",
+      "size": 2180
+    },
+    {
+      "path": "img/items/wheat.webp",
+      "sha256": "26371a25a4348360b51644d191fb503d1b659fb9c37724913d9da36e67fb7e4d",
+      "size": 2900
+    },
+    {
+      "path": "img/items/white-berry.webp",
+      "sha256": "fa99f77ea8ffe559fb40705654a4d4cada5c164157baef32c07537acdc2c6bbd",
+      "size": 3532
+    },
+    {
+      "path": "img/items/yellow-berry.webp",
+      "sha256": "a04643f866299d7e3aa8c6ed913d626b6a759a2e0406ad15f6afb36273b9ecb8",
+      "size": 3594
+    },
+    {
+      "path": "img/livestock/bull.webp",
+      "sha256": "8b09b406e455095ab4242b639e066df102cf2d08a3e599bedf53c257aac9c74f",
+      "size": 44362
+    },
+    {
+      "path": "img/livestock/calf.webp",
+      "sha256": "2c5a885eb36bea3e92679cb3d5f7cd28aa7313e537c2ed76cb8c4272c31eb57f",
+      "size": 40814
+    },
+    {
+      "path": "img/livestock/cow.webp",
+      "sha256": "3d4c97a40bdbf8e6821fa758c9e67fc13d921bb028bef339e2a59785a78bad21",
+      "size": 42332
+    },
+    {
+      "path": "img/livestock/horsedung.webp",
+      "sha256": "ce1039313895d489a0e8588cda560b399205838ca90f5299593152c4c9f76972",
+      "size": 14724
+    },
+    {
+      "path": "img/livestock/lamb.webp",
+      "sha256": "21630ed8822955c50722de996069f24793fc818157e95d26b2156e6faae1c877",
+      "size": 43440
+    },
+    {
+      "path": "img/livestock/milk.webp",
+      "sha256": "6981b70e3ebdc7a819a08a7752bd6f960f7be5791ebaa8c52d95683c300cd065",
+      "size": 8390
+    },
+    {
+      "path": "img/livestock/scrap.webp",
+      "sha256": "1915c3ea514fa111fa13387eba921286cc6add99bbf639195a7bd42bb67841ed",
+      "size": 18006
+    },
+    {
+      "path": "img/livestock/sheep.webp",
+      "sha256": "5e3c2eab096e580ee312fd4036e4e688da228614fbc1289806502aa7dfeff5ed",
+      "size": 49838
+    },
+    {
+      "path": "img/livestock/wool.webp",
+      "sha256": "d0ba3c41cc9658b1970b11c7bfd3dbf77f38118a761f4c93ea07f15c9c78b206",
+      "size": 9530
+    },
+    {
+      "path": "img/planter.webp",
+      "sha256": "4a3e70b26c611d026dc98f9d90a01389c4295525d8f9caadbea6abbf5436c752",
+      "size": 24026
+    },
+    {
+      "path": "img/scanner-frame-inventory.webp",
+      "sha256": "b1338bbbd26f066997ba001b1924710d1f0f39089e4192c94250c095c80e16da",
+      "size": 992
+    },
+    {
+      "path": "img/scanner-frame-world.webp",
+      "sha256": "68a09526a27a1007abff521d8c263e8a64ec5fdcd4bde47304470da8a6f8df3f",
+      "size": 932
+    },
+    {
+      "path": "index.html",
+      "sha256": "88017d6955591a622a9af761667e488a20ae8c4c9227aa97d7bdf997c210945d",
+      "size": 4532
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "9cc163b2968467ab78e0c643a5e6ad1dd5c1b97f9e5ec59465d90170767b1561",
+      "size": 392
+    },
+    {
+      "path": "robots.txt",
+      "sha256": "a52a399dbfe4efcb5d7ebd4ea32934739c9c7a666103cf8a94d9c8a9ab95c9d2",
+      "size": 84
+    },
+    {
+      "path": "sitemap.xml",
+      "sha256": "979f344c2a2ba5f48ff6ab1a95ff75db804d4510c1796051735fdb90f6203d5e",
+      "size": 247
+    },
+    {
+      "path": "tesseract/LICENSE",
+      "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08",
+      "size": 11358
+    },
+    {
+      "path": "tesseract/README.md",
+      "sha256": "763f24dda689f235b3d3963c058629ef080bb47ab011d193a8347ede09e24118",
+      "size": 4116
+    },
+    {
+      "path": "tesseract/eng.traineddata.gz",
+      "sha256": "ed350f3752f81ee8f38769edc14d92d997dababe23b565c59879372cc46a2468",
+      "size": 10923060
+    },
+    {
+      "path": "tesseract/index.js",
+      "sha256": "cc5d319080bc2ef3c288128690ea598c8cbc1d1f2f13a6a750c0ba344ff5a162",
+      "size": 118
+    },
+    {
+      "path": "tesseract/package.json",
+      "sha256": "bb890458ac636043d6c6b1997618ad5b290a219bcec20547b5504bb280513202",
+      "size": 1576
+    },
+    {
+      "path": "tesseract/tesseract-core-lstm.js",
+      "sha256": "fc54a973687325599214294ec90ea9665309cbdf6ca727c43a64651f24e923f7",
+      "size": 124391
+    },
+    {
+      "path": "tesseract/tesseract-core-lstm.wasm",
+      "sha256": "5db58ea4d1bd4256be81e8ae3b4fa226c4625dfba1850b1b3308dbf3700e9929",
+      "size": 2859424
+    },
+    {
+      "path": "tesseract/tesseract-core-lstm.wasm.js",
+      "sha256": "8f04aa0cc81e7bde33f80e92fa01a7a665f0b4884d098acf5de9c7104a11dfaa",
+      "size": 3938277
+    },
+    {
+      "path": "tesseract/tesseract-core-simd-lstm.js",
+      "sha256": "4135a3f6f1cccf3bc92058c1273c49bb4cff6356e1ba15d1b8b4e76e9890526b",
+      "size": 124396
+    },
+    {
+      "path": "tesseract/tesseract-core-simd-lstm.wasm",
+      "sha256": "66b601224a0c4a8977bc9d92dd39841189f9ca22cc4122fcd7208cdb0961eeef",
+      "size": 2859709
+    },
+    {
+      "path": "tesseract/tesseract-core-simd-lstm.wasm.js",
+      "sha256": "ce20eda9533cbed1e6c2b4276fbae1e0adc61b6754b5513084be601787b457cf",
+      "size": 3938657
+    },
+    {
+      "path": "tesseract/tesseract-core-simd.js",
+      "sha256": "74f0f7bacae500794c9e61a54956f23c3b271bf15a9847776d98f93164ba9400",
+      "size": 124079
+    },
+    {
+      "path": "tesseract/tesseract-core-simd.wasm",
+      "sha256": "baa2f54ef5af43ada4605fd7ae999bde3c6ecc96bfe0d0410b0b4f4a5f9c8b91",
+      "size": 3457317
+    },
+    {
+      "path": "tesseract/tesseract-core-simd.wasm.js",
+      "sha256": "63f232c4f7a97b04e52eb940202700b2c6239783a75d0ff0553274fac530cd5c",
+      "size": 4735153
+    },
+    {
+      "path": "tesseract/tesseract-core.js",
+      "sha256": "c8ff737be3e8e12f6426773f13186965ea4455977ab12a759f051da7c6493100",
+      "size": 124074
+    },
+    {
+      "path": "tesseract/tesseract-core.wasm",
+      "sha256": "b47a852b19181ae0999f9d970c368cd351135a320ea978b35bd38602d8bcc0bc",
+      "size": 3457035
+    },
+    {
+      "path": "tesseract/tesseract-core.wasm.js",
+      "sha256": "2b8c8c92b8788807061fb4bb16c5acdf000c149e100255f879f78d2c58ca9969",
+      "size": 4734777
+    },
+    {
+      "path": "tesseract/worker.min.js",
+      "sha256": "aca1229639fc9907d86f96e825955a2b7c5716d17f3bc3acd71f9c7ab66181fc",
+      "size": 123724
+    }
+  ]
+}
