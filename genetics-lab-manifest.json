@@ -1,11 +1,23 @@
 {
   "schema": 1,
   "name": "genetics-lab",
-  "version": "1.13.0",
-  "buildId": "d9848bc41779474b540e2d19f919c8b405f5cb170f90c5c061970a005cb1645f",
+  "version": "1.13.1",
+  "buildId": "f64cf01f726587e24893cd8f4d38eaede9182381afac34f718cc0c31a44d776d",
   "minDesktopVersion": null,
-  "distRef": "dist-v1.13.0",
+  "distRef": "dist-v1.13.1",
   "changelog": [
+    {
+      "version": "1.13.1",
+      "date": "2026-10-13",
+      "sections": [
+        {
+          "title": "Bug Fixes",
+          "items": [
+            "Show the centre plant as soon as it is ticked; feat: planter choice and theme toggle"
+          ]
+        }
+      ]
+    },
     {
       "version": "1.13.0",
       "date": "2026-10-13",
@@ -199,82 +211,28 @@
           ]
         }
       ]
-    },
-    {
-      "version": "1.1.0",
-      "date": "2026-09-04",
-      "sections": [
-        {
-          "title": "Features",
-          "items": [
-            "Add automated version bumping, releases, and dist asset packaging",
-            "Desktop capture path with slot extraction and auto-calibration",
-            "Add NVIDIA Reflex ON + BOOST notice, graphics.reflexmode 2 command, and scanner optimizations",
-            "Read genes with two recognisers and report why a slot fails",
-            "Add manual capture with confirmation, fix detection flicker",
-            "Classify gene glyphs by template instead of running OCR",
-            "Add phone camera scanner (beta)",
-            "Redesign route inspector workflow",
-            "Rebuild farm operations planner",
-            "Refine genetics workspace and solver",
-            "Default anonymous stats on",
-            "Complete responsive accessibility remediation",
-            "Implement 2-level breeding routes sorting and OCR warmup improvements",
-            "Auto-advance to next line after 6 genes, wrap overflow",
-            "Match-mode filtering, responsive layout, perf & UX fixes",
-            "Rework scan/typing sounds",
-            "V1.0.0 — route grouping, alt-plan selection, generation markers, promo slot",
-            "Editable target input, smarter presets, tooltips, hover-scroll tabs, light-mode fixes",
-            "Configure Coolify Docker deployment and Nginx SPA hosting",
-            "Add real-time starvation detection and in-game <= 50 FPS cap warning",
-            "Add GitHub repository and contribute links to header and about modal",
-            "Initialize standalone Rust Genetics Lab web application repository"
-          ]
-        },
-        {
-          "title": "Bug Fixes",
-          "items": [
-            "Ignore ink detached from the glyph, and let OCR abstain",
-            "Match glyph shape instead of glyph ink",
-            "Let the recogniser judge legibility, and give capture a target",
-            "Threshold glyphs with Otsu and show the real OCR input",
-            "Apply the raised distance limit and hold the accepted state",
-            "Read genes per slot and stop discarding good samples",
-            "Unblock camera OCR and tolerate handheld shake",
-            "De-duplicate scanned clones and fix scan sound effects",
-            "Improve light mode color contrast and UI tokens across all components"
-          ]
-        },
-        {
-          "title": "Performance Improvements",
-          "items": [
-            "Rewrite crossbreeding core around pre-allocation admission test",
-            "Prune unreliable plans and prioritize 100%/low-gen routes"
-          ]
-        }
-      ]
     }
   ],
-  "generatedAt": "2026-10-13T10:44:56.189Z",
+  "generatedAt": "2026-10-13T10:58:22.661Z",
   "files": [
     {
-      "path": "assets/DynamicGeneLocator-PPzuEnqY.js",
-      "sha256": "c44267bd1de8f4e532b36933a004b726c3214aaddb02585bf1d02a0e027c42d6",
+      "path": "assets/DynamicGeneLocator-q1_Ce8yJ.js",
+      "sha256": "62e972c299fd39607f8c10c650ea9b59f0bdab8f6acd8d9a3b0c2cf6bb57fac3",
       "size": 12676
     },
     {
-      "path": "assets/LivestockPage-cdomkEZz.js",
-      "sha256": "32b3699e4b680d9aefff1ddc3ddfa019b72b54d8eea5252cd2ccd16eef4a992d",
+      "path": "assets/LivestockPage-RdfAfxDS.js",
+      "sha256": "1c4f12ef3ca6381b7bfdc4ae120363e5f2937d96032bc9122cab40c0456cdc1a",
       "size": 46945
     },
     {
-      "path": "assets/MobileCameraScanner-BUlynWm3.js",
-      "sha256": "d8660bf9f910028f75d428506f0571ccb729abe86dc6aaec262d63920bd2ea04",
+      "path": "assets/MobileCameraScanner-9QUwMGgR.js",
+      "sha256": "577257d0137f40607762c92a0b3e38d87d0a15a5bb83c8d2b08a6eb168111ee9",
       "size": 15914
     },
     {
-      "path": "assets/Planter3DView-D64QKebD.js",
-      "sha256": "b5fdca2a340f7a0d947348217e7dc6b0638ab01eb295a053cfea69b62128be0f",
+      "path": "assets/Planter3DView-BjDgXyIf.js",
+      "sha256": "0d64c1dcc7413bf6de5728a5c8a2780bb30af58cb266a869b4caa34f04cdee25",
       "size": 21962
     },
     {
@@ -283,8 +241,8 @@
       "size": 902
     },
     {
-      "path": "assets/cameraScannerService-DXIHMtOz.js",
-      "sha256": "b1b6ccfa17c86b0b23d21d7242dc410a450997bdf45fe9c73aaa5cf5890087e9",
+      "path": "assets/cameraScannerService-CHpdI6C3.js",
+      "sha256": "ccc3ac0d46176f89e5fc508aeea2dcae77cc8f1a529bb42c5048ba13f207fa24",
       "size": 20833
     },
     {
@@ -313,9 +271,9 @@
       "size": 58456
     },
     {
-      "path": "assets/index-DN3CIjTp.js",
-      "sha256": "0bee8da62712200d76f58443eaadaed14e6d3854ab5f94311bc8f29be2519def",
-      "size": 500468
+      "path": "assets/index-DAOZBlSK.js",
+      "sha256": "4b7d10d45071a04f1f4fbfdce1069be9ae1cd70606543da35057f8c5979f9716",
+      "size": 502148
     },
     {
       "path": "assets/index-DObK7Mmk.css",
@@ -343,8 +301,8 @@
       "size": 46378
     },
     {
-      "path": "assets/vendor-mui-DCIutLC6.js",
-      "sha256": "c1f89d32034ef4d995a556f65556e11739b5656058b694de8d7e13a18ee1f38b",
+      "path": "assets/vendor-mui-BEXDOpPO.js",
+      "sha256": "eb32759ea6ad44455bb815fd0bfadb4cdeed2310f92f08c8981be93b17878a7f",
       "size": 390530
     },
     {
@@ -1009,7 +967,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "e77ae0029af08fa26fcc9d8092f1721db43fb9c9013a7caaddd65f6d31c3d23f",
+      "sha256": "3339b4a773b0f2ac1c2e1739d6549acfd95c82332ad0c9eb475ba3ba1b2fb9d4",
       "size": 4532
     },
     {
