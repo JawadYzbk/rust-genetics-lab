@@ -1,11 +1,23 @@
 {
   "schema": 1,
   "name": "genetics-lab",
-  "version": "1.13.1",
-  "buildId": "f64cf01f726587e24893cd8f4d38eaede9182381afac34f718cc0c31a44d776d",
+  "version": "1.14.0",
+  "buildId": "6171a4a6db3301d05a8a3104551607df7842c138a3dbfd19a1b11dc6d0173ba7",
   "minDesktopVersion": null,
-  "distRef": "dist-v1.13.1",
+  "distRef": "dist-v1.14.0",
   "changelog": [
+    {
+      "version": "1.14.0",
+      "date": "2026-10-13",
+      "sections": [
+        {
+          "title": "Features",
+          "items": [
+            "Detect the plant type from the panel; keep clones of several plants"
+          ]
+        }
+      ]
+    },
     {
       "version": "1.13.1",
       "date": "2026-10-13",
@@ -187,52 +199,28 @@
           ]
         }
       ]
-    },
-    {
-      "version": "1.2.0",
-      "date": "2026-09-04",
-      "sections": [
-        {
-          "title": "Features",
-          "items": [
-            "Display version in About modal title and under gene input"
-          ]
-        },
-        {
-          "title": "Performance Improvements",
-          "items": [
-            "Accelerate GitHub Actions with multi-layer caching and single-pass build"
-          ]
-        },
-        {
-          "title": "Code Refactoring",
-          "items": [
-            "Decouple version bumping and release publishing into standalone workflows"
-          ]
-        }
-      ]
     }
   ],
-  "generatedAt": "2026-10-13T10:58:22.661Z",
+  "generatedAt": "2026-10-13T11:13:49.558Z",
   "files": [
     {
-      "path": "assets/DynamicGeneLocator-q1_Ce8yJ.js",
-      "sha256": "62e972c299fd39607f8c10c650ea9b59f0bdab8f6acd8d9a3b0c2cf6bb57fac3",
+      "path": "assets/DynamicGeneLocator-DAOBSIi3.js",
+      "sha256": "3064fbeb6d03867e2cd169ca53ab087fc154633bbbb93ba1add625abc801f188",
       "size": 12676
     },
     {
-      "path": "assets/LivestockPage-RdfAfxDS.js",
-      "sha256": "1c4f12ef3ca6381b7bfdc4ae120363e5f2937d96032bc9122cab40c0456cdc1a",
+      "path": "assets/LivestockPage-Cv2fG578.js",
+      "sha256": "1a77d21573d3b7c334af4d8a81bdd7325cb7a98eae7d86e3e24aaa8808151c9f",
       "size": 46945
     },
     {
-      "path": "assets/MobileCameraScanner-9QUwMGgR.js",
-      "sha256": "577257d0137f40607762c92a0b3e38d87d0a15a5bb83c8d2b08a6eb168111ee9",
+      "path": "assets/MobileCameraScanner-BatVFetD.js",
+      "sha256": "96d2b5a9e20280b2ef710cb3faa2c32cf1a734cfd90898ddbbf9faca00e13057",
       "size": 15914
     },
     {
-      "path": "assets/Planter3DView-BjDgXyIf.js",
-      "sha256": "0d64c1dcc7413bf6de5728a5c8a2780bb30af58cb266a869b4caa34f04cdee25",
+      "path": "assets/Planter3DView-Dg0ZVkhm.js",
+      "sha256": "01943ad29109da5e52b595ab4538f368ad7fa512665b1a365e14cfcc15ed1e2f",
       "size": 21962
     },
     {
@@ -241,8 +229,8 @@
       "size": 902
     },
     {
-      "path": "assets/cameraScannerService-CHpdI6C3.js",
-      "sha256": "ccc3ac0d46176f89e5fc508aeea2dcae77cc8f1a529bb42c5048ba13f207fa24",
+      "path": "assets/cameraScannerService-BWxEROXY.js",
+      "sha256": "6205788ae9d2844f4a7e1aa20b4255a3946a3412a549c68a6797a3d4207ea229",
       "size": 20833
     },
     {
@@ -271,9 +259,9 @@
       "size": 58456
     },
     {
-      "path": "assets/index-DAOZBlSK.js",
-      "sha256": "4b7d10d45071a04f1f4fbfdce1069be9ae1cd70606543da35057f8c5979f9716",
-      "size": 502148
+      "path": "assets/index-CES_LXL1.js",
+      "sha256": "638538be903da04f9202344eaf0a2fd2395ec8988df5f34a82e4f1c753a46972",
+      "size": 507864
     },
     {
       "path": "assets/index-DObK7Mmk.css",
@@ -967,7 +955,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "3339b4a773b0f2ac1c2e1739d6549acfd95c82332ad0c9eb475ba3ba1b2fb9d4",
+      "sha256": "ce3e4d773a877529d5d9ab5a265bb8f28d52d0eaadc6317c3b2e6756d9e09daa",
       "size": 4532
     },
     {
