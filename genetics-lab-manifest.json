@@ -1,11 +1,23 @@
 {
   "schema": 1,
   "name": "genetics-lab",
-  "version": "1.11.0",
-  "buildId": "1a50ba6c4df294cd230fb93774fa74bb6a049a9cacc75683bec7cd6a413e8400",
+  "version": "1.12.0",
+  "buildId": "cd568f6b24ebc91802a3099c2377194e6c35ceafab856c6e148e5935745e3fcb",
   "minDesktopVersion": null,
-  "distRef": "dist-v1.11.0",
+  "distRef": "dist-v1.12.0",
   "changelog": [
+    {
+      "version": "1.12.0",
+      "date": "2026-10-13",
+      "sections": [
+        {
+          "title": "Features",
+          "items": [
+            "Show your own route in 3D, click plants for their genes, bigger view"
+          ]
+        }
+      ]
+    },
     {
       "version": "1.11.0",
       "date": "2026-10-13",
@@ -231,27 +243,27 @@
       ]
     }
   ],
-  "generatedAt": "2026-10-13T10:12:41.172Z",
+  "generatedAt": "2026-10-13T10:31:41.999Z",
   "files": [
     {
-      "path": "assets/DynamicGeneLocator-hVjxGwv1.js",
-      "sha256": "2c781641f2db9c683811f4ed53c4f3b72dec0f68680e8fb9bc71070a55d9c3f8",
+      "path": "assets/DynamicGeneLocator-DZl8dJ-n.js",
+      "sha256": "ca0313cb3dffcb08c0aa1ac5177b82a2b1bbb5aaf6cfc98ac21aba8e62d529fc",
       "size": 12676
     },
     {
-      "path": "assets/LivestockPage-DtblAesy.js",
-      "sha256": "b64b4935043c865ed61ec83e333288768bd20c78dd3f5362382f7499a148d796",
+      "path": "assets/LivestockPage-CmsxS6h_.js",
+      "sha256": "73a1a98b117755c45cda34371a27019566f770a6e344146daf5da7e26124a2bc",
       "size": 46944
     },
     {
-      "path": "assets/MobileCameraScanner-DLXDK6Fs.js",
-      "sha256": "ba91693dbf59c418d5d8fb884c96f24ecf9d970e8dfc52d67c555fcb9b47a2eb",
+      "path": "assets/MobileCameraScanner-DunYGndq.js",
+      "sha256": "ab9432bf3bf6b6e04c3559729ad3f5abe850386a7b6ad33488618befbd2a278e",
       "size": 15914
     },
     {
-      "path": "assets/Planter3DView-BvHmfwBy.js",
-      "sha256": "2877e8c1895ffcde35dc42f072440820b4b8b36711a5079b4e6fef812d306e00",
-      "size": 20834
+      "path": "assets/Planter3DView-Dmj6eVrD.js",
+      "sha256": "e3967aa830939730a00d25edc3a3ac1029607e39020fd8ace6016bd127c7193f",
+      "size": 21962
     },
     {
       "path": "assets/cameraScannerConfig-Bwgt-29W.js",
@@ -259,8 +271,8 @@
       "size": 902
     },
     {
-      "path": "assets/cameraScannerService-BC-eN66-.js",
-      "sha256": "5cc057170754a26a3b48630652062647915c9b678a7ca55db0cadf97b36bf0ab",
+      "path": "assets/cameraScannerService-D0uilM0A.js",
+      "sha256": "8dad3f1b122945eaa91a05d51ef0443cab20dde81251c7ba71d62823f4a79598",
       "size": 20833
     },
     {
@@ -289,14 +301,14 @@
       "size": 58456
     },
     {
+      "path": "assets/index-BT3BOIzF.js",
+      "sha256": "98ac5e9d7e06ca7f7947b81c31738dbc3645cc31f28ac4b0eaa6959bc0273b7b",
+      "size": 496486
+    },
+    {
       "path": "assets/index-DObK7Mmk.css",
       "sha256": "57ee8fde9500fd58edcfcca3086ba633def0fb145d615817c0da9840c8433993",
       "size": 5316
-    },
-    {
-      "path": "assets/index-D_6zL3xQ.js",
-      "sha256": "626f35700618e6623a6f18572e66489d7fd1f6a7e2366aba201ee3796e30bace",
-      "size": 490378
     },
     {
       "path": "assets/livestockReader.worker-DmWaPnnL.js",
@@ -319,9 +331,9 @@
       "size": 46378
     },
     {
-      "path": "assets/vendor-mui-CUDa3EXl.js",
-      "sha256": "0ad742977bdb8b8a4c3bfd2c533db94200e2cdfb980a002cbb8083b56e758baa",
-      "size": 389737
+      "path": "assets/vendor-mui-BrLGtmt5.js",
+      "sha256": "881481c6628e014e157aaf2a6b04c99b58533ba76a3c81dd9bcb391a9c31273b",
+      "size": 390530
     },
     {
       "path": "assets/vendor-react-BrcHJDSH.js",
@@ -329,9 +341,9 @@
       "size": 150650
     },
     {
-      "path": "assets/vendor-three-CQu_iG34.js",
-      "sha256": "8da60fc54e7485ab0804b45b1ce1868c77c698edc40dcf7ea2d521240ddda2ef",
-      "size": 671846
+      "path": "assets/vendor-three-bRgh_Nwo.js",
+      "sha256": "bc1685e612c09917abad2a9901b26f571d00fb9a369279ee5a927102ffb6ee7a",
+      "size": 672043
     },
     {
       "path": "audio/headshot.mp3",
@@ -985,7 +997,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "ef8b6b15b2e021e37ae52dc39ccd7cfe03a5084a62cbdf5a3d1a394b50dfd678",
+      "sha256": "d0ffe4241ad2e2443ac93a125e682de1af1dfbedc164825f99fdb738c88fa391",
       "size": 4532
     },
     {
@@ -995,8 +1007,8 @@
     },
     {
       "path": "models/README.md",
-      "sha256": "4d65ce6f60a391cb57011302fb0aa3ac2ffbf860c16f5e12c0a3ab44bdbc3501",
-      "size": 1130
+      "sha256": "83e967ec804850c3f7fc4b816e05850966209551f400b6c5a05f1b71ca5b079d",
+      "size": 1450
     },
     {
       "path": "models/planters/large.glb",
@@ -1014,7 +1026,7 @@
       "size": 165880
     },
     {
-      "path": "models/plants/blue-berry.glb",
+      "path": "models/plants/berry.glb",
       "sha256": "7404018d2153f56548450ed1acd247404048b01230b480a8074f2c4954bf603c",
       "size": 125892
     },
@@ -1022,11 +1034,6 @@
       "path": "models/plants/corn.glb",
       "sha256": "d87c3540963620d658a27616eb28fa9842fef127879c79ff1c8a96eb1e296c81",
       "size": 57832
-    },
-    {
-      "path": "models/plants/green-berry.glb",
-      "sha256": "5fbcc4c8e75ef653b8ccfe136456e52070ae41438e2257ef9af730990f5fa1a7",
-      "size": 125896
     },
     {
       "path": "models/plants/hemp.glb",
@@ -1079,11 +1086,6 @@
       "size": 58912
     },
     {
-      "path": "models/plants/red-berry.glb",
-      "sha256": "14c868b95fc07dd8a3baeeeb847572676bdd98f52c98b3234808bf388848dcea",
-      "size": 125892
-    },
-    {
       "path": "models/plants/rose.glb",
       "sha256": "6f91701eaa7a3fb5d9bc17e915b9513a11ad775dc397055fd4fe507e29e818fc",
       "size": 71616
@@ -1097,16 +1099,6 @@
       "path": "models/plants/wheat.glb",
       "sha256": "f70b1a068f8c56d77f7daa96543f8b1799ca0fd9b4a9f295fe68577f0d485e04",
       "size": 116732
-    },
-    {
-      "path": "models/plants/white-berry.glb",
-      "sha256": "06925b11a990d5f4eb702f63527c4aa0c610a547f3f00eadf1a3b3ad4c0b8ea3",
-      "size": 125896
-    },
-    {
-      "path": "models/plants/yellow-berry.glb",
-      "sha256": "916569724eec26bd46d63581809acb04d4624a9cf52de521c42ffb8a2f1757d5",
-      "size": 125900
     },
     {
       "path": "robots.txt",
