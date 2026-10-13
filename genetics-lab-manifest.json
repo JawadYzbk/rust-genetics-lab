@@ -1,11 +1,23 @@
 {
   "schema": 1,
   "name": "genetics-lab",
-  "version": "1.9.0",
-  "buildId": "15628ef58143f250895649436bed4af7b0ad431b880903a7d3c44eb459e27518",
+  "version": "1.10.0",
+  "buildId": "451089cc641ccb491460f5155030f919d8144853a988b6796ffdead8d9ef73ef",
   "minDesktopVersion": null,
-  "distRef": "dist-v1.9.0",
+  "distRef": "dist-v1.10.0",
   "changelog": [
+    {
+      "version": "1.10.0",
+      "date": "2026-10-13",
+      "sections": [
+        {
+          "title": "Features",
+          "items": [
+            "Interactive 3D planter guide with Rust's own planter and plant models"
+          ]
+        }
+      ]
+    },
     {
       "version": "1.9.0",
       "date": "2026-10-13",
@@ -207,22 +219,27 @@
       ]
     }
   ],
-  "generatedAt": "2026-10-13T09:23:55.558Z",
+  "generatedAt": "2026-10-13T09:58:48.180Z",
   "files": [
     {
-      "path": "assets/DynamicGeneLocator-D-1Z28nP.js",
-      "sha256": "29db14f4ab73dd9c9507af4c2ecb0d201866756c3b18662a5c15bba0600dbd90",
+      "path": "assets/DynamicGeneLocator-BtjLsT_b.js",
+      "sha256": "97470f7dfcfb6733ab1477ec15b9c5452961c465cea0781b43685c419ad746e0",
       "size": 12676
     },
     {
-      "path": "assets/LivestockPage-tuqU8zue.js",
-      "sha256": "1966e8fee6f6f4ce6437bcc2b96aeb6b2fbac2c443510c8aa1752d9602207b01",
+      "path": "assets/LivestockPage-CrJeLJvS.js",
+      "sha256": "f66fa033961995ea47c28cc1dd3ad16777ec00ec033db2152b1dd5f944565919",
       "size": 46944
     },
     {
-      "path": "assets/MobileCameraScanner-DdDJiLLz.js",
-      "sha256": "bfe648f75af07437823dac5bbd7f3ef9643df40607000ff7f80b1fe83357ae3e",
+      "path": "assets/MobileCameraScanner-B7kr4JNb.js",
+      "sha256": "cd5d35e55ad27959e0886791b11f36c62bb5f5bee9d6fdc9d14e1a8ef5f42088",
       "size": 15914
+    },
+    {
+      "path": "assets/Planter3DView-VOrIIo6Q.js",
+      "sha256": "b003d6f325f43251a47840ae471e657a4aaf0c8c2805d9accd42b9b69053a7af",
+      "size": 20718
     },
     {
       "path": "assets/cameraScannerConfig-Bwgt-29W.js",
@@ -230,14 +247,39 @@
       "size": 902
     },
     {
-      "path": "assets/cameraScannerService-BIkf7vYv.js",
-      "sha256": "e7341911f4f62e9ea3ded6e65e526cf29a42b7318447df749369683081f184c0",
+      "path": "assets/cameraScannerService-hCDqCyPa.js",
+      "sha256": "88c931e17f42fa537764b52f40f1acc729dbc05ac574fcef709c2df78b5fd5d1",
       "size": 20833
     },
     {
-      "path": "assets/index-B6P74wD7.js",
-      "sha256": "4ffa76522251e3d8d2356a61f86b44cd8aced812f8f0bf2e113cb5d2a4bbf4aa",
-      "size": 472373
+      "path": "assets/draco_decoder-C32yEggz.wasm",
+      "sha256": "c55a594e8ffd18426d36b27fea9618af3df5e173640a3e56d46f09d76f0574f2",
+      "size": 285747
+    },
+    {
+      "path": "assets/draco_decoder-Z1_iN-Ht.wasm",
+      "sha256": "a680d927bed9cb864ddbd63521868891af2bfbe755092761b4837487618df8ac",
+      "size": 192420
+    },
+    {
+      "path": "assets/draco_decoder-fzg4nYZr.js",
+      "sha256": "30e4d486fa020737af10e3c56197693e5b904bdc05b8bfa5d7b06751dec6da04",
+      "size": 719410
+    },
+    {
+      "path": "assets/draco_wasm_wrapper-DxJM36Ib.js",
+      "sha256": "e8049906ef3f8f75d3456c22a3f31bfdfe5b5b5bd09ccdec613b9e9a49d554d8",
+      "size": 58763
+    },
+    {
+      "path": "assets/draco_wasm_wrapper-fZCQGLGb.js",
+      "sha256": "8bb2952d2ba7d67e1414f8df819410cb0434a666be53f671fff75f68843d76f6",
+      "size": 58456
+    },
+    {
+      "path": "assets/index-BZ0knD5e.js",
+      "sha256": "dc907f24b930394c52b48db94be1ec992824be8b7cf895f4037fe91bfd944bd6",
+      "size": 488025
     },
     {
       "path": "assets/index-DObK7Mmk.css",
@@ -265,14 +307,19 @@
       "size": 46378
     },
     {
-      "path": "assets/vendor-mui-C-Vucpfb.js",
-      "sha256": "389c97c42dae8f622286f401ed686bdfe7b2d4b66d28c4112b0b7e564492dd83",
-      "size": 388145
+      "path": "assets/vendor-mui-gL0ZtvXk.js",
+      "sha256": "e7d5871d7fb5ad4aac2948d7dfd3cb36e07afba2788f4f650711f26059e3cfe2",
+      "size": 389656
     },
     {
       "path": "assets/vendor-react-BrcHJDSH.js",
       "sha256": "04dcf881d4d35d43e85ea9460d6ef7001eda162b276a526c48da12db3481d547",
       "size": 150650
+    },
+    {
+      "path": "assets/vendor-three-DcxYJAn1.js",
+      "sha256": "31bb32c91594a34c5aa7ddc6f6bd8aede2baa1621dfca9275fdd6b16c7838e78",
+      "size": 671838
     },
     {
       "path": "audio/headshot.mp3",
@@ -283,6 +330,16 @@
       "path": "audio/pop.mp3",
       "sha256": "49fa23bc79c9b0e6756a2e28f1d483623959ecbf52f8d368f23e18f7d9740d5c",
       "size": 3480
+    },
+    {
+      "path": "draco/draco_decoder.wasm",
+      "sha256": "a680d927bed9cb864ddbd63521868891af2bfbe755092761b4837487618df8ac",
+      "size": 192420
+    },
+    {
+      "path": "draco/draco_wasm_wrapper.js",
+      "sha256": "8bb2952d2ba7d67e1414f8df819410cb0434a666be53f671fff75f68843d76f6",
+      "size": 58456
     },
     {
       "path": "img/Nvidia-Reflex.png",
@@ -916,13 +973,128 @@
     },
     {
       "path": "index.html",
-      "sha256": "217baebe7ed3d13a68f41057d47979a9548bb8c3bdfe9645f81b2299fb2bad04",
+      "sha256": "510b26aef2e4eeb93ada733717f6bebb74711159a116ba51e78e3f2b33263cb9",
       "size": 4532
     },
     {
       "path": "manifest.json",
       "sha256": "9cc163b2968467ab78e0c643a5e6ad1dd5c1b97f9e5ec59465d90170767b1561",
       "size": 392
+    },
+    {
+      "path": "models/README.md",
+      "sha256": "4d65ce6f60a391cb57011302fb0aa3ac2ffbf860c16f5e12c0a3ab44bdbc3501",
+      "size": 1130
+    },
+    {
+      "path": "models/planters/large.glb",
+      "sha256": "c154069006117c1939adef0189b85ce2dfc7b632d5c9fa706bde83587b591e9a",
+      "size": 167712
+    },
+    {
+      "path": "models/planters/small.glb",
+      "sha256": "02a67ff74c5621709557a5e850d46e3291086149f34a96594b4fa0f70cbf6364",
+      "size": 166140
+    },
+    {
+      "path": "models/planters/triangle.glb",
+      "sha256": "bc757bec4d518f852f0dd01c43ff57af4199eb505ed223f18f97e14cc809854f",
+      "size": 165880
+    },
+    {
+      "path": "models/plants/blue-berry.glb",
+      "sha256": "7404018d2153f56548450ed1acd247404048b01230b480a8074f2c4954bf603c",
+      "size": 125892
+    },
+    {
+      "path": "models/plants/corn.glb",
+      "sha256": "d87c3540963620d658a27616eb28fa9842fef127879c79ff1c8a96eb1e296c81",
+      "size": 57832
+    },
+    {
+      "path": "models/plants/green-berry.glb",
+      "sha256": "5fbcc4c8e75ef653b8ccfe136456e52070ae41438e2257ef9af730990f5fa1a7",
+      "size": 125896
+    },
+    {
+      "path": "models/plants/hemp.glb",
+      "sha256": "5c1ec80aed5d0923255e6a352d27b2415f93d4d79086c8871e86f3f0acf744e8",
+      "size": 80572
+    },
+    {
+      "path": "models/plants/orchid.glb",
+      "sha256": "7efdb5bc71283f694748234d7bff1ab555e2d59556d42fa1ef01d183b1ccda0a",
+      "size": 68084
+    },
+    {
+      "path": "models/plants/potato.glb",
+      "sha256": "bb274391cafc6549ba8b6cdd6e2b3c7b28f8ef6fbd406a90d6b5e281057a01b9",
+      "size": 96660
+    },
+    {
+      "path": "models/plants/pumpkin.glb",
+      "sha256": "6aef3966d5bd3b6ac5cd070be3a03982dcfbe2e1995639e8f7e2f99bd96369d0",
+      "size": 68520
+    },
+    {
+      "path": "models/plants/pumpkin/dying.glb",
+      "sha256": "75e1b5dd5f1ae1f9dcbdd6bc3c82b37c9e23558c5cfede1840a8e13fefa4c9d6",
+      "size": 63504
+    },
+    {
+      "path": "models/plants/pumpkin/fruiting.glb",
+      "sha256": "340ae5c824c8f5f2ee7366a91854818cc6f9713d714f9364dce98abd52cd3ffe",
+      "size": 68644
+    },
+    {
+      "path": "models/plants/pumpkin/mature.glb",
+      "sha256": "d2952e31a46ca7355c27274b8b4db45a099b49fe5c2d6fcc9d7c8bc21cfb32d0",
+      "size": 64756
+    },
+    {
+      "path": "models/plants/pumpkin/sapling.glb",
+      "sha256": "f2493c692e10a6bc047d9aff82e24e2189d180ad7bd6d0e63f93a9bd244f2ef2",
+      "size": 61012
+    },
+    {
+      "path": "models/plants/pumpkin/seed.glb",
+      "sha256": "00ac721a0c2b5e866d91d03a31349038ac66030f948cdbea3988214aa74dcbd0",
+      "size": 58888
+    },
+    {
+      "path": "models/plants/pumpkin/seedling.glb",
+      "sha256": "95c35477434782ce6f7631e032538c4639c80f0e7a4276694fbb9fa1ddc45461",
+      "size": 58912
+    },
+    {
+      "path": "models/plants/red-berry.glb",
+      "sha256": "14c868b95fc07dd8a3baeeeb847572676bdd98f52c98b3234808bf388848dcea",
+      "size": 125892
+    },
+    {
+      "path": "models/plants/rose.glb",
+      "sha256": "6f91701eaa7a3fb5d9bc17e915b9513a11ad775dc397055fd4fe507e29e818fc",
+      "size": 71616
+    },
+    {
+      "path": "models/plants/sunflower.glb",
+      "sha256": "37d518537def4b407367781db58d9cc39fb2632ddf1acf9135bba232374996dd",
+      "size": 89940
+    },
+    {
+      "path": "models/plants/wheat.glb",
+      "sha256": "f70b1a068f8c56d77f7daa96543f8b1799ca0fd9b4a9f295fe68577f0d485e04",
+      "size": 116732
+    },
+    {
+      "path": "models/plants/white-berry.glb",
+      "sha256": "06925b11a990d5f4eb702f63527c4aa0c610a547f3f00eadf1a3b3ad4c0b8ea3",
+      "size": 125896
+    },
+    {
+      "path": "models/plants/yellow-berry.glb",
+      "sha256": "916569724eec26bd46d63581809acb04d4624a9cf52de521c42ffb8a2f1757d5",
+      "size": 125900
     },
     {
       "path": "robots.txt",
