@@ -329,11 +329,17 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const updateSessionStepPlanted = useCallback(
     (stepIndex: number, type: 'center' | 'surrounding', planted: boolean) => {
       if (!activeSession) return;
-      const updatedSteps = [...activeSession.steps];
-      if (updatedSteps[stepIndex]) {
-        if (type === 'center') updatedSteps[stepIndex].isCenterPlanted = planted;
-        if (type === 'surrounding') updatedSteps[stepIndex].isSurroundingPlanted = planted;
-      }
+      // A new step object, not an edit of the old one: views memoised on the step (the 3D
+      // planter) only see the change when the reference changes.
+      const updatedSteps = activeSession.steps.map((s, i) =>
+        i !== stepIndex
+          ? s
+          : {
+              ...s,
+              ...(type === 'center' ? { isCenterPlanted: planted } : {}),
+              ...(type === 'surrounding' ? { isSurroundingPlanted: planted } : {})
+            }
+      );
       const updatedSession: BreedingSession = {
         ...activeSession,
         steps: updatedSteps,
@@ -362,12 +368,9 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const completeBreedingStep = useCallback(
     (stepIndex: number) => {
       if (!activeSession) return;
-      const updatedSteps = [...activeSession.steps];
-      if (updatedSteps[stepIndex]) {
-        updatedSteps[stepIndex].isCompleted = true;
-        updatedSteps[stepIndex].isCenterPlanted = true;
-        updatedSteps[stepIndex].isSurroundingPlanted = true;
-      }
+      const updatedSteps = activeSession.steps.map((s, i) =>
+        i === stepIndex ? { ...s, isCompleted: true, isCenterPlanted: true, isSurroundingPlanted: true } : s
+      );
 
       const nextStepIdx = stepIndex + 1;
       const isAllComplete = nextStepIdx >= updatedSteps.length;
