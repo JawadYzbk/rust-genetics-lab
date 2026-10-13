@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9.0](https://github.com/JawadYzbk/rust-genetics-lab/releases/tag/v1.9.0) (2026-10-13)
+
+### 🚀 Features
+
+* feat(updates): open patch notes at any time ([ef8f507](https://github.com/JawadYzbk/rust-genetics-lab/commit/ef8f507a5da47fe6618831d167399d8f26701ae4))
+
+**Full Changelog**: https://github.com/JawadYzbk/rust-genetics-lab/compare/v1.8.0...v1.9.0
+All notable changes to this project will be documented in this file.
+
 ## [1.8.0](https://github.com/JawadYzbk/rust-genetics-lab/releases/tag/v1.8.0) (2026-10-13)
 
 ### 🚀 Features
