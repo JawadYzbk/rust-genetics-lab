@@ -1,11 +1,23 @@
 {
   "schema": 1,
   "name": "genetics-lab",
-  "version": "1.16.1",
-  "buildId": "71cb1474113d3c914d9a755d64c602d05423b2e4adcec2d60ca12635eb58f15a",
+  "version": "1.17.0",
+  "buildId": "14610803bb099bd4dce88dc087009ee32d5797913e32ec50d43735bd84bca7cb",
   "minDesktopVersion": null,
-  "distRef": "dist-v1.16.1",
+  "distRef": "dist-v1.17.0",
   "changelog": [
+    {
+      "version": "1.17.0",
+      "date": "2026-10-13",
+      "sections": [
+        {
+          "title": "Features",
+          "items": [
+            "App tutorial, offered once and open any time"
+          ]
+        }
+      ]
+    },
     {
       "version": "1.16.1",
       "date": "2026-10-13",
@@ -179,40 +191,28 @@
           ]
         }
       ]
-    },
-    {
-      "version": "1.6.0",
-      "date": "2026-10-02",
-      "sections": [
-        {
-          "title": "Features",
-          "items": [
-            "Update genetics rules and add a Rules tab"
-          ]
-        }
-      ]
     }
   ],
-  "generatedAt": "2026-10-13T12:29:01.517Z",
+  "generatedAt": "2026-10-13T12:35:08.346Z",
   "files": [
     {
-      "path": "assets/DynamicGeneLocator-cUeR2rWk.js",
-      "sha256": "522d261f2f3db0da00f2f162cf57ccc441249a4f2730e2af8c0516db9b0d1c22",
+      "path": "assets/DynamicGeneLocator-CvLIDirp.js",
+      "sha256": "48e994c8bd81165b1edcf7be24d8753b0379c5042a89b5634ee9f3bf026ce39f",
       "size": 12676
     },
     {
-      "path": "assets/LivestockPage-DnIUchfh.js",
-      "sha256": "fb8105f8f903d4e96fbdc0c21cd77b5dd4c68a3307f6c3226c69a484558d1f1d",
-      "size": 46942
+      "path": "assets/LivestockPage-Df9kh4Ef.js",
+      "sha256": "b106393dece13a5b6c1110135c010657e94930782474e57da04a6d6be29a140d",
+      "size": 47029
     },
     {
-      "path": "assets/MobileCameraScanner-BtHZR_B4.js",
-      "sha256": "26c4bccbc482e19a8597fdf3441135c0de23008f62547a577e77e0593adfa87d",
-      "size": 15914
+      "path": "assets/MobileCameraScanner-Bzj5e8rh.js",
+      "sha256": "e55f142da34dfe46cdf37195a7570bb90fa4fc91bbd1260147a1a8cf7255daab",
+      "size": 15915
     },
     {
-      "path": "assets/Planter3DView-DGthS3sN.js",
-      "sha256": "99700ecefd357bd989e5eebde013c3f0d335cfa24cf70c24e0319511f8a05740",
+      "path": "assets/Planter3DView-CDQkZRan.js",
+      "sha256": "4726a6558528edca1420523a8ab8f4f9f241fda3a790e77a44b20f17b2854c64",
       "size": 21963
     },
     {
@@ -221,8 +221,8 @@
       "size": 902
     },
     {
-      "path": "assets/cameraScannerService-TwobJAlJ.js",
-      "sha256": "33e0ab5f733b2f05a6f9ab1b8b8c85629dcc3a1aff1d2d99abcbb17e3f72a6c5",
+      "path": "assets/cameraScannerService-nAWcL2Fd.js",
+      "sha256": "3efdc4841274d4a2bef739b2cb63b7b750dd1ef3a286610c48148763429cfec6",
       "size": 20833
     },
     {
@@ -251,14 +251,14 @@
       "size": 58456
     },
     {
-      "path": "assets/index-BaUF42I4.js",
-      "sha256": "a55ae6d6f19ed42b54e41a1a3868a971fd13aa000b5b11813b3d6c36c21b7046",
-      "size": 523351
-    },
-    {
       "path": "assets/index-DObK7Mmk.css",
       "sha256": "57ee8fde9500fd58edcfcca3086ba633def0fb145d615817c0da9840c8433993",
       "size": 5316
+    },
+    {
+      "path": "assets/index-NEReMh-J.js",
+      "sha256": "9cb0a67483b157836d7f2ae35407534b6e6affa77198b73b1b5d20ad88d35dbd",
+      "size": 536028
     },
     {
       "path": "assets/livestockReader.worker-DmWaPnnL.js",
@@ -281,9 +281,9 @@
       "size": 46378
     },
     {
-      "path": "assets/vendor-mui-BUUzk3A_.js",
-      "sha256": "dc7d285cb85569fb06db39365ffb4d48c15e0ce124a708396ab9f9cfb10329bb",
-      "size": 390815
+      "path": "assets/vendor-mui-BvTPQY-3.js",
+      "sha256": "e7671fac1be446e76bfa479ecc0ce8daf5e8920748fb66e52f19ad5d4db5c789",
+      "size": 390922
     },
     {
       "path": "assets/vendor-react-BrcHJDSH.js",
@@ -947,7 +947,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "b3c3a55c58eafb15f9b8f3192609c1fa061a41a7fde2d9e382401cd02bcb1950",
+      "sha256": "fa98293c02e60c5d4276459db70f1cffde19ca8b8656cd78c1177d32194565e8",
       "size": 4532
     },
     {
