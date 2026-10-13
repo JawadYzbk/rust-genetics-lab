@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.8.0](https://github.com/JawadYzbk/rust-genetics-lab/releases/tag/v1.8.0) (2026-10-13)
+
+### 🚀 Features
+
+* feat(updates): ship update manifests and show updates inside Genetics Lab ([2bdb841](https://github.com/JawadYzbk/rust-genetics-lab/commit/2bdb84190e7a681146ab907e63c62b25360f29ee))
+
+**Full Changelog**: https://github.com/JawadYzbk/rust-genetics-lab/compare/v1.7.0...v1.8.0
+All notable changes to this project will be documented in this file.
+
 ## [1.7.0](https://github.com/JawadYzbk/rust-genetics-lab/releases/tag/v1.7.0) (2026-10-12)
 
 ### 🚀 Features
