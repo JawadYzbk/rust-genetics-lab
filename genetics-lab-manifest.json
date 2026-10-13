@@ -1,11 +1,23 @@
 {
   "schema": 1,
   "name": "genetics-lab",
-  "version": "1.16.0",
-  "buildId": "88ddf6cd92d98955c4598f29a3c1188161eab6ed4af2d31c3b830096e6e015af",
+  "version": "1.16.1",
+  "buildId": "71cb1474113d3c914d9a755d64c602d05423b2e4adcec2d60ca12635eb58f15a",
   "minDesktopVersion": null,
-  "distRef": "dist-v1.16.0",
+  "distRef": "dist-v1.16.1",
   "changelog": [
+    {
+      "version": "1.16.1",
+      "date": "2026-10-13",
+      "sections": [
+        {
+          "title": "Bug Fixes",
+          "items": [
+            "One set of region controls, in the Scanner HUD; live previews everywhere"
+          ]
+        }
+      ]
+    },
     {
       "version": "1.16.0",
       "date": "2026-10-13",
@@ -179,41 +191,29 @@
           ]
         }
       ]
-    },
-    {
-      "version": "1.5.0",
-      "date": "2026-10-02",
-      "sections": [
-        {
-          "title": "Features",
-          "items": [
-            "Show each pair's expected newborn gene by gene"
-          ]
-        }
-      ]
     }
   ],
-  "generatedAt": "2026-10-13T12:14:55.213Z",
+  "generatedAt": "2026-10-13T12:29:01.517Z",
   "files": [
     {
-      "path": "assets/DynamicGeneLocator-tR5A3sLH.js",
-      "sha256": "52867967d566d0b53aae6e0a6710c0cbae667daf4c5f6129f58fc179a7676142",
+      "path": "assets/DynamicGeneLocator-cUeR2rWk.js",
+      "sha256": "522d261f2f3db0da00f2f162cf57ccc441249a4f2730e2af8c0516db9b0d1c22",
       "size": 12676
     },
     {
-      "path": "assets/LivestockPage-BCHtUYba.js",
-      "sha256": "773eab6ce8faaf6d9b9359de7cb8b77f093f593ce318eaba133a1ad9dca3aa02",
-      "size": 46946
+      "path": "assets/LivestockPage-DnIUchfh.js",
+      "sha256": "fb8105f8f903d4e96fbdc0c21cd77b5dd4c68a3307f6c3226c69a484558d1f1d",
+      "size": 46942
     },
     {
-      "path": "assets/MobileCameraScanner-BgKiRify.js",
-      "sha256": "19789414d70690d30e46645f71e62a4cba75f277757b2aadddda5e5865d8fc6a",
+      "path": "assets/MobileCameraScanner-BtHZR_B4.js",
+      "sha256": "26c4bccbc482e19a8597fdf3441135c0de23008f62547a577e77e0593adfa87d",
       "size": 15914
     },
     {
-      "path": "assets/Planter3DView-BWkrAt-4.js",
-      "sha256": "4f2624cd9969af0e59bc422345052cd1cfb7721f53322712a334dc3f671d67e4",
-      "size": 21962
+      "path": "assets/Planter3DView-DGthS3sN.js",
+      "sha256": "99700ecefd357bd989e5eebde013c3f0d335cfa24cf70c24e0319511f8a05740",
+      "size": 21963
     },
     {
       "path": "assets/cameraScannerConfig-Bwgt-29W.js",
@@ -221,8 +221,8 @@
       "size": 902
     },
     {
-      "path": "assets/cameraScannerService-DmzN1ILm.js",
-      "sha256": "113846bc0eb2eade7d382aabddef4c3b5c617c14588c8e0d7e1553e90ceafccd",
+      "path": "assets/cameraScannerService-TwobJAlJ.js",
+      "sha256": "33e0ab5f733b2f05a6f9ab1b8b8c85629dcc3a1aff1d2d99abcbb17e3f72a6c5",
       "size": 20833
     },
     {
@@ -251,9 +251,9 @@
       "size": 58456
     },
     {
-      "path": "assets/index-D2hzjVqM.js",
-      "sha256": "6a78a7562323d2b0217c9ccfdabe7ef162a22a26001c397708f75af04c6b7a6e",
-      "size": 523616
+      "path": "assets/index-BaUF42I4.js",
+      "sha256": "a55ae6d6f19ed42b54e41a1a3868a971fd13aa000b5b11813b3d6c36c21b7046",
+      "size": 523351
     },
     {
       "path": "assets/index-DObK7Mmk.css",
@@ -281,8 +281,8 @@
       "size": 46378
     },
     {
-      "path": "assets/vendor-mui-CIahU-MQ.js",
-      "sha256": "5550d4ab4843a6018389d294dbc93532faa6a190ddb732082219a423157856ab",
+      "path": "assets/vendor-mui-BUUzk3A_.js",
+      "sha256": "dc7d285cb85569fb06db39365ffb4d48c15e0ce124a708396ab9f9cfb10329bb",
       "size": 390815
     },
     {
@@ -947,7 +947,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "6f5af65237804269f0748b6e087c951cca17a03b1726db27ac03ff082d3c53da",
+      "sha256": "b3c3a55c58eafb15f9b8f3192609c1fa061a41a7fde2d9e382401cd02bcb1950",
       "size": 4532
     },
     {
