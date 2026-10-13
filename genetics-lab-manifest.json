@@ -1,11 +1,23 @@
 {
   "schema": 1,
   "name": "genetics-lab",
-  "version": "1.15.0",
-  "buildId": "30340a7998d139f737c1cc663d98d0d659705f310fb46c1d885746c07d7f1507",
+  "version": "1.16.0",
+  "buildId": "88ddf6cd92d98955c4598f29a3c1188161eab6ed4af2d31c3b830096e6e015af",
   "minDesktopVersion": null,
-  "distRef": "dist-v1.15.0",
+  "distRef": "dist-v1.16.0",
   "changelog": [
+    {
+      "version": "1.16.0",
+      "date": "2026-10-13",
+      "sections": [
+        {
+          "title": "Features",
+          "items": [
+            "Move a clone to another plant group; fix double-adds and plant reads at small UI scales"
+          ]
+        }
+      ]
+    },
     {
       "version": "1.15.0",
       "date": "2026-10-13",
@@ -179,53 +191,28 @@
           ]
         }
       ]
-    },
-    {
-      "version": "1.4.0",
-      "date": "2026-10-02",
-      "sections": [
-        {
-          "title": "Features",
-          "items": [
-            "Show sex with icons and set it in one click",
-            "Mark livestock genetics as beta",
-            "Read animal names and never add one animal twice",
-            "Add the Milky and Creamy teas from the livestock update",
-            "Detect the animal's kind from the panel portrait",
-            "Model hidden gene copies and real inheritance",
-            "Scan livestock genes and suggest breeding pairs"
-          ]
-        },
-        {
-          "title": "Bug Fixes",
-          "items": [
-            "Tell lamb from sheep and stay unsure between cow and calf",
-            "Read marker numbers, age and condition from the live panel"
-          ]
-        }
-      ]
     }
   ],
-  "generatedAt": "2026-10-13T12:01:09.682Z",
+  "generatedAt": "2026-10-13T12:14:55.213Z",
   "files": [
     {
-      "path": "assets/DynamicGeneLocator-CXZiSjOJ.js",
-      "sha256": "230a50f8338336a7eb41f919dcbcdafc65b0abba67c09c19fe933ce06033a696",
+      "path": "assets/DynamicGeneLocator-tR5A3sLH.js",
+      "sha256": "52867967d566d0b53aae6e0a6710c0cbae667daf4c5f6129f58fc179a7676142",
       "size": 12676
     },
     {
-      "path": "assets/LivestockPage-_Ocyy6c0.js",
-      "sha256": "a5b85e7f0e9dce8e908d225630e1301a51058c7270b412873c9f619571b547a9",
+      "path": "assets/LivestockPage-BCHtUYba.js",
+      "sha256": "773eab6ce8faaf6d9b9359de7cb8b77f093f593ce318eaba133a1ad9dca3aa02",
       "size": 46946
     },
     {
-      "path": "assets/MobileCameraScanner-B_ICgF0O.js",
-      "sha256": "6ff72c4d34b9963d6fe97ae66e8a0ae947d7b782c3fee94cf8954f473c6415dd",
+      "path": "assets/MobileCameraScanner-BgKiRify.js",
+      "sha256": "19789414d70690d30e46645f71e62a4cba75f277757b2aadddda5e5865d8fc6a",
       "size": 15914
     },
     {
-      "path": "assets/Planter3DView-C8rWfQHe.js",
-      "sha256": "fefcf08b06f1d9bf85121639d9c98aa071c4235b39d0a751327800dc18dad968",
+      "path": "assets/Planter3DView-BWkrAt-4.js",
+      "sha256": "4f2624cd9969af0e59bc422345052cd1cfb7721f53322712a334dc3f671d67e4",
       "size": 21962
     },
     {
@@ -234,8 +221,8 @@
       "size": 902
     },
     {
-      "path": "assets/cameraScannerService-CdlIzyal.js",
-      "sha256": "f1fffc3662f5cabc472082a939389ac9314e1dc6fec7cfa57c59badaa331daaa",
+      "path": "assets/cameraScannerService-DmzN1ILm.js",
+      "sha256": "113846bc0eb2eade7d382aabddef4c3b5c617c14588c8e0d7e1553e90ceafccd",
       "size": 20833
     },
     {
@@ -264,9 +251,9 @@
       "size": 58456
     },
     {
-      "path": "assets/index-BZQ3Z01H.js",
-      "sha256": "947763f8396b8e78fd82a2edb235ecc3c513ffc0421ce9b04f480cc97f7b2c5a",
-      "size": 516276
+      "path": "assets/index-D2hzjVqM.js",
+      "sha256": "6a78a7562323d2b0217c9ccfdabe7ef162a22a26001c397708f75af04c6b7a6e",
+      "size": 523616
     },
     {
       "path": "assets/index-DObK7Mmk.css",
@@ -294,9 +281,9 @@
       "size": 46378
     },
     {
-      "path": "assets/vendor-mui-LkYLuLdu.js",
-      "sha256": "2d5530504ca2192cf88a555ce1706ded6f7016d86901a94cbea48541ecbeb998",
-      "size": 390672
+      "path": "assets/vendor-mui-CIahU-MQ.js",
+      "sha256": "5550d4ab4843a6018389d294dbc93532faa6a190ddb732082219a423157856ab",
+      "size": 390815
     },
     {
       "path": "assets/vendor-react-BrcHJDSH.js",
@@ -960,7 +947,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "3f4f1683e17e2045b01a5fc7d4ecc076fffcb002a74e33f6067a83d2f06f8649",
+      "sha256": "6f5af65237804269f0748b6e087c951cca17a03b1726db27ac03ff082d3c53da",
       "size": 4532
     },
     {
