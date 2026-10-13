@@ -27,7 +27,7 @@ export interface RowGeometry {
   pitch: number;
 }
 
-interface NameBand {
+export interface NameBand {
   x0: number;
   x1: number;
   y0: number;
@@ -45,9 +45,25 @@ export const PLANT_NAME_BANDS: Record<ScannerRegionType, NameBand> = {
   inventory: { x0: -5.6, x1: 6.5, y0: -7.85, y1: -6.2, capHeight: 0.68 }
 };
 
+const shifted = (band: NameBand, dy: number, dx0 = 0): NameBand => ({ ...band, x0: band.x0 + dx0, y0: band.y0 + dy, y1: band.y1 + dy });
+
+/**
+ * Where else to look when the measured band reads nothing, best guess first. In-game UI
+ * scale does not resize every part of a panel by the same factor, so the title can sit a
+ * little higher or lower relative to the genes than in the captures the bands were measured
+ * on; the inventory tooltip's title can also start further left. Only a known plant name
+ * counts as a hit, so looking more widely cannot invent a plant.
+ */
+export const PLANT_NAME_SEARCH: Record<ScannerRegionType, NameBand[]> = {
+  planter: [0, -0.3, 0.3, -0.6, 0.6].map((dy) => shifted(PLANT_NAME_BANDS.planter, dy)),
+  inventory: [0, -0.6, 0.6, -1.2, 1.2, -1.8, 1.8].flatMap((dy) => [
+    shifted(PLANT_NAME_BANDS.inventory, dy),
+    shifted(PLANT_NAME_BANDS.inventory, dy, -2)
+  ])
+};
+
 /** The image rectangle to read the plant name from, in pixels. */
-export function plantNameRect(row: RowGeometry, type: ScannerRegionType) {
-  const band = PLANT_NAME_BANDS[type];
+export function plantNameRect(row: RowGeometry, type: ScannerRegionType, band: NameBand = PLANT_NAME_BANDS[type]) {
   return {
     x0: row.x + band.x0 * row.pitch,
     x1: row.x + band.x1 * row.pitch,
@@ -257,11 +273,29 @@ export interface PlantNameRead {
   score: number;
 }
 
-/** Reads the plant named above a gene row, or null when the title is missing or unclear. */
-export function readPlantName(image: RasterImage, row: RowGeometry, type: ScannerRegionType): PlantNameRead | null {
-  if (!(row.pitch > 4)) return null;
-  const glyphs = nameGlyphs(image, plantNameRect(row, type), PLANT_NAME_BANDS[type].capHeight * row.pitch);
-  if (glyphs.length < 3 || glyphs.length > 40) return null;
+/** What the title band holds as read, plant or not; for diagnostics. */
+export interface PlantTitleRead {
+  /** The words as read; empty when no letters were found. */
+  text: string;
+  /** The plant the words name, or null. */
+  plant: string | null;
+  /** Letter-height blobs found in the band. */
+  glyphCount: number;
+  /** Weakest letter's template score. */
+  score: number;
+}
+
+/** Reads the title band above a gene row, whatever it says. */
+export function readPlantTitle(
+  image: RasterImage,
+  row: RowGeometry,
+  type: ScannerRegionType,
+  band: NameBand = PLANT_NAME_BANDS[type]
+): PlantTitleRead {
+  const none = (glyphCount: number): PlantTitleRead => ({ text: '', plant: null, glyphCount, score: 0 });
+  if (!(row.pitch > 4)) return none(0);
+  const glyphs = nameGlyphs(image, plantNameRect(row, type, band), band.capHeight * row.pitch);
+  if (glyphs.length < 3 || glyphs.length > 40) return none(glyphs.length);
 
   const words: string[] = [];
   let worst = Infinity;
@@ -276,6 +310,29 @@ export function readPlantName(image: RasterImage, row: RowGeometry, type: Scanne
     if (text) words.push(text);
   }
 
-  const plant = plantFromTitle(words);
-  return plant ? { plant, text: words.join(' '), score: worst } : null;
+  return { text: words.join(' '), plant: plantFromTitle(words), glyphCount: glyphs.length, score: worst === Infinity ? 0 : worst };
+}
+
+/**
+ * Reads the title, trying the search bands in turn until one names a plant. Returns the hit,
+ * or the read that found the most letters, with the band it came from.
+ */
+export function searchPlantTitle(
+  image: RasterImage,
+  row: RowGeometry,
+  type: ScannerRegionType
+): { read: PlantTitleRead; band: NameBand } {
+  let best: { read: PlantTitleRead; band: NameBand } | null = null;
+  for (const band of PLANT_NAME_SEARCH[type]) {
+    const read = readPlantTitle(image, row, type, band);
+    if (read.plant) return { read, band };
+    if (!best || read.text.length > best.read.text.length) best = { read, band };
+  }
+  return best!;
+}
+
+/** Reads the plant named above a gene row, or null when the title is missing or unclear. */
+export function readPlantName(image: RasterImage, row: RowGeometry, type: ScannerRegionType): PlantNameRead | null {
+  const read = readPlantTitle(image, row, type);
+  return read.plant ? { plant: read.plant, text: read.text, score: read.score } : null;
 }

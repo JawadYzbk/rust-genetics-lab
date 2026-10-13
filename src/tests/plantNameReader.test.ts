@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { RasterImage } from '../services/scanner/scannerTypes.ts';
-import { plantFromTitle, plantNameRect, readPlantName } from '../services/scanner/plantNameReader.ts';
+import { plantFromTitle, plantNameRect, readPlantName, searchPlantTitle } from '../services/scanner/plantNameReader.ts';
 
 async function loadFixture(name: string, width: number, height: number): Promise<RasterImage> {
   const fsName = 'node:fs';
@@ -109,5 +109,25 @@ describe('readPlantName on captures', () => {
     const image = await loadFixture('plant-planter-hemp-a', 628, 200);
     // Pretend the row is far lower: the band above it is empty panel and gene badges.
     expect(readPlantName(image, { x: 187, y: 195, pitch: 30 }, 'planter')).toBeNull();
+  });
+
+  it('finds a title that sits off the measured band (UI scale moves it relative to the genes)', async () => {
+    const inventory = await loadFixture('plant-inventory-green-berry', 640, 250);
+    const row = { x: 171, y: 234, pitch: 29.3 };
+    for (const dy of [-2, -1, 1, 2]) {
+      expect(searchPlantTitle(inventory, { ...row, y: row.y + dy * row.pitch }, 'inventory').read.plant).toBe('green-berry');
+    }
+    // The title starting further left than the band.
+    expect(searchPlantTitle(inventory, { ...row, x: row.x + 1.5 * row.pitch }, 'inventory').read.plant).toBe('green-berry');
+
+    const planter = await loadFixture('plant-planter-hemp-ui07-23', 337, 130);
+    for (const dy of [-0.5, 0.5]) {
+      expect(searchPlantTitle(planter, { x: 70, y: 100 + dy * 43.2, pitch: 43.2 }, 'planter').read.plant).toBe('hemp');
+    }
+  });
+
+  it('searching more widely still reads nothing where there is no title', async () => {
+    const image = await loadFixture('plant-planter-hemp-a', 628, 200);
+    expect(searchPlantTitle(image, { x: 187, y: 195, pitch: 30 }, 'planter').read.plant).toBeNull();
   });
 });
